@@ -5,6 +5,9 @@
     <title>Traceroute Visualization</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A">
+    </script>
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
     <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
@@ -25,21 +28,17 @@
     <![endif]-->
 
     <div class="container" >
-      <div ng-controller="route_list">
-
-        Time: {{route_time}}
-        <div ng-repeat="x in route_values">
-          {{x.ip}}
-        </div>
-
-      </div>
 
       <div ng-controller="ipAddrDecoderController">
+      Lat:{{latitude}}
+      Lon:{{longitude}}
+      </div>
 
-      Latitude: {{latitude}} Longitude:{{longitude}}
 
-    </div>
+      <div id="maps" ng-controller="traceroutePlot">
 
+
+      </div>
 
 
     </div>
