@@ -1,0 +1,822 @@
+[
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/2341cd00be1740e1b558c06cdd2043e5/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/2341cd00be1740e1b558c06cdd2043e5/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1446886789
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/2341cd00be1740e1b558c06cdd2043e5/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "ps-ch-air.k12hsn.org",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-count-total": 21,
+    "metadata-key": "2341cd00be1740e1b558c06cdd2043e5",
+    "source": "184.106.120.33",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/2341cd00be1740e1b558c06cdd2043e5/"
+  },
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/3227dfe26f9e4e5b9900dfe410f516c8/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1446887077
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/3227dfe26f9e4e5b9900dfe410f516c8/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/3227dfe26f9e4e5b9900dfe410f516c8/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "thunderbird.ucsd.edu",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "3227dfe26f9e4e5b9900dfe410f516c8",
+    "source": "132.239.252.252",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/3227dfe26f9e4e5b9900dfe410f516c8/"
+  },
+  {
+    "destination": "137.164.30.5",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/3603ec6844a340cba48a56d8cd86eaee/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1454706282
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/3603ec6844a340cba48a56d8cd86eaee/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/3603ec6844a340cba48a56d8cd86eaee/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1454706282
+      }
+    ],
+    "input-destination": "ps-lax-dc-1g.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "3603ec6844a340cba48a56d8cd86eaee",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/3603ec6844a340cba48a56d8cd86eaee/"
+  },
+  {
+    "destination": "137.164.30.5",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/410e8d493650429fa39f4819f603ad61/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600299
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/410e8d493650429fa39f4819f603ad61/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1443599112
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/410e8d493650429fa39f4819f603ad61/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600299
+      }
+    ],
+    "input-destination": "ps-lax-dc-1g.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "410e8d493650429fa39f4819f603ad61",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/410e8d493650429fa39f4819f603ad61/"
+  },
+  {
+    "destination": "184.106.120.33",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/44dd508023b54f9fa9bbb28376a4f42d/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/44dd508023b54f9fa9bbb28376a4f42d/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744112
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/44dd508023b54f9fa9bbb28376a4f42d/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "ps-ch-air.k12hsn.org",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "44dd508023b54f9fa9bbb28376a4f42d",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/44dd508023b54f9fa9bbb28376a4f42d/"
+  },
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/4d7d97892bcb482283d7f1273e9b071b/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/4d7d97892bcb482283d7f1273e9b071b/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1446886560
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/4d7d97892bcb482283d7f1273e9b071b/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "thunderbird.ucsd.edu",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "4d7d97892bcb482283d7f1273e9b071b",
+    "source": "132.239.252.252",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/4d7d97892bcb482283d7f1273e9b071b/"
+  },
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/532e4ca6a6d9412491a11118800d9e46/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1446885494
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/532e4ca6a6d9412491a11118800d9e46/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/532e4ca6a6d9412491a11118800d9e46/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "ps-ch-air.k12hsn.org",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "532e4ca6a6d9412491a11118800d9e46",
+    "source": "184.106.120.33",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/532e4ca6a6d9412491a11118800d9e46/"
+  },
+  {
+    "destination": "137.164.30.5",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/6010679e249b4f8cae0990976b24b773/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/6010679e249b4f8cae0990976b24b773/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744383
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/6010679e249b4f8cae0990976b24b773/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "ps-lax-dc-1g.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "6010679e249b4f8cae0990976b24b773",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/6010679e249b4f8cae0990976b24b773/"
+  },
+  {
+    "destination": "128.114.0.209",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/71ab2ebb836a4281b0d7aa7987215ae8/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600054
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/71ab2ebb836a4281b0d7aa7987215ae8/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1431559242
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/71ab2ebb836a4281b0d7aa7987215ae8/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600054
+      }
+    ],
+    "input-destination": "ndt.ucsc.edu",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "71ab2ebb836a4281b0d7aa7987215ae8",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/71ab2ebb836a4281b0d7aa7987215ae8/"
+  },
+  {
+    "destination": "184.106.120.33",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/7f7b42ccfffc4482a4e603eeefbdaf65/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443597874
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/7f7b42ccfffc4482a4e603eeefbdaf65/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600281
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/7f7b42ccfffc4482a4e603eeefbdaf65/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "ps-ch-air.k12hsn.org",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "7f7b42ccfffc4482a4e603eeefbdaf65",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/7f7b42ccfffc4482a4e603eeefbdaf65/"
+  },
+  {
+    "destination": "132.239.252.252",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/a6640f5d53f34fe4a72ac244a1d8f76f/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/a6640f5d53f34fe4a72ac244a1d8f76f/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1456743477
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/a6640f5d53f34fe4a72ac244a1d8f76f/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "thunderbird.ucsd.edu",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "a6640f5d53f34fe4a72ac244a1d8f76f",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/a6640f5d53f34fe4a72ac244a1d8f76f/"
+  },
+  {
+    "destination": "137.164.28.125",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa10af187403454cb47d4a76bdaf6434/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443599817
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa10af187403454cb47d4a76bdaf6434/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa10af187403454cb47d4a76bdaf6434/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1443599817
+      }
+    ],
+    "input-destination": "ps-svl-owamp.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "aa10af187403454cb47d4a76bdaf6434",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/aa10af187403454cb47d4a76bdaf6434/"
+  },
+  {
+    "destination": "132.239.252.252",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa739baf724f4c0ba5640b4bb12900e8/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744061
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa739baf724f4c0ba5640b4bb12900e8/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/aa739baf724f4c0ba5640b4bb12900e8/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744061
+      }
+    ],
+    "input-destination": "thunderbird.ucsd.edu",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "aa739baf724f4c0ba5640b4bb12900e8",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/aa739baf724f4c0ba5640b4bb12900e8/"
+  },
+  {
+    "destination": "184.106.120.33",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/acd0512730074f9d8f0aea583cca419b/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1456741609
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/acd0512730074f9d8f0aea583cca419b/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/acd0512730074f9d8f0aea583cca419b/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "ps-ch-air.k12hsn.org",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "acd0512730074f9d8f0aea583cca419b",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/acd0512730074f9d8f0aea583cca419b/"
+  },
+  {
+    "destination": "137.164.28.125",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/b8927bc15bae4e869749a72c8e58a189/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744374
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/b8927bc15bae4e869749a72c8e58a189/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/b8927bc15bae4e869749a72c8e58a189/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744374
+      }
+    ],
+    "input-destination": "ps-svl-owamp.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "b8927bc15bae4e869749a72c8e58a189",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/b8927bc15bae4e869749a72c8e58a189/"
+  },
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/bf5877360ecc41e6bd9cb9ded8f911d2/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/bf5877360ecc41e6bd9cb9ded8f911d2/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1446887002
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/bf5877360ecc41e6bd9cb9ded8f911d2/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "ps-lax-dc-1g.cenic.net",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "bf5877360ecc41e6bd9cb9ded8f911d2",
+    "source": "137.164.30.5",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/",
+    "uri": "/esmond/perfsonar/archive/bf5877360ecc41e6bd9cb9ded8f911d2/"
+  },
+  {
+    "destination": "137.164.28.109",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/d39568d405a14cf3843eb4c584e2502b/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1456521291
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/d39568d405a14cf3843eb4c584e2502b/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/d39568d405a14cf3843eb4c584e2502b/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1451408442
+      }
+    ],
+    "input-destination": "ps-lax-owamp.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "d39568d405a14cf3843eb4c584e2502b",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/d39568d405a14cf3843eb4c584e2502b/"
+  },
+  {
+    "destination": "132.239.252.252",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/e3c202aad7ad48b39870400bac726608/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443599548
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/e3c202aad7ad48b39870400bac726608/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600239
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/e3c202aad7ad48b39870400bac726608/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1443599548
+      }
+    ],
+    "input-destination": "thunderbird.ucsd.edu",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "e3c202aad7ad48b39870400bac726608",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/e3c202aad7ad48b39870400bac726608/"
+  },
+  {
+    "destination": "207.62.103.168",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/eddf0b90eaca422d9b6080532b72cc55/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1446885265
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/eddf0b90eaca422d9b6080532b72cc55/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/eddf0b90eaca422d9b6080532b72cc55/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "207.62.103.168",
+    "input-source": "ps-lax-dc-1g.cenic.net",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "eddf0b90eaca422d9b6080532b72cc55",
+    "source": "137.164.30.5",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/eddf0b90eaca422d9b6080532b72cc55/"
+  },
+  {
+    "destination": "137.164.28.109",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/f665f61c174148e3b254291ae3cb1aa2/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600028
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/f665f61c174148e3b254291ae3cb1aa2/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/f665f61c174148e3b254291ae3cb1aa2/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1443600028
+      }
+    ],
+    "input-destination": "ps-lax-owamp.cenic.net",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "f665f61c174148e3b254291ae3cb1aa2",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath,traceroute",
+    "uri": "/esmond/perfsonar/archive/f665f61c174148e3b254291ae3cb1aa2/"
+  },
+  {
+    "destination": "128.114.0.209",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/fe8526d5679f4e758ba96639c727363a/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744500
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/fe8526d5679f4e758ba96639c727363a/failures/base",
+        "event-type": "failures",
+        "summaries": [
+
+        ],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/fe8526d5679f4e758ba96639c727363a/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [
+
+        ],
+        "time-updated": 1456744500
+      }
+    ],
+    "input-destination": "ndt.ucsc.edu",
+    "input-source": "207.62.103.168",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "207.62.103.168",
+    "metadata-key": "fe8526d5679f4e758ba96639c727363a",
+    "source": "207.62.103.168",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/fe8526d5679f4e758ba96639c727363a/"
+  }
+]
