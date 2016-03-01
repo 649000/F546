@@ -1,0 +1,168 @@
+[
+  {
+    "destination": "192.231.127.41",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/6e43a879efac42939fb6b8c62d546346/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/6e43a879efac42939fb6b8c62d546346/failures/base",
+        "event-type": "failures",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/6e43a879efac42939fb6b8c62d546346/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [],
+        "time-updated": null
+      }
+    ],
+    "input-destination": "ps-latency.atlas.unimelb.edu.au",
+    "input-source": "203.30.39.127",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "203.30.39.127",
+    "metadata-count-total": 5,
+    "metadata-key": "6e43a879efac42939fb6b8c62d546346",
+    "source": "203.30.39.127",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/6e43a879efac42939fb6b8c62d546346/"
+  },
+  {
+    "destination": "2001:388:608c:88b:20d:60ff:fe19:3e7c",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/8662af9e72fb46228ce307534bba5a7f/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [],
+        "time-updated": 1456836099
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/8662af9e72fb46228ce307534bba5a7f/failures/base",
+        "event-type": "failures",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/8662af9e72fb46228ce307534bba5a7f/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [],
+        "time-updated": 1456836099
+      }
+    ],
+    "input-destination": "ndt-v6.its.monash.edu",
+    "input-source": "2001:df0:21a:0:20c:29ff:fec5:6b6c",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "2001:df0:21a:0:20c:29ff:fec5:6b6c",
+    "metadata-key": "8662af9e72fb46228ce307534bba5a7f",
+    "source": "2001:df0:21a:0:20c:29ff:fec5:6b6c",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/8662af9e72fb46228ce307534bba5a7f/"
+  },
+  {
+    "destination": "137.164.30.6",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/cb65ff89fbe045ab85a4db5ba6f14ab4/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [],
+        "time-updated": 1456835790
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/cb65ff89fbe045ab85a4db5ba6f14ab4/failures/base",
+        "event-type": "failures",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/cb65ff89fbe045ab85a4db5ba6f14ab4/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [],
+        "time-updated": 1456835791
+      }
+    ],
+    "input-destination": "ps-lax-dc-owamp.cenic.net",
+    "input-source": "203.30.39.127",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "203.30.39.127",
+    "metadata-key": "cb65ff89fbe045ab85a4db5ba6f14ab4",
+    "source": "203.30.39.127",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/cb65ff89fbe045ab85a4db5ba6f14ab4/"
+  },
+  {
+    "destination": "203.181.249.197",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/f6db1d91c5884fcaa41f54d2bdd4a099/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [],
+        "time-updated": 1456835766
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/f6db1d91c5884fcaa41f54d2bdd4a099/failures/base",
+        "event-type": "failures",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/f6db1d91c5884fcaa41f54d2bdd4a099/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [],
+        "time-updated": 1456835766
+      }
+    ],
+    "input-destination": "nms4.jp.apan.net",
+    "input-source": "203.30.39.127",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "203.30.39.127",
+    "metadata-key": "f6db1d91c5884fcaa41f54d2bdd4a099",
+    "source": "203.30.39.127",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/f6db1d91c5884fcaa41f54d2bdd4a099/"
+  },
+  {
+    "destination": "202.127.204.52",
+    "event-types": [
+      {
+        "base-uri": "/esmond/perfsonar/archive/fef8b3d5e50d480d9bff8763ee40b9ff/packet-trace/base",
+        "event-type": "packet-trace",
+        "summaries": [],
+        "time-updated": 1456836022
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/fef8b3d5e50d480d9bff8763ee40b9ff/failures/base",
+        "event-type": "failures",
+        "summaries": [],
+        "time-updated": null
+      },
+      {
+        "base-uri": "/esmond/perfsonar/archive/fef8b3d5e50d480d9bff8763ee40b9ff/path-mtu/base",
+        "event-type": "path-mtu",
+        "summaries": [],
+        "time-updated": 1456836022
+      }
+    ],
+    "input-destination": "perf.ipp.ac.cn",
+    "input-source": "203.30.39.127",
+    "ip-transport-protocol": "icmp",
+    "measurement-agent": "203.30.39.127",
+    "metadata-key": "fef8b3d5e50d480d9bff8763ee40b9ff",
+    "source": "203.30.39.127",
+    "subject-type": "point-to-point",
+    "time-interval": "600",
+    "tool-name": "bwctl/tracepath",
+    "uri": "/esmond/perfsonar/archive/fef8b3d5e50d480d9bff8763ee40b9ff/"
+  }
+]
