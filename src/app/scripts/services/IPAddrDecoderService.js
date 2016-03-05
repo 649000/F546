@@ -2,7 +2,7 @@
  * Created by Nazri on 25/2/16.
  */
 
-var ipAddrDecodeServices = angular.module('ipAddrDecodeServices', ['ngResource']);
+var ipAddrDecodeServices = angular.module('IPAddrDecodeServices', ['ngResource']);
 
 
 /**

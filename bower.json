@@ -15,7 +15,8 @@
     "moment": "~2.10.6",
     "angular": "~1.4.2",
     "angular-google-maps": "^2.3.2",
-    "gmaps": "^0.4.22"
+    "gmaps": "^0.4.22",
+    "d3": "^3.5.16"
   },
   "devDependencies": {
     "angular-mocks": "~1.4.2"

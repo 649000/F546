@@ -1,4 +1,4 @@
-var generalServices = angular.module('generalServices', []);
+var generalServices = angular.module('GeneralServices', []);
 
 generalServices.factory('IPAddressIdentifierService', function(){
   return {
