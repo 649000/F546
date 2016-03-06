@@ -123,12 +123,8 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults','GEOIP_NE
 
 traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
 
-  var previousIP
-
-  var width = 960,
-    height = 500;
-
-
+  var previousIP, nodes = [], links =[]
+  var width = 960, height = 500;
 
   //var nodes = [
   //  { x:   width/3, y: height/2 },
@@ -141,85 +137,90 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults', function
   //  { source: 1, target: 2 }
   //];
 
-  var nodes = [], links =[]
-
   TracerouteResults.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
+
     for (i = 0; i < data[0].val.length; i++) {
       if (previousIP != data[0].val[i].ip){
         //console.log(data[0].val[i].ip)
-
         nodes.push({ x:   i*width/3, y: height/2 })
-        if(i ==( data[0].val.length - 1) ){
-         // links.push({ source: i, target:  })
-        } else{
-          links.push({ source: i, target: (i+1) })
-        }
-
-        
         previousIP = data[0].val[i].ip
       }
     }
+    for(i =0;i<nodes.length;i++){
+      if(i!=(nodes.length-1)){
+        links.push({ source: i, target: (i+1) })
+      }
+    }
+
+    //links.push({ source: 0, target: (1) })
+    //links.push({ source: 1, target: (2) })
+    //links.push({ source: 2, target: (3) })
+    //links.push({ source: 3, target: (4) })
+    //links.push({ source: 4, target: (5) })
+    //links.push({ source: 5, target: (6) })
+    //links.push({ source: 6, target: (7) })
+    //links.push({ source: 7, target: (8) })
+    //links.push({ source: 8, target: (9) })
+    //links.push({ source: 9, target: (10) })
+    //links.push({ source: 10, target: (11) })
+    //links.push({ source: 11, target: (12) })
+
+
+    //console.log("Node Size: "+ nodes.length)
+    //console.log("Edge Size: " + links.length)
+    //
+    //links.forEach(function(entry) {
+    //  console.log("Link: Source: "+entry.source + " Target: "+ entry.target);
+    //});
+    //
+    //nodes.forEach(function(entry) {
+    //  console.log("Node: X: "+entry.x + " Y: "+ entry.y);
+    //});
+
+
+    var svg = d3.select("#d3fgraph").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+
+
+    var force = d3.layout.force()
+      .size([width, height])
+      .nodes(nodes)
+      .links(links);
+
+    force.linkDistance(width/2);
+
+    var link = svg.selectAll('.link')
+      .data(links)
+      .enter().append('line')
+      .attr('class', 'link');
+
+    var node = svg.selectAll('.node')
+      .data(nodes)
+      .enter().append('circle')
+      .attr('class', 'node');
+
+
+    force.on('end', function() {
+
+      node.attr('r', width/25)
+        .attr('cx', function(d) { return d.x; })
+        .attr('cy', function(d) { return d.y; });
+
+
+      link.attr('x1', function(d) { return d.source.x; })
+        .attr('y1', function(d) { return d.source.y; })
+        .attr('x2', function(d) { return d.target.x; })
+        .attr('y2', function(d) { return d.target.y; });
+
+    });
+
+    force.start();
 
 
   });
 
-  var svg = d3.select("#d3fgraph").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-
-
-  var force = d3.layout.force()
-    .size([width, height])
-    .nodes(nodes)
-    .links(links);
-
-  force.linkDistance(width/2);
-
-  var link = svg.selectAll('.link')
-    .data(links)
-    .enter().append('line')
-    .attr('class', 'link');
-
-  var node = svg.selectAll('.node')
-    .data(nodes)
-    .enter().append('circle')
-    .attr('class', 'node');
-
-
-  force.on('end', function() {
-
-    // When this function executes, the force layout
-    // calculations have concluded. The layout will
-    // have set various properties in our nodes and
-    // links objects that we can use to position them
-    // within the SVG container.
-
-    // First let's reposition the nodes. As the force
-    // layout runs it updates the `x` and `y` properties
-    // that define where the node should be centered.
-    // To move the node, we set the appropriate SVG
-    // attributes to their new values. We also have to
-    // give the node a non-zero radius so that it's visible
-    // in the container.
-
-    node.attr('r', width/25)
-      .attr('cx', function(d) { return d.x; })
-      .attr('cy', function(d) { return d.y; });
-
-    // We also need to update positions of the links.
-    // For those elements, the force layout sets the
-    // `source` and `target` properties, specifying
-    // `x` and `y` values in each case.
-
-    link.attr('x1', function(d) { return d.source.x; })
-      .attr('y1', function(d) { return d.source.y; })
-      .attr('x2', function(d) { return d.target.x; })
-      .attr('y2', function(d) { return d.target.y; });
-
-  });
-
-  force.start();
 
 
 
