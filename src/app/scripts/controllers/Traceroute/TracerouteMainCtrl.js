@@ -178,6 +178,8 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults', function
     //});
 
 
+
+
     var svg = d3.select("#d3fgraph").append("svg")
       .attr("width", width)
       .attr("height", height);
