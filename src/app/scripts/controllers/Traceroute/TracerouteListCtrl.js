@@ -1,5 +1,7 @@
-angular.module('traceroute').controller('TracerouteListCtrl', ['$scope', 'TracerouteList','TracerouteResults', function($scope, TracerouteList, TracerouteResults){
+angular.module('traceroute').controller('TracerouteListCtrl', ['$scope', 'TracerouteList','TracerouteResults', function($scope, TracerouteResults, TracerouteResultIndividual){
+
   console.log("TracerouteListCtrl: START")
+
   //$scope.tr_list = TracerouteList.list()
 
   //dataList = TracerouteList.list()

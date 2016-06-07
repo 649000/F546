@@ -14,7 +14,7 @@ var jsonURL='../../json/hpc-perfsonar.usc.edu.json'
 var traceroute = angular.module('traceroute',['TracerouteServices','IPAddrDecodeServices']);
 
 
-traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults','GEOIP_NEKUDO', function($scope, TracerouteResults, GEOIP_NEKUDO) {
+traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults','GEOIP_NEKUDO', function($scope, TracerouteResults, GEOIP_NEKUDO) {
 
   var previousIP = 0, counter= 0, firstLat= 0, firstLon = 0
 
@@ -36,7 +36,7 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults','GEOIP_NE
 
   //$scope.maps="<div id='maps'></div>"
 
-  Traceroute_Results.get({ metadata_key: '0171dee126dd433e817e21ca352bc517' }, function(data) {
+  TracerouteResults.get({ metadata_key: '0171dee126dd433e817e21ca352bc517' }, function(data) {
     //$scope.route_time = data[0].ts;
     //for (i = 0; i < data[0].val.length; i++) {
     //  console.log(data[0].val[i].ip)
@@ -121,7 +121,7 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults','GEOIP_NE
 
 }]);
 
-traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
+traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
 
   var previousIP, nodes = [], links =[]
   var width = 960, height = 500;
@@ -232,22 +232,54 @@ traceroute.controller('traceroutePlot', ['$scope', 'TracerouteResults', function
 }]);
 
 
+traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
+
+  $scope.username = 'World';
+
+  var previousIP, nodes = [], links =[]
+  var width = 960, height = 500;
+
+
+  // TracerouteResults.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
+  //
+  //   for (i = 0; i < data[0].val.length; i++) {
+  //     if (previousIP != data[0].val[i].ip){
+  //       //console.log(data[0].val[i].ip)
+  //       nodes.push({ x:   i*width/3, y: height/2 })
+  //       previousIP = data[0].val[i].ip
+  //     }
+  //   }
+  //
+  //   for(i =0;i<nodes.length;i++){
+  //     if(i!=(nodes.length-1)){
+  //       links.push({ source: i, target: (i+1) })
+  //     }
+  //   }
+  //
+  // });
 
 
 
 
-traceroute.controller('ipAddrDecoderController', ['$scope', 'GEOIP_NEKUDO', function($scope, GEOIP_NEKUDO) {
-  $scope.ip_address
 
-  GEOIP_NEKUDO.decode({ ip_address: '192.30.252.129' }, function(data) {
-    //$scope.latitude = data.latitude;
-    //$scope.longitude = data.longitude;
-    $scope.latitude = data.location.latitude;
-    $scope.longitude = data.location.longitude;
 
-  });
 
 }]);
+
+
+
+// traceroute.controller('ipAddrDecoderController', ['$scope', 'GEOIP_NEKUDO', function($scope, GEOIP_NEKUDO) {
+//   $scope.ip_address
+//
+//   GEOIP_NEKUDO.decode({ ip_address: '192.30.252.129' }, function(data) {
+//     //$scope.latitude = data.latitude;
+//     //$scope.longitude = data.longitude;
+//     $scope.latitude = data.location.latitude;
+//     $scope.longitude = data.location.longitude;
+//
+//   });
+//
+// }]);
 
 
 
