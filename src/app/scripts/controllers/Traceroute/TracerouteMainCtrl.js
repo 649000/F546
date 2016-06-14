@@ -232,28 +232,40 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function($scope, 
 }]);
 
 
-traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
+traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', function($scope, TracerouteResultIndividual) {
+  var previousIP
+  var cy = cytoscape({
+    container: document.getElementById('tr_plot_cytoscape')
+  });
+
+  var nodes = [];
 
 
 
 
-  // TracerouteResults.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
-  //
-  //   for (i = 0; i < data[0].val.length; i++) {
-  //     if (previousIP != data[0].val[i].ip){
-  //       //console.log(data[0].val[i].ip)
-  //       nodes.push({ x:   i*width/3, y: height/2 })
-  //       previousIP = data[0].val[i].ip
-  //     }
-  //   }
-  //
-  //   for(i =0;i<nodes.length;i++){
-  //     if(i!=(nodes.length-1)){
-  //       links.push({ source: i, target: (i+1) })
-  //     }
-  //   }
-  //
-  // });
+
+  TracerouteResultIndividual.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
+
+    for (i = 0; i < data[0].val.length; i++) {
+      if (previousIP != data[0].val[i].ip){
+        //console.log(data[0].val[i].ip)
+
+        cy.add({
+          group: "nodes",
+          data: {
+
+            id: data[0].val[i].ip
+            }
+          }
+        );
+
+        previousIP = data[0].val[i].ip
+      }
+    }
+
+
+
+  });
 
 
 

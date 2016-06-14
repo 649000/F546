@@ -22,3 +22,33 @@ generalServices.factory('IPAddressIdentifierService', function(){
     }
   }
 });
+
+
+generalServices.factory('UnixTimeConverterService', function(){
+  return {
+    date: function(timestamp){
+      date = new Date(timestamp * 1000),
+        datevalues = [
+          date.getFullYear(),
+          date.getMonth()+1,
+          date.getDate(),
+          date.getHours(),
+          date.getMinutes(),
+          date.getSeconds(),
+        ];
+
+        return datevalues;
+    },
+    time: function(timestamp){
+      date = new Date(timestamp * 1000),
+        timevalues = [
+
+          date.getHours(),
+          date.getMinutes(),
+          date.getSeconds(),
+        ];
+
+      return timevalues;
+    }
+  }
+});
