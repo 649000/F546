@@ -234,10 +234,7 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function($scope, 
 
 traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResults', function($scope, TracerouteResults) {
 
-  $scope.username = 'World';
 
-  var previousIP, nodes = [], links =[]
-  var width = 960, height = 500;
 
 
   // TracerouteResults.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
