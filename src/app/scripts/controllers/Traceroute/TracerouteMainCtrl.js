@@ -239,33 +239,58 @@ traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', f
   });
 
   var nodes = [];
+  var host;
+
+  // Resource is for RESTFUL.
 
 
+  // ng-click - click event.
+  $scope.updateGraph = function (){
 
+   host = $scope.input_servername
+  }
 
+  $scope.getYear = function (){
+    // Do something here
+    //Call this from the main page as {{getYear()}}
+  }
 
-  TracerouteResultIndividual.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
-
-    for (i = 0; i < data[0].val.length; i++) {
-      if (previousIP != data[0].val[i].ip){
-        //console.log(data[0].val[i].ip)
-
-        cy.add({
-          group: "nodes",
-          data: {
-
-            id: data[0].val[i].ip
-            }
-          }
-        );
-
-        previousIP = data[0].val[i].ip
-      }
-    }
-
-
-
+// Simple GET request example:
+  $http({
+    method: 'GET',
+    url: host
+  }).then(function successCallback(response) {
+    // this callback will be called asynchronously
+    // when the response is available
+    // Load shit into the thing.
+  }, function errorCallback(response) {
+    // called asynchronously if an error occurs
+    // or server returns response with an error status.
   });
+
+
+  // TracerouteResultIndividual.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
+  //
+  //   for (i = 0; i < data[0].val.length; i++) {
+  //     if (previousIP != data[0].val[i].ip){
+  //       //console.log(data[0].val[i].ip)
+  //
+  //       cy.add({
+  //         group: "nodes",
+  //         data: {
+  //
+  //           id: data[0].val[i].ip
+  //           }
+  //         }
+  //       );
+  //
+  //       previousIP = data[0].val[i].ip
+  //     }
+  //   }
+  //
+  //
+  //
+  // });
 
 
 
