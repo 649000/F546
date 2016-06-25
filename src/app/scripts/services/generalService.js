@@ -52,3 +52,21 @@ generalServices.factory('UnixTimeConverterService', function(){
     }
   }
 });
+
+generalServices.factory('CurrentTimeUnixService', function(){
+  return {
+
+    time: function(){
+
+      date = new Date(Date.now() * 1000),
+        timevalues = [
+
+          date.getHours(),
+          date.getMinutes(),
+          date.getSeconds(),
+        ];
+
+      return timevalues;
+    }
+  }
+});

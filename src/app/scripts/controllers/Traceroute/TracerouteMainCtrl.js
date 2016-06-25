@@ -238,17 +238,25 @@ traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', f
     container: document.getElementById('tr_plot_cytoscape')
   });
 
+
   var nodes = [];
-  var host;
+  var host1;
+  var host2;
 
   // Resource is for RESTFUL.
 
 
   // ng-click - click event.
   $scope.updateGraph = function (){
+    if (typeof $scope.input_node1 === "undefined") {
+      alert(Math.floor(Date.now()/1000));
+    } else {
+      host1 = $scope.input_node1;
+    }
 
-   host = $scope.input_servername
   }
+
+  // Get Current Time in seconds: Date.now()/1000 and floor it.
 
   $scope.getYear = function (){
     // Do something here
@@ -256,41 +264,41 @@ traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', f
   }
 
 // Simple GET request example:
-  $http({
-    method: 'GET',
-    url: host
-  }).then(function successCallback(response) {
-    // this callback will be called asynchronously
-    // when the response is available
-    // Load shit into the thing.
-  }, function errorCallback(response) {
-    // called asynchronously if an error occurs
-    // or server returns response with an error status.
+//   $http({
+//     method: 'GET',
+//     url: host
+//   }).then(function successCallback(response) {
+//     // this callback will be called asynchronously
+//     // when the response is available
+//     // Load shit into the thing.
+//   }, function errorCallback(response) {
+//     // called asynchronously if an error occurs
+//     // or server returns response with an error status.
+//   });
+
+
+  TracerouteResultIndividual.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
+
+    for (i = 0; i < data[0].val.length; i++) {
+      if (previousIP != data[0].val[i].ip){
+        //console.log(data[0].val[i].ip)
+
+        cy.add({
+          group: "nodes",
+          data: {
+
+            id: data[0].val[i].ip
+            }
+          }
+        );
+
+        previousIP = data[0].val[i].ip
+      }
+    }
+
+
+
   });
-
-
-  // TracerouteResultIndividual.get({ metadata_key: '8662af9e72fb46228ce307534bba5a7f' }, function(data) {
-  //
-  //   for (i = 0; i < data[0].val.length; i++) {
-  //     if (previousIP != data[0].val[i].ip){
-  //       //console.log(data[0].val[i].ip)
-  //
-  //       cy.add({
-  //         group: "nodes",
-  //         data: {
-  //
-  //           id: data[0].val[i].ip
-  //           }
-  //         }
-  //       );
-  //
-  //       previousIP = data[0].val[i].ip
-  //     }
-  //   }
-  //
-  //
-  //
-  // });
 
 
 
@@ -314,13 +322,3 @@ traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', f
 //   });
 //
 // }]);
-
-
-
-traceroute.controller('visController', ['$scope', function($scope) {
-  $scope.greeting = 'Hola!';
-}]);
-
-
-
-
