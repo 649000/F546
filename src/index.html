@@ -8,7 +8,7 @@
   <!--<script-->
   <!--src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A">-->
   <!--</script>-->
-
+  <!--<script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>-->
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
@@ -377,7 +377,7 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Notifications Panel
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
@@ -423,6 +423,43 @@
 
 
         <div id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
+
+        </div>
+
+      </div>
+
+    </div>
+    <!-- /.panel-body -->
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Google Maps
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="container">
+
+
+
+        Node1: <input type="text" name="node1" ng-model="input_node1"><br>
+        Node2: <input type="text" name="node2" ng-model="input_node2"><br>
+
+        <button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>
+
+
+        <div id="tr_plot_gmaps" ng-controller="tr_gmaps">
+
+          <ui-gmap-google-map center='map.center' zoom='map.zoom' >
+            <ui-gmap-markers models="randomMarkers" coords="'self'" icon="'icon'">
+            </ui-gmap-markers>
+
+            <ui-gmap-polylines models="randomLines" path="'geotracks'" stroke="'stroke'" visible="'visible'"
+                               geodesic="'geodesic'" editable="'editable'" draggable="'draggable'" static="true">
+
+            </ui-gmap-polylines>
+          </ui-gmap-google-map>
+
 
         </div>
 

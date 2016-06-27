@@ -3,3 +3,8 @@
   height: 800px;
   display: block;
 }
+
+.angular-google-map-container {
+  height: 800px;
+  width: 975px;
+}
