@@ -84,7 +84,9 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
     {
       id: "first",
       latitude: 1.564836,
-      longitude: 103.718025
+      longitude: 103.718025,
+      title: "Hello1",
+      options: {labelClass:'marker_labels',labelAnchor:'12 60',labelContent:'m1'}
 
     }
   );
@@ -92,7 +94,8 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
     {
       id: "second",
       latitude: 1.512557,
-      longitude: 104.168110
+      longitude: 104.168110,
+
 
     }
   );
@@ -103,7 +106,10 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
 
   $scope.randomLines = markers;
 
-  $scope.randomLines = [{
+  $scope.randomLines = [
+
+
+    {
     id: 1,
     geotracks: [{
       latitude: 1.564836,
@@ -111,7 +117,11 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
     }, {
       latitude: 1.512557,
       longitude: 104.168110
-    }]
+    }],
+      stroke: {
+        color: '#6060FB',
+        weight: 1
+      }
   }, {
     id: 2,
     geotracks: [{
@@ -122,6 +132,8 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
       longitude: 71.58
     }]
   }];
+
+  $scope.title="dd";
 
   uiGmapGoogleMapApi.then(function (maps) {
 

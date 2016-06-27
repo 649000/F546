@@ -451,11 +451,13 @@
         <div id="tr_plot_gmaps" ng-controller="tr_gmaps">
 
           <ui-gmap-google-map center='map.center' zoom='map.zoom' >
-            <ui-gmap-markers models="randomMarkers" coords="'self'" icon="'icon'">
+            <ui-gmap-markers models="randomMarkers" coords="'self'" icon="'icon'" options="'options'">
+              <ui-gmap-windows show="show">
+                <div ng-non-bindable>{{title}}</div>
+              </ui-gmap-windows>
             </ui-gmap-markers>
 
-            <ui-gmap-polylines models="randomLines" path="'geotracks'" stroke="'stroke'" visible="'visible'"
-                               geodesic="'geodesic'" editable="'editable'" draggable="'draggable'" static="true">
+            <ui-gmap-polylines models="randomLines" path="'geotracks'" stroke="'stroke'" >
 
             </ui-gmap-polylines>
           </ui-gmap-google-map>
