@@ -86,7 +86,7 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
       latitude: 1.564836,
       longitude: 103.718025,
       title: "Hello1",
-      options: {labelClass:'marker_labels',labelAnchor:'12 60',labelContent:'m1'}
+      options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
 
     }
   );
@@ -101,39 +101,37 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
   );
 
 
-
   $scope.randomMarkers = markers;
 
-  $scope.randomLines = markers;
 
   $scope.randomLines = [
 
 
     {
-    id: 1,
-    geotracks: [{
-      latitude: 1.564836,
-      longitude: 103.718025
-    }, {
-      latitude: 1.512557,
-      longitude: 104.168110
-    }],
+      id: 1,
+      geotracks: [{
+        latitude: 1.564836,
+        longitude: 103.718025
+      }, {
+        latitude: 1.512557,
+        longitude: 104.168110
+      }],
       stroke: {
         color: '#6060FB',
         weight: 1
       }
-  }, {
-    id: 2,
-    geotracks: [{
-      latitude: 24.0,
-      longitude: 72.58
     }, {
-      latitude: 23.1,
-      longitude: 71.58
-    }]
-  }];
+      id: 2,
+      geotracks: [{
+        latitude: 24.0,
+        longitude: 72.58
+      }, {
+        latitude: 23.1,
+        longitude: 71.58
+      }]
+    }];
 
-  $scope.title="dd";
+  $scope.title = "dd";
 
   uiGmapGoogleMapApi.then(function (maps) {
 
@@ -358,27 +356,50 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function ($scope,
 }]);
 
 
-traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', function ($scope, TracerouteResultIndividual) {
+traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteResultIndividual', function ($scope, $http, TracerouteResultIndividual) {
+
   var previousIP
+  var nodes = [];
+  var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+  var host1JSON;
+  var host2;
+
   var cy = cytoscape({
     container: document.getElementById('tr_plot_cytoscape')
   });
 
+  // Simple GET request example:
+  $http({
+    method: 'GET',
+    url: host1,
+    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000))}
+  }).then(function successCallback(response) {
+    console.log("Success: "+ response.data);
+    // this callback will be called asynchronously
 
-  var nodes = [];
-  var host1;
-  var host2;
 
-  // Resource is for RESTFUL.
 
+    alert(response.data[0]['event-type'])
+
+  }, function errorCallback(response) {
+    console.log("Failed: "+ response.data);
+    // or server returns response with an error status.
+    alert("Error");
+  });
 
   // ng-click - click event.
   $scope.updateGraph = function () {
-    if (typeof $scope.input_node1 === "undefined") {
-      alert(Math.floor(Date.now() / 1000));
+    if (!angular.isUndefined($scope.input_node1)) {
+      //host1 = $scope.input_node1;
+      console.log("Host1: " + host1);
+
+
+
+
     } else {
-      host1 = $scope.input_node1;
+      alert("Undefined");
     }
+
 
   }
 
@@ -389,41 +410,28 @@ traceroute.controller('tr_cytoscape', ['$scope', 'TracerouteResultIndividual', f
     //Call this from the main page as {{getYear()}}
   }
 
-// Simple GET request example:
-//   $http({
-//     method: 'GET',
-//     url: host
-//   }).then(function successCallback(response) {
-//     // this callback will be called asynchronously
-//     // when the response is available
-//     // Load shit into the thing.
-//   }, function errorCallback(response) {
-//     // called asynchronously if an error occurs
-//     // or server returns response with an error status.
-//   });
 
-
-  TracerouteResultIndividual.get({metadata_key: '8662af9e72fb46228ce307534bba5a7f'}, function (data) {
-
-    for (i = 0; i < data[0].val.length; i++) {
-      if (previousIP != data[0].val[i].ip) {
-        //console.log(data[0].val[i].ip)
-
-        cy.add({
-            group: "nodes",
-            data: {
-
-              id: data[0].val[i].ip
-            }
-          }
-        );
-
-        previousIP = data[0].val[i].ip
-      }
-    }
-
-
-  });
+  // TracerouteResultIndividual.get({metadata_key: '8662af9e72fb46228ce307534bba5a7f'}, function (data) {
+  //
+  //   for (i = 0; i < data[0].val.length; i++) {
+  //     if (previousIP != data[0].val[i].ip) {
+  //       //console.log(data[0].val[i].ip)
+  //
+  //       cy.add({
+  //           group: "nodes",
+  //           data: {
+  //
+  //             id: data[0].val[i].ip
+  //           }
+  //         }
+  //       );
+  //
+  //       previousIP = data[0].val[i].ip
+  //     }
+  //   }
+  //
+  //
+  // });
 
 
 }]);
