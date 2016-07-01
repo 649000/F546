@@ -19,7 +19,7 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDeco
 }])
 
 
-traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, TracerouteResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
+traceroute.controller('tr_gmaps', ['$scope', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
 
   // Do stuff with your $scope.
   // Note: Some of the directives require at least something to be defined originally!
@@ -241,7 +241,7 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteResults', 'GEOIP_NEKUDO'
 
 }]);
 
-traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function ($scope, TracerouteResults) {
+traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($scope, TracerouteMainResults) {
 
   var previousIP, nodes = [], links = []
   var width = 960, height = 500;
@@ -356,7 +356,7 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteResults', function ($scope,
 }]);
 
 
-traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteResultIndividual', function ($scope, $http, TracerouteResultIndividual) {
+traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults', function ($scope, $http, TracerouteMainResults) {
 
   var previousIP
   var nodes = [];
@@ -374,26 +374,81 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteResultIndiv
     url: host1,
     params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000))}
   }).then(function successCallback(response) {
-    console.log("Success: "+ response.data);
     // this callback will be called asynchronously
+    console.log("Success: " + response.data);
+    for (i = 0; i < response.data.length; i++) {
+      for (j = 0; j < response.data[i]['event-types'].length; j++) {
+        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+          
+          $http({
+            method: 'GET',
+            url: response.data[i]['url'] + "packet-trace/base",
+            params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
+          }).then(function successCallback(response2) {
+            // this callback will be called asynchronously
+            //console.log(response2.data[0]['ts']);
+            angular.forEach(response2.data, function(value, key){
+              // console.log(key + ': ' + value);
+              var ts = value['ts'] // value.ts
+              var previousIP = 0
+
+              angular.forEach(value['val'], function(value, key){
+                if (previousIP != value['ip']){
+                  console.log(value['ip']);
+                }
+
+                previousIP = value['ip'];
+              });
+              // for (k=0; k< trResult[0].val.length; k++){
+              //   if (previousIP != trResult[0].val[k].ip){
+              //     //data[0].val[i].ip
+              //     console.log(trResult[0].val[k].ip)
+              //
+              //     if (dataList[i].source in retrievedData){
+              //       //Source Key Exist. Append new Traceroute Results
+              //     } else{
+              //
+              //       //retrievedData[dataList[i].source] = null
+              //     }
+              //     previousIP = trResult[0].val[k].ip
+              //   }
+              // }
 
 
 
-    alert(response.data[0]['event-type'])
+
+
+
+            });
+
+
+
+          }, function errorCallback(response2) {
+            // or server returns response with an error status.
+            console.log("Error: " + response2);
+
+            // alert("Error");
+          });
+
+
+        }
+      }
+    }
+
 
   }, function errorCallback(response) {
-    console.log("Failed: "+ response.data);
     // or server returns response with an error status.
-    alert("Error");
+    console.log("Error: " + response);
+
+    // alert("Error");
   });
+
 
   // ng-click - click event.
   $scope.updateGraph = function () {
     if (!angular.isUndefined($scope.input_node1)) {
       //host1 = $scope.input_node1;
       console.log("Host1: " + host1);
-
-
 
 
     } else {

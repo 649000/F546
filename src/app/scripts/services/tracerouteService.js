@@ -26,11 +26,60 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 // TracerouteResult, TracerouteResultIndividual, TRIndividualValue
 //
 
-
-tracerouteServices.factory('TracerouteResults', ['$resource', function($resource){
+tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function($resource){
 
   // Calls the main result page.
-  // Contains: Source, Destination, base-uri, metadata-key
+  // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+  // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
+  // subject-type : "point-to-point"
+  // event-types
+  // source : "203.30.39.127"
+  // destination : "137.189.192.25"
+  // measurement-agent : "203.30.39.127"
+  // tool-name : "bwctl/tracepath"
+  // input-source : "203.30.39.127"
+  // input-destination : "ps1.itsc.cuhk.edu.hk"
+  // time-interval : "600"
+  // ip-transport-protocol : "icmp"
+  // ip-packet-size : "40"
+  // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+  // metadata-count-total : 23
+  // metadata-previous-page : null
+  // metadata-next-page : null
+
+
+  // https://docs.angularjs.org/api/ngResource/service/$resource
+  return $resource(tracerouteResultURL, {}, {
+
+    list: {
+      method:'GET',
+      params:{'format':'json','event-type':'packet-trace'},
+      isArray:true
+    }
+
+  });
+
+}]);
+tracerouteServices.factory('TracerouteMainResults', ['$resource', function($resource){
+
+  // Calls the main result page.
+  // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+  // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
+  // subject-type : "point-to-point"
+  // event-types
+  // source : "203.30.39.127"
+  // destination : "137.189.192.25"
+  // measurement-agent : "203.30.39.127"
+  // tool-name : "bwctl/tracepath"
+  // input-source : "203.30.39.127"
+  // input-destination : "ps1.itsc.cuhk.edu.hk"
+  // time-interval : "600"
+  // ip-transport-protocol : "icmp"
+  // ip-packet-size : "40"
+  // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+  // metadata-count-total : 23
+  // metadata-previous-page : null
+  // metadata-next-page : null
 
 
   // https://docs.angularjs.org/api/ngResource/service/$resource
@@ -46,7 +95,8 @@ tracerouteServices.factory('TracerouteResults', ['$resource', function($resource
 
   }]);
 
-tracerouteServices.factory('TracerouteResultIndividual', ['$resource', function($resource){
+
+tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function($resource){
 
   // Calls the individual test containing various hops.
 
