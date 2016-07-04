@@ -365,6 +365,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
   var cy = cytoscape({
     container: document.getElementById('tr_plot_cytoscape'),
+
     style: [ // the stylesheet for the graph
       {
         selector: 'node',
@@ -387,26 +388,26 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
   });
 
-    var elements = [ // list of graph elements to start with
-      { // node a
-        data: { id: 'a' }
-      },
-      { // node b
-        data: { id: 'c' }
-      },
-      { // edge ab
-        data: { id: 'ab', source: 'a', target: 'b' }
-      }
-    ];
+  //   var elements = [ // list of graph elements to start with
+  //     { // node a
+  //       data: { id: 'a' }
+  //     },
+  //     { // node b
+  //       data: { id: 'c' }
+  //     },
+  //     { // edge ab
+  //       data: { id: 'ab', source: 'a', target: 'b' }
+  //     }
+  //   ];
+  //
+  // elements.push (
+  //   { // node a
+  //     data: { id: 'a' }
+  //   }
+  //
+  // )
 
-  elements.push (
-    { // node a
-      data: { id: 'a' }
-    }
-
-  )
-
-  cy.add(elements)
+  // cy.add(elements)
 
   // var cy = cytoscape({
   //
@@ -451,133 +452,25 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
   //
   // });
 
+
+
   $http({
     method: 'GET',
     url: host1,
-    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000))}
+    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '3'}
   }).then(function successCallback(response) {
     // this callback will be called asynchronously
     console.log("First $http Success");
 
-    // angular.forEach(response.data, function (value, key) {
-    //   var parentSource = value['source'];
-    //   var parentURL = value['url'];
-    //   if (cytoscape_nodes.length == 0) {
-    //     console.log("Size: " + cytoscape_nodes.length)
-    //     console.log("LOOP Key: " + key);
-    //     cytoscape_nodes.push(add_node(value['source']));
-    //
-    //   } else {
-    //     angular.forEach(cytoscape_nodes, function (value, key) {
-    //
-    //       if (parentSource != value['data']['id']) {
-    //         // cytoscape_nodes.push(add_node(parentSource));
-    //       }
-    //     });
-    //   }
-    //
-    //   angular.forEach(value['event-types'], function (value, key) {
-    //     if (value['event-type'] == 'packet-trace') {
-    //
-    //       $http({
-    //         method: 'GET',
-    //         url: parentURL + "packet-trace/base",
-    //         params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
-    //       }).then(function successCallback(response2) {
-    //         console.log("Second $http Success");
-    //         // this callback will be called asynchronously
-    //         //console.log(response2.data[0]['ts']);
-    //
-    //
-    //         angular.forEach(response2.data, function (value, key) {
-    //           // console.log(key + ': ' + value);
-    //           var ts = value['ts'] // value.ts
-    //           var previousIP = 0
-    //
-    //           angular.forEach(value['val'], function (value, key) {
-    //             var parentIP = value['ip'];
-    //
-    //             angular.forEach(cytoscape_nodes, function (value, key) {
-    //
-    //               if (parentIP != value['data']['id']) {
-    //                 // cytoscape_nodes.push(add_node(parentIP));
-    //               }
-    //             });
-    //
-    //             if (previousIP != value['ip']) {
-    //               // console.log(value['ip']);
-    //
-    //               // add_node(value['ip'])
-    //               // add_edge(value['ip'] + 1, value['ip'], value['val'][key-1])
-    //             }
-    //
-    //             previousIP = value['ip'];
-    //
-    //
-    //           });
-    //           // for (k=0; k< trResult[0].val.length; k++){
-    //           //   if (previousIP != trResult[0].val[k].ip){
-    //           //     //data[0].val[i].ip
-    //           //     console.log(trResult[0].val[k].ip)
-    //           //
-    //           //     if (dataList[i].source in retrievedData){
-    //           //       //Source Key Exist. Append new Traceroute Results
-    //           //     } else{
-    //           //
-    //           //       //retrievedData[dataList[i].source] = null
-    //           //     }
-    //           //     previousIP = trResult[0].val[k].ip
-    //           //   }
-    //           // }
-    //
-    //
-    //         });
-    //
-    //         //Cytoscape add must add within $http get.
-    //         // cy.add(cytoscape_nodes);
-    //         // cy.add(cytoscape_edges);
-    //         //
-    //         // var layout = cy.makeLayout({
-    //         //   name: 'random'
-    //         // });
-    //         //
-    //         // layout.run();
-    //
-    //
-    //       }, function errorCallback(response2) {
-    //         // or server returns response with an error status.
-    //         console.log("Error: " + response2);
-    //
-    //         // alert("Error");
-    //       });
-    //
-    //
-    //     }
-    //   })
-    // })
+    for (var i = 0; i < response.data.length; i++) {
 
+      // console.log("Node Size: " + cytoscape_nodes.length)
 
-    for (i = 0; i < response.data.length; i++) {
+      cytoscape_nodes.push(add_node(response.data[i]['source']));
+      var parentIP = response.data[i]['source'];
+      var mainForLoopCounter = i;
 
-      console.log("Node Size: " + cytoscape_nodes.length)
-      if (cytoscape_nodes.length == 0) {
-        cytoscape_nodes.push(add_node(response.data[i]['source']));
-      } else {
-
-        for (cytoCounter = 0; cytoCounter < cytoscape_nodes.length; cytoCounter++) {
-          if (response.data[i]['source'] != cytoscape_nodes[cytoCounter].data.id) {
-            cytoscape_nodes.push(add_node(response.data[i]['source']));
-          }
-        }
-        // angular.forEach(cytoscape_nodes, function (value, key) {
-        //   if (response.data[i]['source'] != value['data']['id']) {
-        //     cytoscape_nodes.push(add_node(response.data[i]['source']));
-        //   }
-        // });
-      }
-
-
-      for (j = 0; j < response.data[i]['event-types'].length; j++) {
+      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
           $http({
@@ -587,105 +480,46 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
           }).then(function successCallback(response2) {
             console.log("Second $http Success");
             //console.log(response2.data[0]['ts']);
-            // cytoscape_nodes.push(add_node(response2.data[0]['val']['ip']));
+
+            for (var k = 0; k < response2.data.length; k++) {
+              var ts = response2.data[k]['ts'];
+              // console.log("TS: " + ts);
+
+                // Main Node
+                cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'] ,response2.data[k]['val'][0]['ip']));
 
 
-            for (k = 0; k < response2.data.length; k++) {
-              var ts = response2.data[k]['ts']
-              console.log("TS: " + ts)
 
-              var previousIP = 0
-
-              for (l = 0; l < response2.data[k]['val'].length; l++) {
-
-                if (previousIP != response2.data[k]['val'][l]['ip']) {
-                  console.log(response2.data[k]['val'][l]['ip']);
-                  var ipToAdd = response2.data[k]['val'][l]['ip'];
-                  cytoscape_nodes.push(add_node(ipToAdd));
-
-                  for (cytoCounter = 0; cytoCounter < cytoscape_nodes.length; cytoCounter++) {
-                    if (ipToAdd != cytoscape_nodes[cytoCounter].data.id) {
-
-                      // console.log("In Node Array: "+ cytoscape_nodes[cytoCounter].data.id)
-                      // cytoscape_nodes.push(add_node(ipToAdd));
-                      // console.log("TO BE ADDED: " +response2.data[k]['val'][l]['ip']);
-                    }
-                  }
+              var temp_ip = [];
+              for (var l = 0; l < response2.data[k]['val'].length; l++) {
+                if (response2.data[k]['val'][l]['query'] == 1) {
+                  temp_ip.push(response2.data[k]['val'][l]['ip']);
                 }
-
-                previousIP = response2.data[k]['val'][l]['ip'];
-
               }
 
-            }
-
-            // angular.forEach(response2.data, function (value, key) {
-            //   // console.log(key + ': ' + value);
-            //   var ts = value['ts'] // value.ts
-            //   var previousIP = 0
-            //
-            //   angular.forEach(value['val'], function (value, key) {
-            //
-            //     if (previousIP != value['ip']) {
-            //        console.log(value['ip']);
-            //       var ipToAdd = value['ip'];
-            //
-            //       angular.forEach(cytoscape_nodes, function (value, key) {
-            //
-            //         if (ipToAdd != value['data']['id']) {
-            //
-            //           cytoscape_nodes.push(add_node(ipToAdd));
-            //
-            //         }
-            //       });
-            //
-            //
-            //     }
-            //
-            //     previousIP = value['ip'];
-            //
-            //
-            //   });
-            //   // for (k=0; k< trResult[0].val.length; k++){
-            //   //   if (previousIP != trResult[0].val[k].ip){
-            //   //     //data[0].val[i].ip
-            //   //     console.log(trResult[0].val[k].ip)
-            //   //
-            //   //     if (dataList[i].source in retrievedData){
-            //   //       //Source Key Exist. Append new Traceroute Results
-            //   //     } else{
-            //   //
-            //   //       //retrievedData[dataList[i].source] = null
-            //   //     }
-            //   //     previousIP = trResult[0].val[k].ip
-            //   //   }
-            //   // }
-            //
-            //
-            // });
-
-            var nodes_tobeadded = [];
-
-            for (cytoCounter = 0; cytoCounter < cytoscape_nodes.length; cytoCounter++) {
+              // Adding Nodes and Edges
+              for (var m = 0; m < temp_ip.length; m++) {
+                cytoscape_nodes.push(add_node(temp_ip[m]));
+                if (m != (temp_ip.length - 1 )) {
+                  cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1]));
+                }
+              }
 
 
             }
 
-            // cy.add(cytoscape_nodes);
+
+            cy.add(cytoscape_nodes);
             cy.add(cytoscape_edges);
 
             var layout = cy.makeLayout({
-              name: 'random'
+              name: 'concentric'
             });
 
             layout.run();
 
-
           }, function errorCallback(response2) {
-            // or server returns response with an error status.
-            console.log("Error: " + response2);
-
-            // alert("Error");
+            console.log("Second $http error: " + response2);
           });
 
 
@@ -694,13 +528,8 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
     }
 
 
-
-
   }, function errorCallback(response) {
-    // or server returns response with an error status.
-    console.log("Error: " + response);
-
-    // alert("Error");
+    console.log("First $http error: " + response);
   });
 
 
@@ -816,6 +645,6 @@ function add_edge(ID, source, target) {
       target: target  // the target node id (edge goes to this node)
     }
   };
-  console.log("Edge ID: " + ID + " Source: " + source + "Target: " + target + " created.");
+  console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
   return edge;
 }
