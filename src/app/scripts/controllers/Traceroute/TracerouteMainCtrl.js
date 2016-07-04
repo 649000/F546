@@ -366,11 +366,32 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
   var cy = cytoscape({
     container: document.getElementById('tr_plot_cytoscape'),
 
-    style: [ // the stylesheet for the graph
+    // style: [ // the stylesheet for the graph
+    //   {
+    //     selector: 'node',
+    //     style: {
+    //       'background-color': '#6686',
+    //       'label': 'data(id)'
+    //     }
+    //   },
+    //
+    //   {
+    //     selector: 'edge',
+    //     style: {
+    //       'width': 3,
+    //       'line-color': '#ccc',
+    //       'target-arrow-color': '#ccc',
+    //       'target-arrow-shape': 'triangle'
+    //     }
+    //   }
+    // ]
+    style: [
       {
         selector: 'node',
         style: {
-          'background-color': '#6686',
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
           'label': 'data(id)'
         }
       },
@@ -378,13 +399,17 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
       {
         selector: 'edge',
         style: {
-          'width': 3,
-          'line-color': '#ccc',
-          'target-arrow-color': '#ccc',
+          // 'curve-style': 'haystack',
+          // 'haystack-radius': 0,
+          'width': 4,
+          'opacity': 0.8,
+          'line-color': '#a8ea00',
+          'target-arrow-color': '#a8ea00',
           'target-arrow-shape': 'triangle'
         }
       }
-    ]
+    ],
+
 
   });
 
@@ -513,8 +538,19 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
             cy.add(cytoscape_edges);
 
             var layout = cy.makeLayout({
-              name: 'concentric'
+              name: 'concentric',
+              concentric: function( node ){
+                return node.degree();
+              },
+              levelWidth: function( nodes ){
+                return 2;
+              }
             });
+
+            // var layout = cy.makeLayout({
+            //   name: 'spread',
+            //   minDist: 40
+            // });
 
             layout.run();
 
@@ -608,6 +644,7 @@ function add_node(ID) {
       id: ID// mandatory for each element, assigned automatically on undefined
       // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
     }
+
 
     // scratchpad data (usually temp or nonserialisable data)
     // scratch: {
