@@ -382,44 +382,19 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="container">
-        <!--<div ng-controller="ipAddrDecoderController">-->
-        <!--Lat:{{latitude}}-->
-        <!--Lon:{{longitude}}-->
-        <!--</div>-->
-
-
-        <!--<div id="maps" ng-controller="traceroutePlot">-->
-
-
-        <!--</div>-->
-        <!--<div class="row" ng-controller="TracerouteListCtrl">-->
-        <!--<div class="col-lg-6">-->
-        <!--<div class="input-group">-->
-
-        <!--<div ng-repeat="tr in trList">-->
-
-
-        <!--<span class="input-group-addon">-->
-        <!--<input type="checkbox">-->
-        <!--</span>-->
-        <!--<input type="text" class="form-control" value="{{tr['metadata-key']}}">-->
-
-        <!--</div>-->
-        <!--</div>&lt;!&ndash; /input-group &ndash;&gt;-->
-
-        <!--</div>&lt;!&ndash; /.col-lg-6 &ndash;&gt;-->
-        <!--</div>&lt;!&ndash; /.row &ndash;&gt;-->
-
-
-        <!--<div id="d3fgraph" ng-controller="traceroutePlot">-->
-        <!--{{testing}}-->
-        <!--</div>-->
 
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
         <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
 
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+
+        <div ng-controller="tr_cytoscape">
+          Main Nodes: {{mainNodes}}
+          Total Nodes: {{totalNodes}}
+          Date of Traceroute Test: {{tracerouteDate}}
+          Time of Traceroute Test: {{tracerouteTime}}
+        </div>
 
 
         <div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
