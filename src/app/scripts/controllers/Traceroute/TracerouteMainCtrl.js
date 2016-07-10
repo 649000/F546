@@ -5,10 +5,6 @@
 // NOTE: Might want to separate tracerouteController.js out
 
 
-//var jsonURL = 'http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/?event-type=packet-trace&format=json'
-var jsonURL = '../../json/hpc-perfsonar.usc.edu.json'
-
-
 // This has to match with ng-app="traceroute" on HTML page
 var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'uiGmapgoogle-maps']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
   GoogleMapApiProviders.configure({
@@ -18,8 +14,9 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDeco
   });
 }])
 
+// NOTE. Built in modules with $ should be declared first.
 
-traceroute.controller('tr_gmaps', ['$scope', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
+traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, $http, $q, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
 
   // Do stuff with your $scope.
   // Note: Some of the directives require at least something to be defined originally!
@@ -28,8 +25,11 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteMainResults', 'GEOIP_NEK
   // uiGmapGoogleMapApi is a promise.
   // The "then" callback function provides the google.maps object.
 
-  var previousIP = 0, counter = 0, firstLat = 0, firstLon = 0
+  var nodes = [];
+  var edges = [];
   var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+
+
   $scope.map = {
     center: {
       latitude: 1.345468,
@@ -41,42 +41,6 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteMainResults', 'GEOIP_NEK
   };
   $scope.marker = {key: 1, coords: {latitude: 45, longitude: -73}};
 
-  //
-  // var createRandomMarker = function(i, bounds, idKey) {
-  //   var lat_min = bounds.southwest.latitude,
-  //     lat_range = bounds.northeast.latitude - lat_min,
-  //     lng_min = bounds.southwest.longitude,
-  //     lng_range = bounds.northeast.longitude - lng_min;
-  //
-  //   if (idKey == null) {
-  //     idKey = "id";
-  //   }
-  //
-  //   var latitude = lat_min + (Math.random() * lat_range);
-  //   var longitude = lng_min + (Math.random() * lng_range);
-  //   var ret = {
-  //     latitude: latitude,
-  //     longitude: longitude,
-  //     title: 'm' + i
-  //   };
-  //   ret[idKey] = i;
-  //   return ret;
-  // };
-  //
-  // $scope.randomMarkers = [];
-  // // Get the bounds from the map once it's loaded
-  // $scope.$watch(function () {
-  //   return $scope.map.bounds;
-  // }, function (nv, ov) {
-  //   // Only need to regenerate once
-  //   if (!ov.southwest && nv.southwest) {
-  //     var markers = [];
-  //     for (var i = 0; i < 50; i++) {
-  //       markers.push(createRandomMarker(i, $scope.map.bounds))
-  //     }
-  //     $scope.randomMarkers = markers;
-  //   }
-  // }, true)
 
   var markers = [];
 
@@ -96,48 +60,191 @@ traceroute.controller('tr_gmaps', ['$scope', 'TracerouteMainResults', 'GEOIP_NEK
       latitude: 1.512557,
       longitude: 104.168110,
 
-
     }
   );
 
 
-  $scope.randomMarkers = markers;
+  // $scope.randomMarkers = markers;
+  //
+  //
+  // $scope.randomLines = [
+  //
+  //   {
+  //     id: 1,
+  //     geotracks: [{
+  //       latitude: 1.564836,
+  //       longitude: 103.718025
+  //     }, {
+  //       latitude: 1.512557,
+  //       longitude: 104.168110
+  //     }],
+  //     stroke: {
+  //       color: '#6060FB',
+  //       weight: 1
+  //     }
+  //   }, {
+  //     id: 2,
+  //     geotracks: [{
+  //       latitude: 24.0,
+  //       longitude: 72.58
+  //     }, {
+  //       latitude: 23.1,
+  //       longitude: 71.58
+  //     }]
+  //   }];
 
-
-  $scope.randomLines = [
-
-
-    {
-      id: 1,
-      geotracks: [{
-        latitude: 1.564836,
-        longitude: 103.718025
-      }, {
-        latitude: 1.512557,
-        longitude: 104.168110
-      }],
-      stroke: {
-        color: '#6060FB',
-        weight: 1
-      }
-    }, {
-      id: 2,
-      geotracks: [{
-        latitude: 24.0,
-        longitude: 72.58
-      }, {
-        latitude: 23.1,
-        longitude: 71.58
-      }]
-    }];
-
-  $scope.title = "dd";
 
   uiGmapGoogleMapApi.then(function (maps) {
-
+    console.log("Inside GoogleMaps Then");
 
   });
 
+  $scope.getNodes = $http({
+    method: 'GET',
+    url: host1,
+    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '1'}
+  }).then(function successCallback(response) {
+    console.log("First $http Success");
+
+    for (var i = 0; i < response.data.length; i++) {
+      var parentIP = response.data[i]['source'];
+      var mainForLoopCounter = i;
+
+      addNode(response.data[i]['source'], response.data[i]['source']);
+
+      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+          $http({
+            method: 'GET',
+            url: response.data[i]['url'] + "packet-trace/base",
+            params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
+          }).then(function successCallback(response2) {
+            console.log("Second $http Success");
+            //console.log(response2.data[0]['ts']);
+
+            for (var k = 0; k < response2.data.length; k++) {
+              var ts = response2.data[k]['ts'];
+              // console.log("TS: " + ts);
+
+              // Main Node
+              // cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'] ,response2.data[k]['val'][0]['ip'], Math.random()));
+              addEdge(Math.random(), response.data[mainForLoopCounter]['source'], response2.data[k]['val'][0]['ip'], 1);
+
+              var temp_ip = [];
+              for (var l = 0; l < response2.data[k]['val'].length; l++) {
+                if (response2.data[k]['val'][l]['query'] == 1) {
+                  temp_ip.push(response2.data[k]['val'][l]['ip']);
+                }
+              }
+
+              // Adding Nodes and Edges
+              for (var m = 0; m < temp_ip.length; m++) {
+                // cytoscape_nodes.push(add_node(temp_ip[m]));
+                addNode(temp_ip[m], temp_ip[m]);
+                if (m != (temp_ip.length - 1 )) {
+                  // cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1],100000));
+                  addEdge(Math.random(), temp_ip[m], temp_ip[m + 1], 1);
+                }
+              }
+
+            }
+
+          }, function errorCallback(response2) {
+            console.log("Second $http error: " + response2);
+          });
+
+
+        }
+      }
+    }
+
+  }, function errorCallback(response) {
+    console.log("First $http error: " + response);
+  });
+
+
+  $q.all([$scope.getNodes]).then(function (values) {
+
+
+  });
+  for (var i = 0; i < nodes.length; i++) {
+    GEOIP_NEKUDO.decode({ip_address: nodes[i].id}, function (decoded_ip) {
+      nodes[i].latitude = decoded_ip.location.latitude;
+      nodes[i].longitude = decoded_ip.location.longitude;
+      console.log("Latitude: " + decoded_ip.location.latitude);
+    });
+  }
+
+  // for (var i = 0; i < edges.length; i++) {
+  //   GEOIP_NEKUDO.decode({ip_address: edges[i].id}, function (decoded_ip) {
+  //     edges[i].latitude = decoded_ip.location.latitude;
+  //     edges[i].longitude = decoded_ip.location.longitude;
+  //
+  //
+  //   });
+  // }
+
+
+  function addNode(id, title) {
+    if (nodes.length > 0) {
+      var hasDuplicates = false;
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id == id) {
+          hasDuplicates = true;
+        }
+      }
+
+      if (hasDuplicates == false) {
+        nodes.push(
+          {
+            id: id,
+            latitude: 0,
+            longitude: 0,
+            title: title,
+            options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
+
+          });
+
+      }
+    } else {
+      nodes.push(
+        {
+          id: id,
+          latitude: 0,
+          longitude: 0,
+          title: title,
+          options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
+
+        });
+
+    }
+
+  }
+
+  function addEdge(id, source, target, weight) {
+
+    edges.push(
+      {
+        id: id,
+        geotracks: [{
+          latitude: source,
+          longitude: 0
+        }, {
+          latitude: target,
+          longitude: 0
+        }],
+        stroke: {
+          color: '#6060FB',
+          weight: weight
+        }
+      }
+    )
+
+  }
+
+  $scope.nodeMarkers = nodes;
+  $scope.edgeLines = edges;
 
   //  var maps = new GMaps({
   //   div: '#maps',
@@ -366,6 +473,324 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
   var cy = cytoscape({
     container: document.getElementById('tr_plot_cytoscape'),
 
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
+          'label': 'data(id)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          // 'curve-style': 'haystack',
+          // 'haystack-radius': 0,
+          'width': 3,
+          'opacity': 0.8,
+          'line-color': '#a8ea00',
+          'target-arrow-color': '#a8ea00',
+          'target-arrow-shape': 'triangle'
+        }
+      }
+    ],
+
+  });
+
+  //   var elements = [ // list of graph elements to start with
+  //     { // node a
+  //       data: { id: 'a' }
+  //     },
+  //     { // node b
+  //       data: { id: 'c' }
+  //     },
+  //     { // edge ab
+  //       data: { id: 'ab', source: 'a', target: 'b' }
+  //     }
+  //   ];
+  //
+  // elements.push (
+  //   { // node a
+  //     data: { id: 'a' }
+  //   }
+  //
+  // )
+
+  // cy.add(elements)
+
+  // var cy = cytoscape({
+  //
+  //   container: document.getElementById('tr_plot_cytoscape'), // container to render in
+  //
+  //   elements: [ // list of graph elements to start with
+  //     { // node a
+  //       data: { id: 'a' }
+  //     },
+  //     { // node b
+  //       data: { id: 'b' }
+  //     },
+  //     { // edge ab
+  //       data: { id: 'ab', source: 'a', target: 'b' }
+  //     }
+  //   ],
+  //
+  //   // style: [ // the stylesheet for the graph
+  //   //   {
+  //   //     selector: 'node',
+  //   //     style: {
+  //   //       'background-color': '#666',
+  //   //       'label': 'data(id)'
+  //   //     }
+  //   //   },
+  //   //
+  //   //   {
+  //   //     selector: 'edge',
+  //   //     style: {
+  //   //       'width': 3,
+  //   //       'line-color': '#ccc',
+  //   //       'target-arrow-color': '#ccc',
+  //   //       'target-arrow-shape': 'triangle'
+  //   //     }
+  //   //   }
+  //   // ],
+  //
+  //   // layout: {
+  //   //   name: 'grid',
+  //   //   rows: 1
+  //   // }
+  //
+  // });
+
+
+  $http({
+    method: 'GET',
+    url: host1,
+    params: {
+      'format': 'json',
+      'event-type': 'packet-trace',
+      'time-end': (Math.floor(Date.now() / 1000)),
+      'limit': 99,
+      'time-range': 86400
+    }
+  }).then(function successCallback(response) {
+    // this callback will be called asynchronously
+    console.log("First $http Success");
+
+    for (var i = 0; i < response.data.length; i++) {
+
+      // console.log("Node Size: " + cytoscape_nodes.length)
+
+      cytoscape_nodes.push(add_node(response.data[i]['source'], true));
+      var parentIP = response.data[i]['source'];
+      var mainForLoopCounter = i;
+
+      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+          $http({
+            method: 'GET',
+            url: response.data[i]['url'] + "packet-trace/base",
+            params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
+          }).then(function successCallback(response2) {
+            console.log("Second $http Success");
+            //console.log(response2.data[0]['ts']);
+
+            for (var k = 0; k < response2.data.length; k++) {
+              var ts = response2.data[k]['ts'];
+              // console.log("TS: " + ts);
+
+              // Main Node
+              var edgeID = response.data[mainForLoopCounter]['source'] + "to" + response2.data[k]['val'][0]['ip'];
+              cytoscape_edges.push(add_edge(edgeID, response.data[mainForLoopCounter]['source'], response2.data[k]['val'][0]['ip'], Math.random()));
+
+
+              var temp_ip = [];
+              for (var l = 0; l < response2.data[k]['val'].length; l++) {
+                if (response2.data[k]['val'][l]['query'] == 1) {
+                  temp_ip.push(response2.data[k]['val'][l]['ip']);
+                }
+              }
+
+              // Adding Nodes and Edges
+              for (var m = 0; m < temp_ip.length; m++) {
+                cytoscape_nodes.push(add_node(temp_ip[m], false));
+                if (m != (temp_ip.length - 1 )) {
+                  var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+                  cytoscape_edges.push(add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000));
+                }
+              }
+
+
+            }
+
+
+            cy.add(cytoscape_nodes);
+            cy.add(cytoscape_edges);
+
+            //Layout Options
+            // cy.makeLayout({
+            //   // http://js.cytoscape.org/#layouts
+            //   // grid, random, concentric
+            //   name: 'random',
+            //   concentric: function (node) {
+            //     return node.degree();
+            //   },
+            //   levelWidth: function (nodes) {
+            //     return 2;
+            //   }
+            // }).run();
+
+
+            var layoutOptions = {
+              name: 'breadthfirst',
+              fit: true, // whether to fit the viewport to the graph
+              directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+              padding: 30, // padding on fit
+              circle: false, // put depths in concentric circles if true, put depths top down if false
+              spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+              boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+              avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+              roots: undefined, // the roots of the trees
+              maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+              animate: false, // whether to transition the node positions
+              animationDuration: 500, // duration of animation in ms if enabled
+              animationEasing: undefined, // easing of animation if enabled
+              ready: undefined, // callback on layoutready
+              stop: undefined // callback on layoutstop
+            };
+
+            cy.layout( layoutOptions );
+
+            //Style Options
+            cy.style()
+            // .selector('#203.30.39.127')
+            // .selector(':selected')
+            // .selector('[id = "203.30.39.127"]')
+              .selector('node[startNode = "true"]')
+              .style({
+                'background-color': 'black'
+              }).update();
+
+
+          }, function errorCallback(response2) {
+            console.log("Second $http error: " + response2);
+          });
+
+        }
+      }
+    }
+
+
+  }, function errorCallback(response) {
+    console.log("First $http error: " + response);
+  });
+
+
+  // ng-click - click event.
+  $scope.updateGraph = function () {
+    if (!angular.isUndefined($scope.input_node1)) {
+      //host1 = $scope.input_node1;
+      console.log("Host1: " + host1);
+
+
+    } else {
+      alert("Undefined");
+    }
+
+
+  }
+
+
+  $scope.getYear = function () {
+    // Do something here
+    //Call this from the main page as {{getYear()}}
+  }
+
+
+  function add_node(ID, startNode) {
+
+    var mainNode;
+    if (startNode) {
+      mainNode = "true";
+    } else {
+      mainNode = "false";
+    }
+
+    var node = {
+      group: 'nodes',
+      // 'nodes' for a node, 'edges' for an edge
+      // NB the group field can be automatically inferred for you but specifying it
+      // gives you nice debug messages if you mis-init elements
+
+      // NB: id fields must be strings or numbers
+      data: {
+        // element data (put dev data here)
+        // mandatory for each element, assigned automatically on undefined
+        id: ID,
+        startNode: mainNode
+
+        // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+      }
+
+
+      // scratchpad data (usually temp or nonserialisable data)
+      // scratch: {
+      //   foo: 'bar'
+      // },
+      //
+      // position: { // the model position of the node (optional on init, mandatory after)
+      //   x: 100,
+      //   y: 100
+      // },
+      //
+      // selected: false, // whether the element is selected (default false)
+      //
+      // selectable: true, // whether the selection state is mutable (default true)
+      //
+      // locked: false, // when locked a node's position is immutable (default false)
+      //
+      // grabbable: true // whether the node can be grabbed and moved by the user
+
+      // class: 'mainNode'// a space separated list of class names that the element has
+    };
+
+    console.log("Node ID: " + ID + " created.");
+    return node;
+  }
+
+  function add_edge(ID, source, target, bandwidth, latency) {
+
+    var edge = {
+      group: 'edges',
+      data: {
+        id: ID,
+        // inferred as an edge because `source` and `target` are specified:
+        source: source, // the source node id (edge comes from this node)
+        target: target,  // the target node id (edge goes to this node)
+        bandwidth: bandwidth,
+        latency: latency
+      }
+    };
+    console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
+    return edge;
+  }
+
+}]);
+
+
+traceroute.controller('traceroute_visjs', ['$scope', '$http', 'TracerouteMainResults', function ($scope, $http, TracerouteMainResults) {
+
+
+  var cytoscape_nodes = [];
+  var cytoscape_edges = [];
+  var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+
+  var cy = cytoscape({
+    container: document.getElementById('tr_plot_cytoscape'),
+
     // style: [ // the stylesheet for the graph
     //   {
     //     selector: 'node',
@@ -478,11 +903,16 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
   // });
 
 
-
   $http({
     method: 'GET',
     url: host1,
-    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '3'}
+    params: {
+      'format': 'json',
+      'event-type': 'packet-trace',
+      'time-end': (Math.floor(Date.now() / 1000)),
+      'limit': 1,
+      'time-range': 86400
+    }
   }).then(function successCallback(response) {
     // this callback will be called asynchronously
     console.log("First $http Success");
@@ -510,9 +940,8 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
               var ts = response2.data[k]['ts'];
               // console.log("TS: " + ts);
 
-                // Main Node
-                cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'] ,response2.data[k]['val'][0]['ip']));
-
+              // Main Node
+              cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'], response2.data[k]['val'][0]['ip'], Math.random()));
 
 
               var temp_ip = [];
@@ -526,7 +955,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
               for (var m = 0; m < temp_ip.length; m++) {
                 cytoscape_nodes.push(add_node(temp_ip[m]));
                 if (m != (temp_ip.length - 1 )) {
-                  cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1]));
+                  cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1], 100000));
                 }
               }
 
@@ -539,10 +968,10 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
             var layout = cy.makeLayout({
               name: 'concentric',
-              concentric: function( node ){
+              concentric: function (node) {
                 return node.degree();
               },
-              levelWidth: function( nodes ){
+              levelWidth: function (nodes) {
                 return 2;
               }
             });
@@ -553,6 +982,17 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
             // });
 
             layout.run();
+
+            cy.style()
+            // .selector('#203.30.39.127')
+
+            // .selector('[id = "203.30.39.127"]')
+              .selector('node[startNode = "1"]')
+              .style({
+                'background-color': 'yellow'
+              })
+
+              .update();
 
           }, function errorCallback(response2) {
             console.log("Second $http error: " + response2);
@@ -630,58 +1070,3 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 //
 // }]);
 
-function add_node(ID) {
-
-
-  var node = { // node n1
-    group: 'nodes',
-    // 'nodes' for a node, 'edges' for an edge
-    // NB the group field can be automatically inferred for you but specifying it
-    // gives you nice debug messages if you mis-init elements
-
-    // NB: id fields must be strings or numbers
-    data: { // element data (put dev data here)
-      id: ID// mandatory for each element, assigned automatically on undefined
-      // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
-    }
-
-
-    // scratchpad data (usually temp or nonserialisable data)
-    // scratch: {
-    //   foo: 'bar'
-    // },
-    //
-    // position: { // the model position of the node (optional on init, mandatory after)
-    //   x: 100,
-    //   y: 100
-    // },
-    //
-    // selected: false, // whether the element is selected (default false)
-    //
-    // selectable: true, // whether the selection state is mutable (default true)
-    //
-    // locked: false, // when locked a node's position is immutable (default false)
-    //
-    // grabbable: true // whether the node can be grabbed and moved by the user
-
-    // classes: 'foo bar' // a space separated list of class names that the element has
-  };
-
-  console.log("Node ID: " + ID + " created.");
-
-  return node;
-}
-
-function add_edge(ID, source, target) {
-  var edge = {
-    group: "edges",
-    data: {
-      id: ID,
-      // inferred as an edge because `source` and `target` are specified:
-      source: source, // the source node id (edge comes from this node)
-      target: target  // the target node id (edge goes to this node)
-    }
-  };
-  console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
-  return edge;
-}

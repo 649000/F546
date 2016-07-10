@@ -422,15 +422,39 @@
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
-        <div id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
+        <div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
 
         </div>
+
+
 
       </div>
 
     </div>
     <!-- /.panel-body -->
   </div>
+
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Vis
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="container">
+
+
+        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+
+
+
+      </div>
+
+    </div>
+    <!-- /.panel-body -->
+  </div>
+
+
 
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -441,23 +465,19 @@
       <div class="container">
 
 
-
-        Node1: <input type="text" name="node1" ng-model="input_node1"><br>
-        Node2: <input type="text" name="node2" ng-model="input_node2"><br>
-
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
         <div id="tr_plot_gmaps" ng-controller="tr_gmaps">
 
-          <ui-gmap-google-map center='map.center' zoom='map.zoom' >
-            <ui-gmap-markers models="randomMarkers" coords="'self'" icon="'icon'" options="'options'">
+          <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+            <ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">
               <ui-gmap-windows show="show">
                 <div ng-non-bindable>{{title}}</div>
               </ui-gmap-windows>
             </ui-gmap-markers>
 
-            <ui-gmap-polylines models="randomLines" path="'geotracks'" stroke="'stroke'" >
+            <ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">
 
             </ui-gmap-polylines>
           </ui-gmap-google-map>
