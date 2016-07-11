@@ -581,10 +581,9 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
     for (var i = 0; i < response.data.length; i++) {
       // console.log("Node Size: " + cytoscape_nodes.length)
 
-
+      bandwidthService.getBandwidth(response.data[i]);
       cytoscape_nodes.push(add_node(response.data[i]['source'], true));
 
-      // var parentIP = response.data[i]['source'];
       var mainForLoopCounter = i;
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
@@ -604,16 +603,6 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
             console.log("$http: Second Traceroute Call");
             //console.log(response2.data[0]['ts']);
 
-            // bmlService.passData(data);
-
-            // $http({
-            //   method: 'GET',
-            //   url: '/someUrl'
-            // }).then(function successCallback(response) {
-            //
-            // }, function errorCallback(response) {
-            //
-            // });
 
             var reversedResponse = response2.data.reverse();
 
@@ -650,7 +639,6 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
             cy.add(cytoscape_nodes);
             cy.add(cytoscape_edges);
-
 
 
             //Layout Options
@@ -730,7 +718,6 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
             //   console.log("HELLOOO!!!: " + cy.elements('node[startNode = "true"]')[1].data('id'))
             $scope.mainNodes = cy.elements('node[startNode = "true"]').size();
             $scope.totalNodes = cy.elements('node').size();
-            $scope.$emit("initialized");
 
 
             // cy.style()
@@ -753,35 +740,71 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
       }
     }
 
-    bandwidthService.getBandwidth();
 
   }, function errorCallback(response) {
     console.log("First $http error: " + response);
   });
 
-
-  $scope.$on('initialized', function () {
-    console.log("INITIALIZED CALLED");
-    // still called multiple times.
-
-    //issue here
-  });
+  // $scope.$emit("initialized");
+  // $scope.$on('initialized', function () {
+  //   console.log("INITIALIZED CALLED");
+  //   // still called multiple times.
+  //
+  //   //issue here
+  // });
 
 
   // another method: http://stackoverflow.com/questions/36737213/how-to-access-ajax-response-data-outside-ajax-function-in-angularjs
   var bandwidthService = {
-    getBandwidth: function () {
+    getBandwidth: function (data) {
 
-      // alert(cy.elements('node[startNode = "true"]').size());
+      $http({
+        method: 'GET',
+        url: host1,
+        params: {
+          'format': 'json',
+          'event-type': 'throughput',
+          // 'limit': '2',
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          'source': data['source'],
+          'destination': data['destination'],
+          'time-range': 86400
+        }
 
-      // $http({
-      //   method: 'GET',
-      //   url: '/someUrl'
-      // }).then(function successCallback(response) {
-      //
-      // }, function errorCallback(response) {
-      //
-      // });
+      }).then(function successCallback(response) {
+        //http://ps2.jp.apan.net/esmond/perfsonar/archive/?event-type=throughput&format=json&source=203.30.39.127&destination=202.90.129.130&time-range=86400
+
+        var reversedResponse = response.data.reverse();
+        for (var i = 0; i < reversedResponse.length; i++) {
+          // Only take the first result, technically, there should only be one.
+
+          // Another $http
+          for (var j = 0; j < reversedResponse[i]['event-types'].length; j++) {
+            if (reversedResponse[i]['event-types'][j]['event-type'] == 'throughput') {
+              for (var k = 0; k < reversedResponse[i]['event-types'][j]['summaries'].length; k++) {
+                //reversedResponse[i]['event-types'][j]['summaries'][k]['uri']
+
+                var tobeexecuted = reversedResponse[i]['url'] + "/throughput/averages/"+ reversedResponse[i]['event-types'][j]['summaries'][k]['summary-window'];
+
+
+              }
+
+
+            }
+
+          }
+
+
+          // Summaries only return 1 result, an average over past 24 hours
+          // Base Data returns actual data.
+          break;
+        }
+
+      }, function errorCallback(response) {
+
+      });
+
+
     }
   };
 
