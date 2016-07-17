@@ -26,6 +26,96 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 // TracerouteResult, TracerouteResultIndividual, TRIndividualValue
 //
 
+// TO DO
+tracerouteServices.factory('cytoscape', [function(){
+
+
+
+  var cy = cytoscape({
+    container: document.getElementById('tr_plot_cytoscape'),
+
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
+          'label': 'data(id)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'width': 3,
+          'opacity': 0.8,
+          'line-color': '#a8ea00',
+          'target-arrow-color': 'black',
+          'target-arrow-shape': 'triangle'
+        }
+      }
+    ],
+
+  });
+
+
+  cy.add =  function add_node(ID, startNode) {
+
+    var mainNode;
+    if (startNode) {
+      mainNode = "true";
+    } else {
+      mainNode = "false";
+    }
+
+    var node = {
+      group: 'nodes',
+      // 'nodes' for a node, 'edges' for an edge
+      // NB the group field can be automatically inferred for you but specifying it
+      // gives you nice debug messages if you mis-init elements
+
+      // NB: id fields must be strings or numbers
+      data: {
+        // element data (put dev data here)
+        // mandatory for each element, assigned automatically on undefined
+        id: ID,
+        startNode: mainNode
+
+        // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+      }
+
+
+      // scratchpad data (usually temp or nonserialisable data)
+      // scratch: {
+      //   foo: 'bar'
+      // },
+      //
+      // position: { // the model position of the node (optional on init, mandatory after)
+      //   x: 100,
+      //   y: 100
+      // },
+      //
+      // selected: false, // whether the element is selected (default false)
+      //
+      // selectable: true, // whether the selection state is mutable (default true)
+      //
+      // locked: false, // when locked a node's position is immutable (default false)
+      //
+      // grabbable: true // whether the node can be grabbed and moved by the user
+
+      // class: 'mainNode'// a space separated list of class names that the element has
+    };
+
+    // console.log("Node ID: " + ID + " created.");
+    return node;
+  }
+
+
+
+
+}]);
+
 tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function($resource){
 
   // Calls the main result page.

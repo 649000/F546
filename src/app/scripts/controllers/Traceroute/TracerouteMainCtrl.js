@@ -708,7 +708,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
             // .selector('#203.30.39.127')
             // .selector(':selected')
             // .selector('[id = "203.30.39.127"]')
-              .selector('node[startNode = "true"]')
+              .selector('node[mainNode = "true"]')
               .style({
                 'background-color': 'black'
               }).update();
@@ -716,7 +716,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
             //cy.elements('node[startNode = "true"]').size();
             //   console.log("HELLOOO!!!: " + cy.elements('node[startNode = "true"]')[1].data('id'))
-            $scope.mainNodes = cy.elements('node[startNode = "true"]').size();
+            $scope.mainNodes = cy.elements('node[mainNode = "true"]').size();
             $scope.totalNodes = cy.elements('node').size();
 
 
@@ -778,24 +778,23 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
         for (var i = 0; i < reversedResponse.length; i++) {
           // Only take the first result, technically, there should only be one.
 
-          // Another $http
+
           for (var j = 0; j < reversedResponse[i]['event-types'].length; j++) {
             if (reversedResponse[i]['event-types'][j]['event-type'] == 'throughput') {
               for (var k = 0; k < reversedResponse[i]['event-types'][j]['summaries'].length; k++) {
                 //reversedResponse[i]['event-types'][j]['summaries'][k]['uri']
 
-                var tobeexecuted = reversedResponse[i]['url'] + "/throughput/averages/"+ reversedResponse[i]['event-types'][j]['summaries'][k]['summary-window'];
-
+                var tobeexecuted = reversedResponse[i]['url'] + "/throughput/averages/" + reversedResponse[i]['event-types'][j]['summaries'][k]['summary-window'];
+                // Another $http
 
               }
 
-
             }
-
           }
 
 
           // Summaries only return 1 result, an average over past 24 hours
+          // 1 Result for One day.
           // Base Data returns actual data.
           break;
         }
@@ -810,14 +809,6 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
 
   // ng-click - click event.
   $scope.updateGraph = function () {
-    if (!angular.isUndefined($scope.input_node1)) {
-      //host1 = $scope.input_node1;
-      console.log("Host1: " + host1);
-
-    } else {
-      alert("Undefined");
-    }
-
 
   }
 
@@ -847,7 +838,11 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
         // element data (put dev data here)
         // mandatory for each element, assigned automatically on undefined
         id: ID,
-        startNode: mainNode
+        mainNode: mainNode,
+        endNode: "false",
+        startNodeID:1,
+        endNodeID:2
+
 
         // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
       }
