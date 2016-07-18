@@ -64,10 +64,11 @@ tracerouteServices.factory('CytoscapeService', [function () {
 
 
   return {
-    add_node: function (ID, startNode) {
+    add_node: function (ID, main, startNode,endNode) {
       var mainNode;
 
-      if (startNode == true) {
+
+      if (main == true) {
         mainNode = "true";
       } else {
         mainNode = "false";
@@ -84,7 +85,9 @@ tracerouteServices.factory('CytoscapeService', [function () {
           // element data (put dev data here)
           // mandatory for each element, assigned automatically on undefined
           id: ID,
-          mainNode: mainNode
+          mainNode: mainNode,
+          startNode: 0,
+          endNode: 0
 
           // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
         }

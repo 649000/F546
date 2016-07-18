@@ -913,10 +913,17 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
   }).then(function successCallback(response) {
     for (var i = 0; i < response.data.length; i++) {
 
-      //bandwidthService.getBandwidth(response.data[i]);
-      CytoscapeService.add_node(response.data[i]['source'], true);
-
+      var startNode = response.data[i]['source'];
+      var destinationNode = response.data[i]['destination'];
       var mainForLoopCounter = i;
+
+      //bandwidthService.getBandwidth(response.data[i]);
+
+
+      if (CytoscapeService.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
+        CytoscapeService.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
+      }
+
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
@@ -942,16 +949,12 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
             // May not need to loop. can access array directly, display size to user.
 
             for (var k = 0; k < reversedResponse.length; k++) {
+
               $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
               $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
 
-              // Main Node
-              var edgeID = response.data[mainForLoopCounter]['source'] + "to" + reversedResponse[k]['val'][0]['ip'];
-              // cytoscape_edges.push(add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'], Math.random()));
-
-              CytoscapeService.add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'],Math.random(),100000)
-
               var temp_ip = [];
+
               for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
                 if (reversedResponse[k]['val'][l]['query'] == 1) {
                   temp_ip.push(reversedResponse[k]['val'][l]['ip']);
@@ -960,23 +963,40 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
               // Adding Nodes and Edges
               for (var m = 0; m < temp_ip.length; m++) {
-                CytoscapeService.add_node(temp_ip[m], false);
+                if (CytoscapeService.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
+                  CytoscapeService.add_node(temp_ip[m], false);
+                }
 
 
+                // if (m != (temp_ip.length - 1 )) {
+                //   var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+                //   if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+                //     // CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
+                //   }
+                // }
+
+              }
+
+              // May potentially remove this for loop, however this helps to elimate the error.
+              for (var m = 0; m < temp_ip.length; m++) {
                 if (m != (temp_ip.length - 1 )) {
                   var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-                  CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000,100000);
-
-
+                  if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+                    CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
+                  }
                 }
+              }
+
+
+              // Edge for main node
+              var edgeID = response.data[mainForLoopCounter]['source'] + "to" + reversedResponse[k]['val'][0]['ip'];
+              if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+                CytoscapeService.add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'], Math.random(), 100000)
               }
 
               // Break so that we grab only the latest traceroute path
               break;
             }
-
-
-
 
 
             //Style Options
@@ -988,7 +1008,6 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
               .style({
                 'background-color': 'black'
               }).update();
-
 
 
             //cy.elements('node[startNode = "true"]').size();
@@ -1015,11 +1034,9 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
             CytoscapeService.getGraph().layout(layoutOptions);
 
 
-            $scope.mainNodes =  CytoscapeService.getGraph().elements('node[mainNode = "true"]').size();
-            $scope.NonMainNodes =  CytoscapeService.getGraph().elements('node[mainNode = "false"]').size();
-            $scope.totalNodes =  CytoscapeService.getGraph().elements('node').size();
-
-
+            $scope.mainNodes = CytoscapeService.getGraph().elements('node[mainNode = "true"]').size();
+            $scope.NonMainNodes = CytoscapeService.getGraph().elements('node[mainNode = "false"]').size();
+            $scope.totalNodes = CytoscapeService.getGraph().elements('node').size();
 
 
             // cy.style()
