@@ -376,8 +376,9 @@
   <!--ACTUAL BODY STARTS HERE-->
 
   <div class="panel panel-default">
+
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape - Traceroute
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
@@ -386,11 +387,10 @@
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
         <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
-
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-
         <div ng-controller="tr_cytoscape">
           Main Nodes: {{mainNodes}}
+
           Total Nodes: {{totalNodes}}
           Date of Traceroute Test: {{tracerouteDate}}
           Time of Traceroute Test: {{tracerouteTime}}
@@ -400,6 +400,59 @@
         <div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
 
         </div>
+
+
+
+      </div>
+
+    </div>
+    <!-- /.panel-body -->
+  </div>
+
+
+
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape - SERVICE CHECK
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="container">
+
+        <div ng-controller="tr_cytoscape_service_TEST">
+          Main Nodes: {{mainNodes}}
+          NON - Main Nodes: {{NonMainNodes}}
+          Total Nodes: {{totalNodes}}
+          Date of Traceroute Test: {{tracerouteDate}}
+          Time of Traceroute Test: {{tracerouteTime}}
+        </div>
+
+
+        <div class="container" id="tr_plot_cytoscape_2" ng-controller="tr_cytoscape_service_TEST">
+
+        </div>
+
+
+
+      </div>
+
+    </div>
+    <!-- /.panel-body -->
+  </div>
+
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Bandwidth
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="container">
+
+
+        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
 

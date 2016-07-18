@@ -7,6 +7,15 @@
   border-width: 1px;
 
 }
+#tr_plot_cytoscape_2 {
+  height: 800px;
+  /*width: 1200px;*/
+  /*height: 100%;*/
+  /*width: 100%;*/
+  border-style: solid;
+  border-width: 1px;
+
+}
 
 .angular-google-map-container {
   height: 800px;

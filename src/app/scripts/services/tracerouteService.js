@@ -15,10 +15,8 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 //https://docs.angularjs.org/tutorial/step_11
 
 
-
 //Register a custom service using a factory function
 //Passed in the name of the service - 'Phone'
-
 
 
 // Break down services to granular level as opposed to only calling ALL results.
@@ -27,12 +25,10 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 //
 
 // TO DO
-tracerouteServices.factory('cytoscape', [function(){
+tracerouteServices.factory('CytoscapeService', [function () {
 
-
-
-  var cy = cytoscape({
-    container: document.getElementById('tr_plot_cytoscape'),
+  var graph = cytoscape({
+    container: document.getElementById('tr_plot_cytoscape_2'),
 
     style: [
       {
@@ -55,68 +51,117 @@ tracerouteServices.factory('cytoscape', [function(){
           'target-arrow-shape': 'triangle'
         }
       }
-    ],
+    ]
+
+    // Layout can only be done in Controller.
+
+    // layout: {
+    //   name: 'concentric',
+    // }
+
 
   });
 
 
-  cy.add =  function add_node(ID, startNode) {
+  return {
+    add_node: function (ID, startNode) {
+      var mainNode;
 
-    var mainNode;
-    if (startNode) {
-      mainNode = "true";
-    } else {
-      mainNode = "false";
-    }
-
-    var node = {
-      group: 'nodes',
-      // 'nodes' for a node, 'edges' for an edge
-      // NB the group field can be automatically inferred for you but specifying it
-      // gives you nice debug messages if you mis-init elements
-
-      // NB: id fields must be strings or numbers
-      data: {
-        // element data (put dev data here)
-        // mandatory for each element, assigned automatically on undefined
-        id: ID,
-        startNode: mainNode
-
-        // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+      if (startNode == true) {
+        mainNode = "true";
+      } else {
+        mainNode = "false";
       }
 
+      var node = {
+        group: 'nodes',
+        // 'nodes' for a node, 'edges' for an edge
+        // NB the group field can be automatically inferred for you but specifying it
+        // gives you nice debug messages if you mis-init elements
 
-      // scratchpad data (usually temp or nonserialisable data)
-      // scratch: {
-      //   foo: 'bar'
-      // },
-      //
-      // position: { // the model position of the node (optional on init, mandatory after)
-      //   x: 100,
-      //   y: 100
-      // },
-      //
-      // selected: false, // whether the element is selected (default false)
-      //
-      // selectable: true, // whether the selection state is mutable (default true)
-      //
-      // locked: false, // when locked a node's position is immutable (default false)
-      //
-      // grabbable: true // whether the node can be grabbed and moved by the user
+        // NB: id fields must be strings or numbers
+        data: {
+          // element data (put dev data here)
+          // mandatory for each element, assigned automatically on undefined
+          id: ID,
+          mainNode: mainNode
 
-      // class: 'mainNode'// a space separated list of class names that the element has
-    };
+          // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+        }
 
-    // console.log("Node ID: " + ID + " created.");
-    return node;
+
+        // scratchpad data (usually temp or nonserialisable data)
+        // scratch: {
+        //   foo: 'bar'
+        // },
+        //
+        // position: { // the model position of the node (optional on init, mandatory after)
+        //   x: 100,
+        //   y: 100
+        // },
+        //
+        // selected: false, // whether the element is selected (default false)
+        //
+        // selectable: true, // whether the selection state is mutable (default true)
+        //
+        // locked: false, // when locked a node's position is immutable (default false)
+        //
+        // grabbable: true // whether the node can be grabbed and moved by the user
+
+        // class: 'mainNode'// a space separated list of class names that the element has
+      };
+
+      // console.log("Node ID: " + ID + " created.");
+
+
+      graph.add(node);
+      return graph;
+    },
+
+    add_edge: function (ID, source, target, bandwidth, latency) {
+
+      var edge = {
+        group: 'edges',
+        data: {
+          id: ID,
+          // inferred as an edge because `source` and `target` are specified:
+          source: source, // the source node id (edge comes from this node)
+          target: target,  // the target node id (edge goes to this node)
+          bandwidth: bandwidth,
+          latency: latency
+        }
+      };
+      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
+      //return edge;
+
+      graph.add(edge);
+      return graph;
+    },
+
+    setLayout: function (selector) {
+
+      graph.style()
+      // .selector('#203.30.39.127')
+      // .selector(':selected')
+      // .selector('[id = "203.30.39.127"]')
+        .selector('node[mainNode = "true"]')
+        .style({
+          'background-color': 'black'
+        }).update();
+
+      return graph;
+    },
+
+    getGraph: function () {
+      return graph;
+    }
   }
-
-
 
 
 }]);
 
-tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function($resource){
+
+tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function ($resource) {
 
   // Calls the main result page.
   // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
@@ -142,15 +187,15 @@ tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function($r
   return $resource(tracerouteResultURL, {}, {
 
     list: {
-      method:'GET',
-      params:{'format':'json','event-type':'packet-trace'},
-      isArray:true
+      method: 'GET',
+      params: {'format': 'json', 'event-type': 'packet-trace'},
+      isArray: true
     }
 
   });
 
 }]);
-tracerouteServices.factory('TracerouteMainResults', ['$resource', function($resource){
+tracerouteServices.factory('TracerouteMainResults', ['$resource', function ($resource) {
 
   // Calls the main result page.
   // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
@@ -173,20 +218,20 @@ tracerouteServices.factory('TracerouteMainResults', ['$resource', function($reso
 
 
   // https://docs.angularjs.org/api/ngResource/service/$resource
-    return $resource(tracerouteResultURL, {}, {
+  return $resource(tracerouteResultURL, {}, {
 
-      list: {
-        method:'GET',
-        params:{'format':'json','event-type':'packet-trace'},
-        isArray:true
-      }
+    list: {
+      method: 'GET',
+      params: {'format': 'json', 'event-type': 'packet-trace'},
+      isArray: true
+    }
 
-    });
+  });
 
-  }]);
+}]);
 
 
-tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function($resource){
+tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function ($resource) {
 
   // Calls the individual test containing various hops.
 
@@ -196,9 +241,10 @@ tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function
 
   return $resource(tracerouteResultIndividualURL, {}, {
     get: {
-      method:'GET',
-      params:{'format':'json'},
-      isArray:true}
+      method: 'GET',
+      params: {'format': 'json'},
+      isArray: true
+    }
 
 
   });
