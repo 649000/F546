@@ -914,28 +914,27 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
   }).then(function successCallback(response) {
 
+
     // Single result is not an array
 
-    if(angular.isArray(response.data) == true) {
+    if (angular.isArray(response.data) == true) {
 
-    } else{
+    } else {
       // alert(response.data['metadata-key'])
       //
- // Issue with Metadakey: 03088b19576a44309b096cda7b861065
- //      TracerouteTime Updated:1469017926
+      // Issue with Metadakey: 03088b19576a44309b096cda7b861065
+      //      TracerouteTime Updated:1469017926
       // nodes not loaded
 
-    }
-
-
-    function populateGraph(response){
+      // Non array only for singular results from metadata key.
 
     }
-
 
 
     for (var i = 0; i < response.data.length; i++) {
-      // alert(response.data['metadata-key'])
+
+
+
       var startNode = response.data[i]['source'];
       var destinationNode = response.data[i]['destination'];
       var mainForLoopCounter = i;
@@ -970,8 +969,8 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
             //console.log(response2.data[0]['ts']);
 
 
-            // var reversedResponse = response2.data.reverse();
-            var reversedResponse = response2.data;
+            var reversedResponse = response2.data.reverse();
+            // var reversedResponse = response2.data;
 
 
             // May not need to loop. can access array directly, display size to user.
@@ -984,11 +983,17 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
               var temp_ip = [];
 
               for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-                if (reversedResponse[k]['val'][l]['query'] == 1) {
+                console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
 
-                  if(reversedResponse[k]['val'][l]['ip'] == "150.99.199.93"){
-                    alert("Found:150.99.199.93");
-                  }
+                if (reversedResponse[k]['val'][l]['ip'] == "198.71.45.170") {
+                  // alert("Found:198.71.45.170 at " + response.data[mainForLoopCounter]['metadata-key']);
+                }
+
+                if (reversedResponse[k]['val'][l]['ip'] == "150.99.199.93") {
+                  // alert("Found:150.99.199.93 at " + response.data[mainForLoopCounter]['metadata-key']);
+                }
+
+                if (reversedResponse[k]['val'][l]['query'] == 1) {
 
 
                   temp_ip.push(reversedResponse[k]['val'][l]['ip']);
@@ -1104,12 +1109,10 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 }]);
 
 
-traceroute.controller('tr_cytoscape_information', ['$scope', 'CytoscapeService','UnixTimeConverterService', function($scope, CytoscapeService,UnixTimeConverterService) {
-
+traceroute.controller('tr_cytoscape_information', ['$scope', 'CytoscapeService', 'UnixTimeConverterService', function ($scope, CytoscapeService, UnixTimeConverterService) {
 
 
 }]);
-
 
 
 traceroute.controller('traceroute_visjs', ['$scope', '$http', 'TracerouteMainResults', function ($scope, $http, TracerouteMainResults) {

@@ -46,6 +46,7 @@ tracerouteServices.factory('CytoscapeService', [function () {
         style: {
           'width': 3,
           'opacity': 0.8,
+          'label': 'data(id)',
           'line-color': '#a8ea00',
           'target-arrow-color': 'black',
           'target-arrow-shape': 'triangle'
