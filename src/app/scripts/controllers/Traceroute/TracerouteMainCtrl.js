@@ -637,8 +637,8 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults
               break;
             }
 
-            cy.add(cytoscape_nodes);
-            cy.add(cytoscape_edges);
+            // cy.add(cytoscape_nodes);
+            // cy.add(cytoscape_edges);
 
 
             //Layout Options
@@ -908,11 +908,34 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
       // 'limit': 1000,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
-    }
+    },
+
+    cache: false
 
   }).then(function successCallback(response) {
-    for (var i = 0; i < response.data.length; i++) {
 
+    // Single result is not an array
+
+    if(angular.isArray(response.data) == true) {
+
+    } else{
+      // alert(response.data['metadata-key'])
+      //
+ // Issue with Metadakey: 03088b19576a44309b096cda7b861065
+ //      TracerouteTime Updated:1469017926
+      // nodes not loaded
+
+    }
+
+
+    function populateGraph(response){
+
+    }
+
+
+
+    for (var i = 0; i < response.data.length; i++) {
+      // alert(response.data['metadata-key'])
       var startNode = response.data[i]['source'];
       var destinationNode = response.data[i]['destination'];
       var mainForLoopCounter = i;
@@ -928,6 +951,7 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
+
           $http({
             method: 'GET',
             url: response.data[i]['url'] + "packet-trace/base",
@@ -935,15 +959,19 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
               'format': 'json',
               // 'limit': '2',
               // 'time-end': (Math.floor(Date.now() / 1000)),
-              'time-range': 86400
-            }
+              // 'time-range': 172800
+              //48 Hours = 172800
+              // 24 hours = 86400
+            },
+            cache: false
           }).then(function successCallback(response2) {
 
             // console.log("$http: Second Traceroute Call");
             //console.log(response2.data[0]['ts']);
 
 
-            var reversedResponse = response2.data.reverse();
+            // var reversedResponse = response2.data.reverse();
+            var reversedResponse = response2.data;
 
 
             // May not need to loop. can access array directly, display size to user.
@@ -957,6 +985,12 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
               for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
                 if (reversedResponse[k]['val'][l]['query'] == 1) {
+
+                  if(reversedResponse[k]['val'][l]['ip'] == "150.99.199.93"){
+                    alert("Found:150.99.199.93");
+                  }
+
+
                   temp_ip.push(reversedResponse[k]['val'][l]['ip']);
                 }
               }
@@ -977,7 +1011,8 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
               }
 
-              // May potentially remove this for loop, however this helps to elimate the error.
+              // May potentially remove this for loop, however this helps to eliminate the error.
+
               for (var m = 0; m < temp_ip.length; m++) {
                 if (m != (temp_ip.length - 1 )) {
                   var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
@@ -1057,6 +1092,8 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
         }
       }
+
+
     }
 
   }, function errorCallback(response) {
@@ -1065,6 +1102,14 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
 
 }]);
+
+
+traceroute.controller('tr_cytoscape_information', ['$scope', 'CytoscapeService','UnixTimeConverterService', function($scope, CytoscapeService,UnixTimeConverterService) {
+
+
+
+}]);
+
 
 
 traceroute.controller('traceroute_visjs', ['$scope', '$http', 'TracerouteMainResults', function ($scope, $http, TracerouteMainResults) {

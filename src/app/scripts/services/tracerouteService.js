@@ -27,7 +27,7 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 // TO DO
 tracerouteServices.factory('CytoscapeService', [function () {
 
-  var graph = cytoscape({
+  var cy = cytoscape({
     container: document.getElementById('tr_plot_cytoscape_2'),
 
     style: [
@@ -64,7 +64,7 @@ tracerouteServices.factory('CytoscapeService', [function () {
 
 
   return {
-    add_node: function (ID, main, startNode,endNode) {
+    add_node: function (ID, main, startNode, endNode) {
       var mainNode;
 
 
@@ -117,8 +117,8 @@ tracerouteServices.factory('CytoscapeService', [function () {
       // console.log("Node ID: " + ID + " created.");
 
 
-      graph.add(node);
-      return graph;
+      cy.add(node);
+      return cy;
     },
 
     add_edge: function (ID, source, target, bandwidth, latency) {
@@ -137,13 +137,28 @@ tracerouteServices.factory('CytoscapeService', [function () {
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
       //return edge;
 
-      graph.add(edge);
-      return graph;
+      cy.add(edge);
+      return cy;
+    },
+
+    update_node: function (ID, data) {
+      // cy.elements('node[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
+    },
+
+    update_edge: function (ID, data) {
+
+      // cy.elements('edge[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
     },
 
     setLayout: function (selector) {
 
-      graph.style()
+      cy.style()
       // .selector('#203.30.39.127')
       // .selector(':selected')
       // .selector('[id = "203.30.39.127"]')
@@ -152,11 +167,11 @@ tracerouteServices.factory('CytoscapeService', [function () {
           'background-color': 'black'
         }).update();
 
-      return graph;
+      return cy;
     },
 
     getGraph: function () {
-      return graph;
+      return cy;
     }
   }
 
