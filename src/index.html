@@ -402,14 +402,11 @@
         </div>
 
 
-
       </div>
 
     </div>
     <!-- /.panel-body -->
   </div>
-
-
 
 
   <div class="panel panel-default">
@@ -427,13 +424,19 @@
           Total Nodes: {{totalNodes}}
           Date of Traceroute Test: {{tracerouteDate}}
           Time of Traceroute Test: {{tracerouteTime}}
+          <ul>
+            <li ng-repeat="x in timeOfResultsArray">
+              {{ x }}
+            </li>
+          </ul>
+
+
         </div>
 
 
         <div class="container" id="tr_plot_cytoscape_2" ng-controller="tr_cytoscape_service_TEST">
 
         </div>
-
 
 
       </div>
@@ -455,7 +458,6 @@
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
-
       </div>
 
     </div>
@@ -470,12 +472,11 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="container">
-       Focus: detection of variating/anomaly in the health of links.
-       We need to get the data over time to see if there is progressive deterioration on links.
+        Focus: detection of variating/anomaly in the health of links.
+        We need to get the data over time to see if there is progressive deterioration on links.
         look ay past data you would see the changes in latency amd bandwidth.
         visualisation and analysis tool for the network manager.
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-
 
 
       </div>
@@ -483,7 +484,6 @@
     </div>
     <!-- /.panel-body -->
   </div>
-
 
 
   <div class="panel panel-default">

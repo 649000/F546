@@ -964,38 +964,29 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
             },
             cache: false
           }).then(function successCallback(response2) {
-
             // console.log("$http: Second Traceroute Call");
             //console.log(response2.data[0]['ts']);
 
-
             var reversedResponse = response2.data.reverse();
-            // var reversedResponse = response2.data;
-
 
             // May not need to loop. can access array directly, display size to user.
 
+            var timeOfResultsArray = [];
             for (var k = 0; k < reversedResponse.length; k++) {
 
               $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
               $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
 
+              timeOfResultsArray.push(reversedResponse[k]['ts']);
+
               var temp_ip = [];
 
               for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-                console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
+                // console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
 
-                if (reversedResponse[k]['val'][l]['ip'] == "198.71.45.170") {
-                  // alert("Found:198.71.45.170 at " + response.data[mainForLoopCounter]['metadata-key']);
-                }
 
-                if (reversedResponse[k]['val'][l]['ip'] == "150.99.199.93") {
-                  // alert("Found:150.99.199.93 at " + response.data[mainForLoopCounter]['metadata-key']);
-                }
 
                 if (reversedResponse[k]['val'][l]['query'] == 1) {
-
-
                   temp_ip.push(reversedResponse[k]['val'][l]['ip']);
                 }
               }
@@ -1036,7 +1027,12 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'Cytoscap
 
               // Break so that we grab only the latest traceroute path
               break;
+
+              // But return TS.
             }
+
+            $scope.timeOfResultsArray = timeOfResultsArray;
+            // Loop it outside on scope
 
 
             //Style Options
