@@ -1390,10 +1390,9 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
 
 }]);
 
-traceroute.controller('updateBandwidth', ['$scope', '$http', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
 
 
-  // var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
   var host1 = HostService.getHost();
 
   // Option1. For each edge, get BW of parentNode/DestinationNode
@@ -1402,7 +1401,6 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', 'HostService', 'Cyt
 
   // ng-click - click event.
   $scope.getBandwidth = function () {
-    console.log("Updating graph with bandwidth data..");
 
     $http({
       method: 'GET',
@@ -1410,41 +1408,28 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', 'HostService', 'Cyt
       params: {
         'format': 'json',
         'event-type': 'throughput',
-        'limit': 10,
+        // 'limit': 10,
         // 'time-end': (Math.floor(Date.now() / 1000)),
         'time-range': 86400
       },
-
       cache: false
-
-    }).then(function successCallback(response) {
-
+    }).then(function (response) {
 
       for (var i = 0; i < response.data.length; i++) {
-
+        var promises = []
         var startNode = response.data[i]['source'];
         var destinationNode = response.data[i]['destination'];
-        var mainForLoopCounter = i;
-
-        //String or integer?
-        // var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
-        var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = ' + startNode + '][endNode = ' + destinationNode + ']');
-
-        alert(edges.size())
 
         for (var j = 0; j < response.data[i]['event-types'].length; j++) {
           if (response.data[i]['event-types'][j]['event-type'] == 'throughput') {
 
-            // console.log("BW Source: "+ startNode + " BW Destination: "+ destinationNode);
             // Assuming that there are unique BW destination.
 
-
-            // Might want to consider break after 1 loop.
             for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
 
               var bw_summary_url = response.data[i]['url'] + "/throughput/averages/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window'];
 
-              $http({
+              var promise = $http({
                 method: 'GET',
                 url: bw_summary_url,
                 params: {
@@ -1456,39 +1441,11 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', 'HostService', 'Cyt
                   // 24 hours = 86400
                 },
                 cache: false
-              }).then(function successCallback(response2) {
-
-                var ts;
-                var val;
-
-                var reversedResponse = response2.data.reverse();
-
-                for (var k = 0; k < reversedResponse.length; k++) {
-
-                  ts = reversedResponse[k]['ts'];
-                  bw = reversedResponse[k]['val']
-
-                }
-
-
-                for (var k = 0; k < edges.size(); k++) {
-
-                  // Need to check whether bw is double or string
-                  edge[k].data({
-                    bandwidth: bw
-                  });
-
-                }
-
-                //CytoscapeService_Bandwidth.getGraph().style.update();
-
-              }, function errorCallback(response2) {
-                // console.log("Second $http error: " + response2);
               });
 
-
+              promises.push(promise);
             }
-
+            updateBWGraph(promises, startNode, destinationNode);
 
           }
         }
@@ -1496,12 +1453,66 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', 'HostService', 'Cyt
 
       }
 
-    }, function errorCallback(response) {
-
     });
 
 
   }
+
+  function updateBWGraph(promises, startNode, destinationNode) {
+    $q.all(promises).then(function (response) {
+      //String
+      var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
+      // var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = ' + startNode + '][endNode = ' + destinationNode + ']');
+
+      console.log("Edges Size: "+ edges.size());
+      var ts;
+      var bw;
+
+      // Becareful, bw/ts is being replaced.
+      for (var i = 0; i < response.length; i++) {
+        var reversedResponse = response[i].data;
+        for (var k = 0; k < reversedResponse.length; k++) {
+
+          ts = reversedResponse[k]['ts'];
+          bw = reversedResponse[k]['val']
+
+        }
+      }
+
+      for (var k = 0; k < edges.size(); k++) {
+
+        // Need to check whether bw is double or string
+        edges[k].data({
+          bandwidth: bw
+        });
+
+      }
+
+      var layoutOptions = {
+        name: 'breadthfirst',
+        fit: true, // whether to fit the viewport to the graph
+        directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+        padding: 30, // padding on fit
+        circle: false, // put depths in concentric circles if true, put depths top down if false
+        spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+        boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+        roots: undefined, // the roots of the trees
+        maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+        animate: false, // whether to transition the node positions
+        animationDuration: 500, // duration of animation in ms if enabled
+        animationEasing: undefined, // easing of animation if enabled
+        ready: undefined, // callback on layoutready
+        stop: undefined // callback on layoutstop
+      };
+
+      CytoscapeService_Bandwidth.getGraph().layout();
+
+
+    });
+
+  }
+
 
 }]);
 
