@@ -388,18 +388,18 @@
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
         <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-        <div ng-controller="tr_cytoscape">
-          Main Nodes: {{mainNodes}}
+        <!--<div ng-controller="tr_cytoscape">-->
+          <!--Main Nodes: {{mainNodes}}-->
 
-          Total Nodes: {{totalNodes}}
-          Date of Traceroute Test: {{tracerouteDate}}
-          Time of Traceroute Test: {{tracerouteTime}}
-        </div>
+          <!--Total Nodes: {{totalNodes}}-->
+          <!--Date of Traceroute Test: {{tracerouteDate}}-->
+          <!--Time of Traceroute Test: {{tracerouteTime}}-->
+        <!--</div>-->
 
 
-        <div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">
+        <!--<div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">-->
 
-        </div>
+        <!--</div>-->
 
 
       </div>
@@ -448,18 +448,20 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Bandwidth
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Bandwidth - AngularJS Service
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="container">
-
-
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+        <button type="button" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
 
+        <!--<div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">-->
+        <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape_promises">
+
+        </div>
 
       </div>
-
     </div>
     <!-- /.panel-body -->
   </div>
