@@ -418,7 +418,7 @@
     <div class="panel-body">
       <div class="container">
 
-        <div ng-controller="tr_cytoscape_service_TEST">
+        <div ng-controller="tr_cytoscape">
           Main Nodes: {{mainNodes}}
           NON - Main Nodes: {{NonMainNodes}}
           Total Nodes: {{totalNodes}}
@@ -434,7 +434,7 @@
         </div>
 
 
-        <div class="container" id="tr_plot_cytoscape_2" ng-controller="tr_cytoscape_service_TEST">
+        <div class="container" id="tr_plot_cytoscape_2" ng-controller="tr_cytoscape">
 
         </div>
 
@@ -457,7 +457,7 @@
         <button type="button" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
 
         <!--<div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">-->
-        <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape_promises">
+        <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
 
         </div>
 

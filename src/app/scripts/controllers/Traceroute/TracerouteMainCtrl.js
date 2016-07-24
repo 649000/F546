@@ -104,7 +104,7 @@ traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResul
     url: host1,
     params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '1'}
   }).then(function successCallback(response) {
-    console.log("First $http Success");
+    // console.log("First $http Success");
 
     for (var i = 0; i < response.data.length; i++) {
       var parentIP = response.data[i]['source'];
@@ -120,7 +120,7 @@ traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResul
             url: response.data[i]['url'] + "packet-trace/base",
             params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
           }).then(function successCallback(response2) {
-            console.log("Second $http Success");
+            // console.log("Second $http Success");
             //console.log(response2.data[0]['ts']);
 
             for (var k = 0; k < response2.data.length; k++) {
@@ -894,7 +894,7 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($sc
 // }]);
 
 
-traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'HostService', 'CytoscapeService', 'UnixTimeConverterService', function ($scope, $http, HostService, CytoscapeService, UnixTimeConverterService) {
+traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService, UnixTimeConverterService) {
 
   var host1 = HostService.getHost();
 
@@ -911,28 +911,22 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'HostServ
 
     cache: false
 
-  }).then(function successCallback(response) {
+  }).then(function (response) {
 
     for (var i = 0; i < response.data.length; i++) {
-
-
       var startNode = response.data[i]['source'];
       var destinationNode = response.data[i]['destination'];
-      var mainForLoopCounter = i;
-
-      //bandwidthService.getBandwidth(response.data[i]);
+      var promises = [];
 
 
       if (CytoscapeService.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
-        CytoscapeService.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
+        CytoscapeService.add_node(response.data[i]['source'], true, startNode, destinationNode);
       }
-
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-
-          $http({
+          var promise = $http({
             method: 'GET',
             url: response.data[i]['url'] + "packet-trace/base",
             params: {
@@ -944,337 +938,318 @@ traceroute.controller('tr_cytoscape_service_TEST', ['$scope', '$http', 'HostServ
               // 24 hours = 86400
             },
             cache: false
-          }).then(function successCallback(response2) {
-            // console.log("$http: Second Traceroute Call");
-            //console.log(response2.data[0]['ts']);
+          });
 
-            var reversedResponse = response2.data.reverse();
-
-            // May not need to loop. can access array directly, display size to user.
-
-            var timeOfResultsArray = [];
-            for (var k = 0; k < reversedResponse.length; k++) {
-
-              $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
-              $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
-
-              timeOfResultsArray.push(reversedResponse[k]['ts']);
-
-              var temp_ip = [];
-
-              for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-                // console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
+          promises.push(promise);
 
 
-                if (reversedResponse[k]['val'][l]['query'] == 1) {
-                  temp_ip.push(reversedResponse[k]['val'][l]['ip']);
-                }
-              }
+        }
+      }
+      populateGraph(promises, startNode, destinationNode);
 
-              // Adding Nodes and Edges
-              for (var m = 0; m < temp_ip.length; m++) {
-                if (CytoscapeService.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
-                  CytoscapeService.add_node(temp_ip[m], false);
-                }
+    }
 
+  }).catch(function (error) {
+    console.log("An error occured: " + error);
+  });
 
-                // if (m != (temp_ip.length - 1 )) {
-                //   var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-                //   if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                //     // CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
-                //   }
-                // }
+  function populateGraph(promises, startNode, destinationNode) {
 
-              }
+    $q.all(promises).then(function (response) {
+      for (var i = 0; i < response.length; i++) {
 
-              // May potentially remove this for loop, however this helps to eliminate the error.
+        var reversedResponse = response[i].data;
 
-              for (var m = 0; m < temp_ip.length; m++) {
-                if (m != (temp_ip.length - 1 )) {
-                  var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-                  if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                    CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
-                  }
-                }
-              }
+        for (var k = 0; k < reversedResponse.length; k++) {
 
+          $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
+          $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
 
-              // Edge for main node
-              var edgeID = response.data[mainForLoopCounter]['source'] + "to" + reversedResponse[k]['val'][0]['ip'];
+          var temp_ip = [];
+
+          for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
+            if (reversedResponse[k]['val'][l]['query'] == 1) {
+              temp_ip.push(reversedResponse[k]['val'][l]['ip']);
+            }
+          }
+
+          // Adding Nodes
+          for (var m = 0; m < temp_ip.length; m++) {
+            if (CytoscapeService.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
+              CytoscapeService.add_node(temp_ip[m], false);
+            }
+          }
+
+          // May potentially remove this for loop, however this helps to eliminate the error.
+
+          //Adding Edges
+          for (var m = 0; m < temp_ip.length; m++) {
+            if (m != (temp_ip.length - 1 )) {
+              var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
               if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                CytoscapeService.add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'], Math.random(), 100000)
+                CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
               }
-
-              // Break so that we grab only the latest traceroute path
-              break;
-
-              // But return TS.
             }
-
-            $scope.timeOfResultsArray = timeOfResultsArray;
-            // Loop it outside on scope
+          }
 
 
-            //Style Options
-            CytoscapeService.getGraph().style()
-            // .selector('#203.30.39.127')
-            // .selector(':selected')
-            // .selector('[id = "203.30.39.127"]')
-              .selector('node[mainNode = "true"]')
-              .style({
-                'background-color': 'black'
-              }).update();
+          // Edge for main node
+          var edgeID = startNode + "to" + reversedResponse[k]['val'][0]['ip'];
+          if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+            CytoscapeService.add_edge(edgeID, startNode, reversedResponse[k]['val'][0]['ip'], Math.random(), 100000)
+          }
 
-
-            //cy.elements('node[startNode = "true"]').size();
-
-
-            var layoutOptions = {
-              name: 'breadthfirst',
-              fit: true, // whether to fit the viewport to the graph
-              directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-              padding: 30, // padding on fit
-              circle: false, // put depths in concentric circles if true, put depths top down if false
-              spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-              boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-              avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-              roots: undefined, // the roots of the trees
-              maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-              animate: false, // whether to transition the node positions
-              animationDuration: 500, // duration of animation in ms if enabled
-              animationEasing: undefined, // easing of animation if enabled
-              ready: undefined, // callback on layoutready
-              stop: undefined // callback on layoutstop
-            };
-
-            CytoscapeService.getGraph().layout(layoutOptions);
-
-
-            $scope.mainNodes = CytoscapeService.getGraph().elements('node[mainNode = "true"]').size();
-            $scope.NonMainNodes = CytoscapeService.getGraph().elements('node[mainNode = "false"]').size();
-            $scope.totalNodes = CytoscapeService.getGraph().elements('node').size();
-
-
-            // cy.style()
-            //   .selector('edge')
-            //   .style({
-            //     'width': '10',
-            //     'curve-style': 'haystack',
-            //     'line-color' :'black',
-            //     'line-style' : 'solid',
-            //     'target-arrow-color': 'black',
-            //    'target-arrow-shape': 'triangle'
-            //   }).update();
-
-
-          }, function errorCallback(response2) {
-            console.log("Second $http error: " + response2);
-          });
-
+          // Break so that we grab only the latest traceroute path
+          break;
         }
+
+
+        //Style Options
+        CytoscapeService.getGraph().style()
+        // .selector('#203.30.39.127')
+        // .selector(':selected')
+        // .selector('[id = "203.30.39.127"]')
+          .selector('node[mainNode = "true"]')
+          .style({
+            'background-color': 'black'
+          }).update();
+
+
+        //cy.elements('node[startNode = "true"]').size();
+
+
+        var layoutOptions = {
+          name: 'breadthfirst',
+          fit: true, // whether to fit the viewport to the graph
+          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+          padding: 30, // padding on fit
+          circle: false, // put depths in concentric circles if true, put depths top down if false
+          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          roots: undefined, // the roots of the trees
+          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          ready: undefined, // callback on layoutready
+          stop: undefined // callback on layoutstop
+        };
+
+        CytoscapeService.getGraph().layout(layoutOptions);
+
+
+        $scope.mainNodes = CytoscapeService.getGraph().elements('node[mainNode = "true"]').size();
+        $scope.NonMainNodes = CytoscapeService.getGraph().elements('node[mainNode = "false"]').size();
+        $scope.totalNodes = CytoscapeService.getGraph().elements('node').size();
+
+
+        // cy.style()
+        //   .selector('edge')
+        //   .style({
+        //     'width': '10',
+        //     'curve-style': 'haystack',
+        //     'line-color' :'black',
+        //     'line-style' : 'solid',
+        //     'target-arrow-color': 'black',
+        //    'target-arrow-shape': 'triangle'
+        //   }).update();
+
       }
 
+    });
 
-    }
-
-  }, function errorCallback(response) {
-
-  });
-
+  }
 
 }]);
 
 
-traceroute.controller('bw_cytoscape', ['$scope', '$http', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
-
-  // var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
-  var host1 = HostService.getHost();
-
-
-  $http({
-    method: 'GET',
-    url: host1,
-    params: {
-      'format': 'json',
-      'event-type': 'packet-trace',
-      'limit': 10,
-      // 'time-end': (Math.floor(Date.now() / 1000)),
-      'time-range': 86400
-    },
-
-    cache: true
-
-  }).then(function successCallback(response) {
-
-
-    for (var i = 0; i < response.data.length; i++) {
-
-      var startNode = response.data[i]['source'];
-      var destinationNode = response.data[i]['destination'];
-      var mainForLoopCounter = i;
-
-
-      if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
-        CytoscapeService_Bandwidth.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
-      }
-
-      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-          $http({
-            method: 'GET',
-            url: response.data[i]['url'] + "packet-trace/base",
-            params: {
-              'format': 'json',
-              // 'limit': '2',
-              // 'time-end': (Math.floor(Date.now() / 1000)),
-              'time-range': 86400
-              //48 Hours = 172800
-              // 24 hours = 86400
-            },
-            cache: true
-          }).then(function successCallback(response2) {
-            // console.log("$http: Second Traceroute Call");
-            //console.log(response2.data[0]['ts']);
-
-            var tsqd = destinationNode;
-            console.log("Inner Destination: " + tsqd);
-            console.log("Inner Source: " + response.data[mainForLoopCounter]['source']);
-
-
-            var reversedResponse = response2.data.reverse();
-
-            // May not need to loop. can access array directly, display size to user.
-
-            var timeOfResultsArray = [];
-            for (var k = 0; k < reversedResponse.length; k++) {
-
-              $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
-              $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
-
-              timeOfResultsArray.push(reversedResponse[k]['ts']);
-
-              var temp_ip = [];
-
-              for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-                // console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
-
-                if (reversedResponse[k]['val'][l]['query'] == 1) {
-                  temp_ip.push(reversedResponse[k]['val'][l]['ip']);
-                }
-              }
-
-              // Adding Nodes and Edges
-              for (var m = 0; m < temp_ip.length; m++) {
-                if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
-                  CytoscapeService_Bandwidth.add_node(temp_ip[m], false);
-                }
-              }
-
-
-              for (var m = 0; m < temp_ip.length; m++) {
-                if (m != (temp_ip.length - 1 )) {
-                  var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-                  if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                    CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], null, null, response.data[mainForLoopCounter]['source'], response.data[mainForLoopCounter]['destination']);
-                  }
-                }
-              }
-
-
-              // Edge for main node
-              var edgeID = response.data[mainForLoopCounter]['source'] + "to" + reversedResponse[k]['val'][0]['ip'];
-              if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                CytoscapeService_Bandwidth.add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'], null, null, response.data[mainForLoopCounter]['source'], response.data[mainForLoopCounter]['destination'])
-              }
-
-              // Break so that we grab only the latest traceroute path
-              break;
-
-              // But return TS.
-            }
-
-            $scope.timeOfResultsArray = timeOfResultsArray;
-            // Loop it outside on scope
-
-
-            //Style Options
-            CytoscapeService_Bandwidth.getGraph().style()
-            // .selector('#203.30.39.127')
-            // .selector(':selected')
-            // .selector('[id = "203.30.39.127"]')
-              .selector('node[mainNode = "true"]')
-              .style({
-                'background-color': 'black'
-              }).update();
-
-
-            //cy.elements('node[startNode = "true"]').size();
-
-
-            var layoutOptions = {
-              name: 'breadthfirst',
-              fit: true, // whether to fit the viewport to the graph
-              directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-              padding: 30, // padding on fit
-              circle: false, // put depths in concentric circles if true, put depths top down if false
-              spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-              boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-              avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-              roots: undefined, // the roots of the trees
-              maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-              animate: false, // whether to transition the node positions
-              animationDuration: 500, // duration of animation in ms if enabled
-              animationEasing: undefined, // easing of animation if enabled
-              ready: undefined, // callback on layoutready
-              stop: undefined // callback on layoutstop
-            };
-
-            CytoscapeService_Bandwidth.getGraph().layout(layoutOptions);
-
-
-            $scope.mainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "true"]').size();
-            $scope.NonMainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "false"]').size();
-            $scope.totalNodes = CytoscapeService_Bandwidth.getGraph().elements('node').size();
-
-
-            // cy.style()
-            //   .selector('edge')
-            //   .style({
-            //     'width': '10',
-            //     'curve-style': 'haystack',
-            //     'line-color' :'black',
-            //     'line-style' : 'solid',
-            //     'target-arrow-color': 'black',
-            //    'target-arrow-shape': 'triangle'
-            //   }).update();
-
-
-          }, function errorCallback(response2) {
-            console.log("Second $http error: " + response2);
-          });
-
-        }
-      }
-
-
-    }
-
-  }, function errorCallback(response) {
-
-  });
-
-
-}]);
+// traceroute.controller('bw_cytoscape', ['$scope', '$http', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+//
+//   // var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+//   var host1 = HostService.getHost();
+//
+//
+//   $http({
+//     method: 'GET',
+//     url: host1,
+//     params: {
+//       'format': 'json',
+//       'event-type': 'packet-trace',
+//       'limit': 10,
+//       // 'time-end': (Math.floor(Date.now() / 1000)),
+//       'time-range': 86400
+//     },
+//
+//     cache: true
+//
+//   }).then(function successCallback(response) {
+//
+//
+//     for (var i = 0; i < response.data.length; i++) {
+//
+//       var startNode = response.data[i]['source'];
+//       var destinationNode = response.data[i]['destination'];
+//       var mainForLoopCounter = i;
+//
+//
+//       if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
+//         CytoscapeService_Bandwidth.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
+//       }
+//
+//       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+//         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+//
+//           $http({
+//             method: 'GET',
+//             url: response.data[i]['url'] + "packet-trace/base",
+//             params: {
+//               'format': 'json',
+//               // 'limit': '2',
+//               // 'time-end': (Math.floor(Date.now() / 1000)),
+//               'time-range': 86400
+//               //48 Hours = 172800
+//               // 24 hours = 86400
+//             },
+//             cache: true
+//           }).then(function successCallback(response2) {
+//             // console.log("$http: Second Traceroute Call");
+//             //console.log(response2.data[0]['ts']);
+//
+//             var tsqd = destinationNode;
+//             console.log("Inner Destination: " + tsqd);
+//             console.log("Inner Source: " + response.data[mainForLoopCounter]['source']);
+//
+//
+//             var reversedResponse = response2.data.reverse();
+//
+//             // May not need to loop. can access array directly, display size to user.
+//
+//             var timeOfResultsArray = [];
+//             for (var k = 0; k < reversedResponse.length; k++) {
+//
+//               $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
+//               $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
+//
+//               timeOfResultsArray.push(reversedResponse[k]['ts']);
+//
+//               var temp_ip = [];
+//
+//               for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
+//                 // console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
+//
+//                 if (reversedResponse[k]['val'][l]['query'] == 1) {
+//                   temp_ip.push(reversedResponse[k]['val'][l]['ip']);
+//                 }
+//               }
+//
+//               // Adding Nodes and Edges
+//               for (var m = 0; m < temp_ip.length; m++) {
+//                 if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
+//                   CytoscapeService_Bandwidth.add_node(temp_ip[m], false);
+//                 }
+//               }
+//
+//
+//               for (var m = 0; m < temp_ip.length; m++) {
+//                 if (m != (temp_ip.length - 1 )) {
+//                   var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+//                   if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+//                     CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], null, null, response.data[mainForLoopCounter]['source'], response.data[mainForLoopCounter]['destination']);
+//                   }
+//                 }
+//               }
+//
+//
+//               // Edge for main node
+//               var edgeID = response.data[mainForLoopCounter]['source'] + "to" + reversedResponse[k]['val'][0]['ip'];
+//               if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+//                 CytoscapeService_Bandwidth.add_edge(edgeID, response.data[mainForLoopCounter]['source'], reversedResponse[k]['val'][0]['ip'], null, null, response.data[mainForLoopCounter]['source'], response.data[mainForLoopCounter]['destination'])
+//               }
+//
+//               // Break so that we grab only the latest traceroute path
+//               break;
+//
+//               // But return TS.
+//             }
+//
+//             $scope.timeOfResultsArray = timeOfResultsArray;
+//             // Loop it outside on scope
+//
+//
+//             //Style Options
+//             CytoscapeService_Bandwidth.getGraph().style()
+//             // .selector('#203.30.39.127')
+//             // .selector(':selected')
+//             // .selector('[id = "203.30.39.127"]')
+//               .selector('node[mainNode = "true"]')
+//               .style({
+//                 'background-color': 'black'
+//               }).update();
+//
+//
+//             //cy.elements('node[startNode = "true"]').size();
+//
+//
+//             var layoutOptions = {
+//               name: 'breadthfirst',
+//               fit: true, // whether to fit the viewport to the graph
+//               directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+//               padding: 30, // padding on fit
+//               circle: false, // put depths in concentric circles if true, put depths top down if false
+//               spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+//               boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+//               avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+//               roots: undefined, // the roots of the trees
+//               maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+//               animate: false, // whether to transition the node positions
+//               animationDuration: 500, // duration of animation in ms if enabled
+//               animationEasing: undefined, // easing of animation if enabled
+//               ready: undefined, // callback on layoutready
+//               stop: undefined // callback on layoutstop
+//             };
+//
+//             CytoscapeService_Bandwidth.getGraph().layout(layoutOptions);
+//
+//
+//             $scope.mainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "true"]').size();
+//             $scope.NonMainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "false"]').size();
+//             $scope.totalNodes = CytoscapeService_Bandwidth.getGraph().elements('node').size();
+//
+//
+//             // cy.style()
+//             //   .selector('edge')
+//             //   .style({
+//             //     'width': '10',
+//             //     'curve-style': 'haystack',
+//             //     'line-color' :'black',
+//             //     'line-style' : 'solid',
+//             //     'target-arrow-color': 'black',
+//             //    'target-arrow-shape': 'triangle'
+//             //   }).update();
+//
+//
+//           }, function errorCallback(response2) {
+//             console.log("Second $http error: " + response2);
+//           });
+//
+//         }
+//       }
+//
+//
+//     }
+//
+//   }, function errorCallback(response) {
+//
+//   });
+//
+//
+// }]);
 
 // http://www.dwmkerr.com/promises-in-angularjs-the-definitive-guide/
-traceroute.controller('bw_cytoscape_promises', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
 
-  // var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
   var host1 = HostService.getHost();
-  var startNode, destinationNode;
-  
-  var promises = [];
 
   $http({
     method: 'GET',
@@ -1288,21 +1263,21 @@ traceroute.controller('bw_cytoscape_promises', ['$scope', '$http', '$q', 'HostSe
     },
     cache: false
   }).then(function (response) {
-    // Store the username, get the profile.
-    // details.username = response.data;
 
     for (var i = 0; i < response.data.length; i++) {
+      var promises = [];
+      var startNode = response.data[i]['source'];
+      var destinationNode = response.data[i]['destination'];
+
       if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
-        CytoscapeService_Bandwidth.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
+        CytoscapeService_Bandwidth.add_node(response.data[i]['source'], true, startNode, destinationNode);
       }
 
-      startNode = response.data[i]['source'];
-      destinationNode = response.data[i]['destination'];
-
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-          promises.push($http({
+          var promise = $http({
             method: 'GET',
             url: response.data[i]['url'] + "packet-trace/base",
             params: {
@@ -1314,136 +1289,104 @@ traceroute.controller('bw_cytoscape_promises', ['$scope', '$http', '$q', 'HostSe
               // 24 hours = 86400
             },
             cache: false
-          }));
+          });
 
+          promises.push(promise);
         }
       }
+
+      populateGraph(promises, startNode, destinationNode);
+
     }
+  }).catch(function (error) {
+    console.log("An error occured: " + error);
+  });
 
-  })
 
-  $q.all(promises).then(
-    function(results) {
-      $q.defer().resolve(
+  function populateGraph(promises, startNode, destinationNode) {
 
-        console.log(results)
-      )
-    },
-    function(errors) {
-      $q.defer().reject(errors);
-    }
-  );
+    $q.all(promises).then(function (response) {
+      // console.log("Last Then, START NODE: " + start);
+      // console.log("Last Then, END NODE: " + end);
 
-  //   .then(function (response) {
-  //   //  Store the profile, now get the permissions.
-  //   // details.profile = response.data;
-  //
-  //   var reversedResponse = response.data.reverse();
-  //
-  //
-  //   var timeOfResultsArray = [];
-  //   for (var k = 0; k < reversedResponse.length; k++) {
-  //
-  //     $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
-  //     $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
-  //
-  //     timeOfResultsArray.push(reversedResponse[k]['ts']);
-  //
-  //     var temp_ip = [];
-  //
-  //     for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-  //       // console.log("Metadakey : " + response.data[mainForLoopCounter]['metadata-key'])
-  //
-  //       if (reversedResponse[k]['val'][l]['query'] == 1) {
-  //         temp_ip.push(reversedResponse[k]['val'][l]['ip']);
-  //       }
-  //     }
-  //
-  //     // Adding Nodes and Edges
-  //     for (var m = 0; m < temp_ip.length; m++) {
-  //       if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
-  //         CytoscapeService_Bandwidth.add_node(temp_ip[m], false);
-  //       }
-  //     }
-  //
-  //
-  //     for (var m = 0; m < temp_ip.length; m++) {
-  //       if (m != (temp_ip.length - 1 )) {
-  //         var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-  //         if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-  //           CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], null, null, startNode, destinationNode);
-  //         }
-  //       }
-  //     }
-  //
-  //     // Edge for main node
-  //     var edgeID = startNode + "to" + reversedResponse[k]['val'][0]['ip'];
-  //     if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-  //       CytoscapeService_Bandwidth.add_edge(edgeID, startNode, reversedResponse[k]['val'][0]['ip'], null, null, startNode, destinationNode);
-  //     }
-  //
-  //     // Break so that we grab only the latest traceroute path
-  //     break;
-  //   }
-  //
-  //   $scope.timeOfResultsArray = timeOfResultsArray;
-  //   // Loop it outside on scope
-  //
-  //
-  //   //Style Options
-  //   CytoscapeService_Bandwidth.getGraph().style()
-  //   // .selector('#203.30.39.127')
-  //   // .selector(':selected')
-  //   // .selector('[id = "203.30.39.127"]')
-  //     .selector('node[mainNode = "true"]')
-  //     .style({
-  //       'background-color': 'black'
-  //     }).update();
-  //
-  //
-  //   //cy.elements('node[startNode = "true"]').size();
-  //
-  //
-  //   var layoutOptions = {
-  //     name: 'breadthfirst',
-  //     fit: true, // whether to fit the viewport to the graph
-  //     directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-  //     padding: 30, // padding on fit
-  //     circle: false, // put depths in concentric circles if true, put depths top down if false
-  //     spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-  //     boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-  //     avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-  //     roots: undefined, // the roots of the trees
-  //     maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-  //     animate: false, // whether to transition the node positions
-  //     animationDuration: 500, // duration of animation in ms if enabled
-  //     animationEasing: undefined, // easing of animation if enabled
-  //     ready: undefined, // callback on layoutready
-  //     stop: undefined // callback on layoutstop
-  //   };
-  //
-  //   CytoscapeService_Bandwidth.getGraph().layout(layoutOptions);
-  //
-  //
-  //   $scope.mainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "true"]').size();
-  //   $scope.NonMainNodes = CytoscapeService_Bandwidth.getGraph().elements('node[mainNode = "false"]').size();
-  //   $scope.totalNodes = CytoscapeService_Bandwidth.getGraph().elements('node').size();
-  //
-  //
-  //   // cy.style()
-  //   //   .selector('edge')
-  //   //   .style({
-  //   //     'width': '10',
-  //   //     'curve-style': 'haystack',
-  //   //     'line-color' :'black',
-  //   //     'line-style' : 'solid',
-  //   //     'target-arrow-color': 'black',
-  //   //    'target-arrow-shape': 'triangle'
-  //   //   }).update();
-  //
-  //
-  // })
+      for (var i = 0; i < response.length; i++) {
 
+        var reversedResponse = response[i].data;
+
+        for (var j = 0; j < reversedResponse.length; j++) {
+          $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[j]['ts']);
+          $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[j]['ts']);
+
+          var temp_ip = [];
+
+          for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+            if (reversedResponse[j]['val'][k]['query'] == 1) {
+              temp_ip.push(reversedResponse[j]['val'][k]['ip']);
+            }
+          }
+
+          // Adding Nodes
+          for (var m = 0; m < temp_ip.length; m++) {
+            if (CytoscapeService_Bandwidth.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
+              CytoscapeService_Bandwidth.add_node(temp_ip[m], false);
+            }
+          }
+
+          // Adding edges
+          for (var m = 0; m < temp_ip.length; m++) {
+            if (m != (temp_ip.length - 1 )) {
+              var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+              if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+                CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], null, null, startNode, destinationNode);
+              }
+            }
+          }
+
+          // Add Edge for main node
+          var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
+          if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+            CytoscapeService_Bandwidth.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], null, null, startNode, destinationNode);
+          }
+
+          // Break so that we grab only the latest traceroute path
+          break;
+        }
+
+      }
+
+      //Style Options
+      CytoscapeService_Bandwidth.getGraph().style()
+      // .selector('#203.30.39.127')
+      // .selector(':selected')
+      // .selector('[id = "203.30.39.127"]')
+        .selector('node[mainNode = "true"]')
+        .style({
+          'background-color': 'black'
+        }).update();
+
+      var layoutOptions = {
+        name: 'breadthfirst',
+        fit: true, // whether to fit the viewport to the graph
+        directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+        padding: 30, // padding on fit
+        circle: false, // put depths in concentric circles if true, put depths top down if false
+        spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+        boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+        roots: undefined, // the roots of the trees
+        maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+        animate: false, // whether to transition the node positions
+        animationDuration: 500, // duration of animation in ms if enabled
+        animationEasing: undefined, // easing of animation if enabled
+        ready: undefined, // callback on layoutready
+        stop: undefined // callback on layoutstop
+      };
+
+      CytoscapeService_Bandwidth.getGraph().layout(layoutOptions);
+
+
+    })
+  }
 
 }]);
 
