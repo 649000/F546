@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps','AnalyzationServices']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
   GoogleMapApiProviders.configure({
     key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
     v: '3.20', //defaults to latest 3.X anyhow
@@ -920,8 +920,18 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', '
 
 
       if (CytoscapeService.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
-        CytoscapeService.add_node(response.data[i]['source'], true, startNode, destinationNode);
+        CytoscapeService.add_node(startNode, true, startNode, destinationNode);
+
+        // Gotta add event here else event gets added repeated times.
+        CytoscapeService.getGraph().on('mouseup', 'node[id = "' + startNode + '"]' , function (event) {
+          console.log(event);
+          console.log("clicked")
+
+          var node = event.cyTarget;
+          console.log( 'tapped ' + node.id() );
+        });
       }
+
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
@@ -942,12 +952,16 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', '
 
           promises.push(promise);
 
-
         }
       }
+
       populateGraph(promises, startNode, destinationNode);
 
+
     }
+
+
+
 
   }).catch(function (error) {
     console.log("An error occured: " + error);
@@ -1060,6 +1074,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', '
     });
 
   }
+
 
 }]);
 
@@ -1261,7 +1276,7 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     },
-    cache: false
+    cache: true
   }).then(function (response) {
 
     for (var i = 0; i < response.data.length; i++) {
@@ -1288,7 +1303,7 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
               //48 Hours = 172800
               // 24 hours = 86400
             },
-            cache: false
+            cache: true
           });
 
           promises.push(promise);
@@ -1464,7 +1479,7 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService'
       var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
       // var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = ' + startNode + '][endNode = ' + destinationNode + ']');
 
-      console.log("Edges Size: "+ edges.size());
+      console.log("Edges Size: " + edges.size());
       var ts;
       var bw;
 

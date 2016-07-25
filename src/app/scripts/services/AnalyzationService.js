@@ -6,26 +6,116 @@
 // Each new change, hard to tell, list the differences.
 // Consider: https://github.com/jmdobry/angular-cache
 
-var analyzationService = angular.module('AnalyzationService', ['ngResource']);
+//http://status.sgaf.org.sg/traceSG-US.html
 
-analyzationService.factory('Analyze_Traceroute', ['$resource', function () {
+var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-  //Conditions of an anomaly
-  // 1. Change in path.
-  // Idea
-  // 1. List all of the history, select which one to display.
-  // 2. Compare the latest with previous. if changes detected, highlight.
+analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'HostService', 'TracerouteResultsService', function ($http, $q, HostService, TracerouteResultsService) {
 
-  var comparison = [];
+  var host = HostService.getHost();
+
+  var analyzedTRList = [];
+
 
   return {
-    compare: {
 
-      // Do something
-    },
-    add: {
-      //Do Something
+    getAnalyzation: function () {
+      // For each TR result, calculate last 7 days of average min RTT, mean RTT, std deviation RTT
+      // push it into analyzedTRList
+
+      TracerouteResultsService.getMainResult().then(function (response) {
+
+        for (var i = 0; i < response.data.length; i++) {
+          var source = response.data[i]['source'];
+          var destination = response.data[i]['destination'];
+
+          var promises = [];
+
+          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+              var promise = TracerouteResultsService.getIndividualResult(response.data[i]['url'], 604800)
+              promises.push(promise);
+
+            }
+          }
+
+          analyzeResults(promises, source, destination);
+          console.log("analyzedTRList size: "+ analyzedTRList.length);
+          return analyzedTRList;
+        }
+
+      }).catch(function (error) {
+        console.log("AnalyzationServices: function getAnalyzation() " + error);
+      });
+
+
     }
+  };
+
+  function analyzeResults(promises, source, destination) {
+    // if 0 or only 1 result, skip.
+    //else do the calculation here.
+
+    $q.all(promises).then(function (response) {
+
+      // Either return or push the array here.
+      var results = {
+        source: source,
+        destination: destination,
+        threshold: []
+      };
+
+      var toCalculate = [];
+
+
+      for (var i = 0; i < response.length; i++) {
+        // Checking for 'active' servers
+        if (response[i].data.length > 1) {
+
+          for (var k = 0; k < response[i].data.length; k++) {
+
+            for (var l = 0; l < response[i].data[k]['val'].length; l++) {
+
+              var IPAddr = response[i].data[k]['val'][l]['ip']
+              var rtt = response[i].data[k]['val'][l]['rtt']
+              var IPExist = false;
+
+              for (var j = 0; j < toCalculate.length; j++) {
+                if (toCalculate[j]['IP'] == IPAddr) {
+                  IPExist = true;
+                  toCalculate[j]['rtt'].push(rtt);
+                }
+              }
+
+              if (IPExist == false) {
+
+                var tempResult = {
+                  IP: IPAddr,
+                  rtt: [rtt]
+                }
+
+                toCalculate.push(tempResult);
+              }
+            }
+          }
+
+
+        }
+      }
+
+      //Calculating Mean, Min and Std Deviation.
+      for (var i = 0; i < toCalculate.length; i++) {
+        results['threshold']['ip'] = toCalculate[i]['IP']
+        results['threshold']['rttAvg'] = math.mean(toCalculate[i]['rtt']);
+        results['threshold']['rttMin'] = math.min(toCalculate[i]['rtt']);
+        results['threshold']['rttStd'] = math.std(toCalculate[i]['rtt']);
+        analyzedTRList.push(results);
+      }
+
+      
+    });
+
   }
 
 
