@@ -341,7 +341,8 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 }]);
 
 
-tracerouteServices.factory('TracerouteResultsService', ['$resource', '$http', '$q', 'HostService', function ($http, $q, HostService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', 'HostService', function ($http, $q, HostService) {
+
 
   var host = HostService.getHost();
 
@@ -359,7 +360,7 @@ tracerouteServices.factory('TracerouteResultsService', ['$resource', '$http', '$
           // 'time-end': (Math.floor(Date.now() / 1000)),
           // 'time-range': timeRange
         },
-        cache: true
+        cache: false
       })
     },
 
@@ -377,7 +378,7 @@ tracerouteServices.factory('TracerouteResultsService', ['$resource', '$http', '$
           // 24 hours = 86400
           //604800 (7days).
         },
-        cache: true
+        cache: false
       });
     }
 

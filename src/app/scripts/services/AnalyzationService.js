@@ -10,9 +10,9 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'HostService', 'TracerouteResultsService', function ($http, $q, HostService, TracerouteResultsService) {
+analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', 'TracerouteResultsService', function ($http, $q, HostService, TracerouteResultsService) {
 
-  var host = HostService.getHost();
+  // var host = HostService.getHost();
 
   var analyzedTRList = [];
 
@@ -25,9 +25,14 @@ analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'H
 
       TracerouteResultsService.getMainResult().then(function (response) {
 
+        console.log("Main Response: "+response.data.length)
+
         for (var i = 0; i < response.data.length; i++) {
           var source = response.data[i]['source'];
           var destination = response.data[i]['destination'];
+
+          console.log("Source: "+source)
+          console.log("destination: "+destination)
 
           var promises = [];
 
@@ -40,16 +45,17 @@ analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'H
             }
           }
 
+          console.log("Promise Size: "+ promises.length)
           analyzeResults(promises, source, destination);
           console.log("analyzedTRList size: "+ analyzedTRList.length);
-          return analyzedTRList;
+
         }
 
       }).catch(function (error) {
         console.log("AnalyzationServices: function getAnalyzation() " + error);
       });
 
-
+      return analyzedTRList;
     }
   };
 
@@ -110,10 +116,11 @@ analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'H
         results['threshold']['rttAvg'] = math.mean(toCalculate[i]['rtt']);
         results['threshold']['rttMin'] = math.min(toCalculate[i]['rtt']);
         results['threshold']['rttStd'] = math.std(toCalculate[i]['rtt']);
+
         analyzedTRList.push(results);
       }
 
-      
+
     });
 
   }
@@ -121,7 +128,7 @@ analyzationService.factory('Analyze_Traceroute', ['$resource', '$http', '$q', 'H
 
 }]);
 
-analyzationService.factory('Analyze_Bandwidth', ['$resource', function () {
+analyzationService.factory('Analyze_Bandwidth', [function () {
   //Conditions of an anomaly
   // 1. Values are different in a certain threshold.
 

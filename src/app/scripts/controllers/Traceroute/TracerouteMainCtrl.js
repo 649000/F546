@@ -1685,6 +1685,23 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService'
 // }]);
 //
 
+traceroute.controller('testController', ['$scope', 'AnalyzeTraceroute', function ($scope, AnalyzeTraceroute) {
+
+
+$scope.analyzetr = function (){
+
+
+  // alert("HI")
+
+  var tr_7days = AnalyzeTraceroute.getAnalyzation();
+  console.log("Caller: ")
+  console.log(tr_7days)
+}
+
+
+
+}]);
+
 // traceroute.controller('ipAddrDecoderController', ['$scope', 'GEOIP_NEKUDO', function ($scope, GEOIP_NEKUDO) {
 //   $scope.ip_address
 //
