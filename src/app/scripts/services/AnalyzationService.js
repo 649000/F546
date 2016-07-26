@@ -39,7 +39,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
           for (var j = 0; j < response.data[i]['event-types'].length; j++) {
             if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-              var promise = TracerouteResultsService.getIndividualResult(response.data[i]['url'], 604800)
+              var promise = TracerouteResultsService.getIndividualResult(response.data[i]['url'], 604800);
               promises.push(promise);
 
             }
@@ -51,11 +51,15 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
 
         }
 
+        // return promise here
+
       }).catch(function (error) {
         console.log("AnalyzationServices: function getAnalyzation() " + error);
       });
 
       return analyzedTRList;
+
+      //Option 1. return $q.all(promises) and do then on the controller, no source/destination.
     }
   };
 

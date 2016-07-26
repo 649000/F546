@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps','AnalyzationServices']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps', 'AnalyzationServices']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
   GoogleMapApiProviders.configure({
     key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
     v: '3.20', //defaults to latest 3.X anyhow
@@ -923,12 +923,12 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', '
         CytoscapeService.add_node(startNode, true, startNode, destinationNode);
 
         // Gotta add event here else event gets added repeated times.
-        CytoscapeService.getGraph().on('mouseup', 'node[id = "' + startNode + '"]' , function (event) {
+        CytoscapeService.getGraph().on('mouseup', 'node[id = "' + startNode + '"]', function (event) {
           console.log(event);
           console.log("clicked")
 
           var node = event.cyTarget;
-          console.log( 'tapped ' + node.id() );
+          console.log('tapped ' + node.id());
         });
       }
 
@@ -959,8 +959,6 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', '
 
 
     }
-
-
 
 
   }).catch(function (error) {
@@ -1333,10 +1331,12 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
           $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[j]['ts']);
 
           var temp_ip = [];
+          var temp_rtt = [];
 
           for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
             if (reversedResponse[j]['val'][k]['query'] == 1) {
               temp_ip.push(reversedResponse[j]['val'][k]['ip']);
+              temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
             }
           }
 
@@ -1352,7 +1352,7 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
             if (m != (temp_ip.length - 1 )) {
               var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
               if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], null, null, startNode, destinationNode);
+                CytoscapeService_Bandwidth.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], temp_rtt[m], null, null, startNode, destinationNode);
               }
             }
           }
@@ -1360,7 +1360,7 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
           // Add Edge for main node
           var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
           if (CytoscapeService_Bandwidth.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-            CytoscapeService_Bandwidth.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], null, null, startNode, destinationNode);
+            CytoscapeService_Bandwidth.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], temp_rtt[m], null, null, startNode, destinationNode);
           }
 
           // Break so that we grab only the latest traceroute path
@@ -1688,16 +1688,15 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService'
 traceroute.controller('testController', ['$scope', 'AnalyzeTraceroute', function ($scope, AnalyzeTraceroute) {
 
 
-$scope.analyzetr = function (){
+  $scope.analyzetr = function () {
 
 
-  // alert("HI")
+    // alert("HI")
 
-  var tr_7days = AnalyzeTraceroute.getAnalyzation();
-  console.log("Caller: ")
-  console.log(tr_7days)
-}
-
+    var tr_7days = AnalyzeTraceroute.getAnalyzation();
+    console.log("Caller: ")
+    console.log(tr_7days)
+  }
 
 
 }]);

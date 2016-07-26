@@ -204,7 +204,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
         style: {
           'width': 3,
           'opacity': 0.8,
-          'label': 'data(bandwidth)',
+          'label': 'data(rtt)',
           'line-color': '#a8ea00',
           'target-arrow-color': 'black',
           'target-arrow-shape': 'triangle'
@@ -280,7 +280,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
       return cy;
     },
 
-    add_edge: function (ID, source, target, bandwidth, latency, startNode, endNode) {
+    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode) {
 
 
       var edge = {
@@ -290,6 +290,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
           // inferred as an edge because `source` and `target` are specified:
           source: source, // the source node id (edge comes from this node)
           target: target,  // the target node id (edge goes to this node)
+          rtt: tracerouteRTT,
           bandwidth: bandwidth,
           latency: latency,
           startNode: startNode,
