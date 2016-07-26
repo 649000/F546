@@ -52,6 +52,13 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
         }
 
         // return promise here
+        // OR return $q.all(promises);
+        // store array or source/dest above.
+
+      }).then(function (response) {
+
+        //process $q.all here.
+
 
       }).catch(function (error) {
         console.log("AnalyzationServices: function getAnalyzation() " + error);
