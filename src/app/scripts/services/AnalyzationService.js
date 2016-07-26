@@ -60,6 +60,12 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
       return analyzedTRList;
 
       //Option 1. return $q.all(promises) and do then on the controller, no source/destination.
+    },
+
+    // If option 1 doesn't work, try this:
+    getSourceAndDestination: function (){
+    // returns promise of main TR result. chain it with getAnalyzation's promise.
+
     }
   };
 
