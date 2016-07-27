@@ -10,11 +10,12 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', 'TracerouteResultsService', function ($http, $q, HostService, TracerouteResultsService) {
+analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', 'TracerouteResultsService', function ($http, $q, $log, HostService, TracerouteResultsService) {
 
-  // var host = HostService.getHost();
+  var host = HostService.getHost();
 
-  var analyzedTRList = [];
+
+  var sourceAndDestinationList;
 
 
   return {
@@ -23,18 +24,23 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
       // For each TR result, calculate last 7 days of average min RTT, mean RTT, std deviation RTT
       // push it into analyzedTRList
 
-      TracerouteResultsService.getMainResult().then(function (response) {
+      sourceAndDestinationList = [];
 
-        console.log("Main Response: "+response.data.length)
+      var analyzedTRList = TracerouteResultsService.getMainResult().then(function (response) {
+
+        $log.debug("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> Main Response: " + response.data.length)
+
+        var promises = [];
 
         for (var i = 0; i < response.data.length; i++) {
-          var source = response.data[i]['source'];
-          var destination = response.data[i]['destination'];
 
-          console.log("Source: "+source)
-          console.log("destination: "+destination)
+          sourceAndDestinationList.push(
+            {
+              source: response.data[i]['source'],
+              destination: response.data[i]['destination']
+            }
+          );
 
-          var promises = [];
 
           for (var j = 0; j < response.data[i]['event-types'].length; j++) {
             if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
@@ -45,9 +51,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
             }
           }
 
-          console.log("Promise Size: "+ promises.length)
-          analyzeResults(promises, source, destination);
-          console.log("analyzedTRList size: "+ analyzedTRList.length);
+          // analyzeResults(promises, source, destination);
 
         }
 
@@ -55,23 +59,101 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', 'HostService', '
         // OR return $q.all(promises);
         // store array or source/dest above.
 
+        $log.debug("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> End of getMainResult(), Promises Length:  " + promises.length);
+
+        return $q.all(promises);
+
       }).then(function (response) {
 
-        //process $q.all here.
+        $log.debug("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> Start of second .then response");
 
+        var nodeAndRttList_CalculatedData = [];
+        var nodeAndRttList_RawData = [];
+
+
+        for (var i = 0; i < response.length; i++) {
+
+          $log.debug("Source: " +sourceAndDestinationList[i]['source']);
+          $log.debug("Destination: " + sourceAndDestinationList[i]['destination']);
+
+          // Checking for 'active' servers
+          if (response[i].data.length > 1) {
+
+            for (var k = 0; k < response[i].data.length; k++) {
+
+              var ts = response[i].data[k]['ts'];
+
+              for (var l = 0; l < response[i].data[k]['val'].length; l++) {
+
+                var IPAddr = response[i].data[k]['val'][l]['ip'];
+                var rtt = response[i].data[k]['val'][l]['rtt'];
+                var IPExist = false;
+
+
+                // Check if the IP Address already exist in the list.
+                for (var j = 0; j < nodeAndRttList_RawData.length; j++) {
+
+                  //IP Address Exist. Append new rtt value.
+                  if (nodeAndRttList_RawData[j]['IP'] == IPAddr) {
+                    IPExist = true;
+                    nodeAndRttList_RawData[j]['rtt'].push(rtt);
+                  }
+
+                }
+
+                if (IPExist == false) {
+
+                  var newNode = {
+                    //source: xx,
+                    //destination: xx
+                    IP: IPAddr,
+                    rtt: [rtt]
+                  }
+
+                  nodeAndRttList_RawData.push(newNode);
+                }
+              }
+            }
+
+
+          }
+        }
+
+        //Calculating Mean, Min and Std Deviation.
+        for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
+
+          nodeAndRttList_CalculatedData.push(
+            {
+              source: 0,
+              destination: 0,
+              nodes: {
+                ip: nodeAndRttList_RawData[i]['IP'],
+                rttAvg: math.mean(nodeAndRttList_RawData[i]['rtt']),
+                rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
+                rttStd: math.std(nodeAndRttList_RawData[i]['rtt']),
+                startDate:1,
+                endDate:1
+              }
+            }
+          );
+
+        }
+
+        return nodeAndRttList_CalculatedData;
 
       }).catch(function (error) {
-        console.log("AnalyzationServices: function getAnalyzation() " + error);
+        console.log("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> Error: " + error);
       });
 
       return analyzedTRList;
 
-      //Option 1. return $q.all(promises) and do then on the controller, no source/destination.
-    },
 
+
+    },
+//Option 1. return $q.all(promises) and do then on the controller, no source/destination.
     // If option 1 doesn't work, try this:
-    getSourceAndDestination: function (){
-    // returns promise of main TR result. chain it with getAnalyzation's promise.
+    getSourceAndDestination: function () {
+      // returns promise of main TR result. chain it with getAnalyzation's promise.
 
     }
   };

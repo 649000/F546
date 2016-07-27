@@ -894,9 +894,10 @@ traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($sc
 // }]);
 
 
-traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService, UnixTimeConverterService) {
+traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', '$log', 'HostService', 'CytoscapeService', 'UnixTimeConverterService', function ($scope, $http, $q, $log, HostService, CytoscapeService, UnixTimeConverterService) {
 
   var host1 = HostService.getHost();
+
 
   $http({
     method: 'GET',
@@ -1405,7 +1406,7 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
 
 }]);
 
-traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, $log, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
 
 
   var host1 = HostService.getHost();
@@ -1685,17 +1686,24 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', 'HostService'
 // }]);
 //
 
-traceroute.controller('testController', ['$scope', 'AnalyzeTraceroute', function ($scope, AnalyzeTraceroute) {
+traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', function ($scope, $log, AnalyzeTraceroute) {
 
 
   $scope.analyzetr = function () {
-
-
-    // alert("HI")
-
-    var tr_7days = AnalyzeTraceroute.getAnalyzation();
     console.log("Caller: ")
-    console.log(tr_7days)
+
+
+
+
+    AnalyzeTraceroute.getAnalyzation().then(function (response) {
+      console.log(response)
+      $log.debug("MIN String?: " + (response[0]['nodes']['rttMin']))
+      //0.074
+      $log.debug("MIN String?: " + angular.isString(response[0]['nodes']['rttMin']))
+
+    });
+
+
   }
 
 

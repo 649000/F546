@@ -342,9 +342,10 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 }]);
 
 
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', 'HostService', function ($http, $q, HostService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFactory', '$log','HostService', function ($http, $q, $log, $cacheFactory, HostService) {
 
 
+  // cache http://stackoverflow.com/questions/21660647/angular-js-http-cache-time
   var host = HostService.getHost();
 
   return {
@@ -361,11 +362,11 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', 'HostServ
           // 'time-end': (Math.floor(Date.now() / 1000)),
           // 'time-range': timeRange
         },
-        cache: false
+        cache: true
       })
     },
 
-    getIndividualResult: function (metadataURL,timeRange) {
+    getIndividualResult: function (metadataURL, timeRange) {
 
       return $http({
         method: 'GET',
@@ -379,191 +380,17 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', 'HostServ
           // 24 hours = 86400
           //604800 (7days).
         },
-        cache: false
+        cache: true
       });
+    },
+
+    clearCache: function () {
+      $cacheFactory.get('$http').removeAll();
+      $log.debug("TracerouteResultsService:clearCache() Cache Cleared");
     }
 
   };
 
-
-  function httpCall() {
-
-    $http({
-      method: 'GET',
-      url: host,
-      params: {
-        'format': 'json',
-        'event-type': 'packet-trace',
-        'limit': 10,
-        // 'time-end': (Math.floor(Date.now() / 1000)),
-        'time-range': 86400
-      },
-
-      cache: true
-
-    }).then(function (response) {
-
-      for (var i = 0; i < response.data.length; i++) {
-        var startNode = response.data[i]['source'];
-        var destinationNode = response.data[i]['destination'];
-        var promises = [];
-
-
-        if (CytoscapeService.getGraph().elements('node[id = "' + startNode + '"]').size() == 0) {
-          CytoscapeService.add_node(startNode, true, startNode, destinationNode);
-
-          // Gotta add event here else event gets added repeated times.
-          CytoscapeService.getGraph().on('mouseup', 'node[id = "' + startNode + '"]', function (event) {
-            console.log(event);
-            console.log("clicked")
-
-            var node = event.cyTarget;
-            console.log('tapped ' + node.id());
-
-          });
-        }
-
-        for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-          if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-            var promise = $http({
-              method: 'GET',
-              url: response.data[i]['url'] + "packet-trace/base",
-              params: {
-                'format': 'json',
-                // 'limit': '2',
-                // 'time-end': (Math.floor(Date.now() / 1000)),
-                'time-range': 86400
-                //48 Hours = 172800
-                // 24 hours = 86400
-              },
-              cache: true
-            });
-
-            promises.push(promise);
-
-
-          }
-        }
-
-        populateGraph(promises, startNode, destinationNode);
-
-
-      }
-
-
-    }).catch(function (error) {
-      console.log("An error occured: " + error);
-    });
-  }
-
-  function populateGraph(promises, startNode, destinationNode) {
-
-    $q.all(promises).then(function (response) {
-      for (var i = 0; i < response.length; i++) {
-
-        var reversedResponse = response[i].data;
-
-        for (var k = 0; k < reversedResponse.length; k++) {
-
-          $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[k]['ts']);
-          $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[k]['ts']);
-
-          var temp_ip = [];
-
-          for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
-            if (reversedResponse[k]['val'][l]['query'] == 1) {
-              temp_ip.push(reversedResponse[k]['val'][l]['ip']);
-            }
-          }
-
-          // Adding Nodes
-          for (var m = 0; m < temp_ip.length; m++) {
-            if (CytoscapeService.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
-              CytoscapeService.add_node(temp_ip[m], false);
-            }
-          }
-
-          // May potentially remove this for loop, however this helps to eliminate the error.
-
-          //Adding Edges
-          for (var m = 0; m < temp_ip.length; m++) {
-            if (m != (temp_ip.length - 1 )) {
-              var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-              if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-                CytoscapeService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], 100000, 100000);
-              }
-            }
-          }
-
-
-          // Edge for main node
-          var edgeID = startNode + "to" + reversedResponse[k]['val'][0]['ip'];
-          if (CytoscapeService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-            CytoscapeService.add_edge(edgeID, startNode, reversedResponse[k]['val'][0]['ip'], Math.random(), 100000)
-          }
-
-          // Break so that we grab only the latest traceroute path
-          break;
-        }
-
-
-        //Style Options
-        CytoscapeService.getGraph().style()
-        // .selector('#203.30.39.127')
-        // .selector(':selected')
-        // .selector('[id = "203.30.39.127"]')
-          .selector('node[mainNode = "true"]')
-          .style({
-            'background-color': 'black'
-          }).update();
-
-
-        //cy.elements('node[startNode = "true"]').size();
-
-
-        var layoutOptions = {
-          name: 'breadthfirst',
-          fit: true, // whether to fit the viewport to the graph
-          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-          padding: 30, // padding on fit
-          circle: false, // put depths in concentric circles if true, put depths top down if false
-          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-          roots: undefined, // the roots of the trees
-          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-          animate: false, // whether to transition the node positions
-          animationDuration: 500, // duration of animation in ms if enabled
-          animationEasing: undefined, // easing of animation if enabled
-          ready: undefined, // callback on layoutready
-          stop: undefined // callback on layoutstop
-        };
-
-        CytoscapeService.getGraph().layout(layoutOptions);
-
-
-        $scope.mainNodes = CytoscapeService.getGraph().elements('node[mainNode = "true"]').size();
-        $scope.NonMainNodes = CytoscapeService.getGraph().elements('node[mainNode = "false"]').size();
-        $scope.totalNodes = CytoscapeService.getGraph().elements('node').size();
-
-
-        // cy.style()
-        //   .selector('edge')
-        //   .style({
-        //     'width': '10',
-        //     'curve-style': 'haystack',
-        //     'line-color' :'black',
-        //     'line-style' : 'solid',
-        //     'target-arrow-color': 'black',
-        //    'target-arrow-shape': 'triangle'
-        //   }).update();
-
-      }
-
-    });
-
-  }
 
 }]);
 
