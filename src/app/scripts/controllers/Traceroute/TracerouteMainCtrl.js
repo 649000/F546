@@ -7,346 +7,352 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps', 'AnalyzationServices']).config(['uiGmapGoogleMapApiProvider', function (GoogleMapApiProviders) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'uiGmapgoogle-maps', 'AnalyzationServices']).config(['$logProvider', 'uiGmapGoogleMapApiProvider', function ($logProvider, GoogleMapApiProviders) {
+
   GoogleMapApiProviders.configure({
     key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
     v: '3.20', //defaults to latest 3.X anyhow
     libraries: 'weather,geometry,visualization'
   });
+
+  // Turn debugging on/off
+  // http://stackoverflow.com/questions/15561853/how-to-turn-on-off-log-debug-in-angularjs
+  $logProvider.debugEnabled(true);
+
 }])
 
 
-traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, $http, $q, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
-
-  // Do stuff with your $scope.
-  // Note: Some of the directives require at least something to be defined originally!
-  // e.g. $scope.markers = []
-
-  // uiGmapGoogleMapApi is a promise.
-  // The "then" callback function provides the google.maps object.
-
-  var nodes = [];
-  var edges = [];
-  var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
-
-
-  $scope.map = {
-    center: {
-      latitude: 1.345468,
-      longitude: 103.956101
-    }, zoom: 8, pan: false
-  };
-  $scope.options = {
-    scrollwheel: true
-  };
-  $scope.marker = {key: 1, coords: {latitude: 45, longitude: -73}};
-
-
-  var markers = [];
-
-  markers.push(
-    {
-      id: "first",
-      latitude: 1.564836,
-      longitude: 103.718025,
-      title: "Hello1",
-      options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
-
-    }
-  );
-  markers.push(
-    {
-      id: "second",
-      latitude: 1.512557,
-      longitude: 104.168110,
-
-    }
-  );
-
-
-  // $scope.randomMarkers = markers;
-  //
-  //
-  // $scope.randomLines = [
-  //
-  //   {
-  //     id: 1,
-  //     geotracks: [{
-  //       latitude: 1.564836,
-  //       longitude: 103.718025
-  //     }, {
-  //       latitude: 1.512557,
-  //       longitude: 104.168110
-  //     }],
-  //     stroke: {
-  //       color: '#6060FB',
-  //       weight: 1
-  //     }
-  //   }, {
-  //     id: 2,
-  //     geotracks: [{
-  //       latitude: 24.0,
-  //       longitude: 72.58
-  //     }, {
-  //       latitude: 23.1,
-  //       longitude: 71.58
-  //     }]
-  //   }];
-
-
-  uiGmapGoogleMapApi.then(function (maps) {
-    console.log("Inside GoogleMaps Then");
-
-  });
-
-  $scope.getNodes = $http({
-    method: 'GET',
-    url: host1,
-    params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '1'}
-  }).then(function successCallback(response) {
-    // console.log("First $http Success");
-
-    for (var i = 0; i < response.data.length; i++) {
-      var parentIP = response.data[i]['source'];
-      var mainForLoopCounter = i;
-
-      addNode(response.data[i]['source'], response.data[i]['source']);
-
-      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-          $http({
-            method: 'GET',
-            url: response.data[i]['url'] + "packet-trace/base",
-            params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
-          }).then(function successCallback(response2) {
-            // console.log("Second $http Success");
-            //console.log(response2.data[0]['ts']);
-
-            for (var k = 0; k < response2.data.length; k++) {
-              var ts = response2.data[k]['ts'];
-              // console.log("TS: " + ts);
-
-              // Main Node
-              // cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'] ,response2.data[k]['val'][0]['ip'], Math.random()));
-              addEdge(Math.random(), response.data[mainForLoopCounter]['source'], response2.data[k]['val'][0]['ip'], 1);
-
-              var temp_ip = [];
-              for (var l = 0; l < response2.data[k]['val'].length; l++) {
-                if (response2.data[k]['val'][l]['query'] == 1) {
-                  temp_ip.push(response2.data[k]['val'][l]['ip']);
-                }
-              }
-
-              // Adding Nodes and Edges
-              for (var m = 0; m < temp_ip.length; m++) {
-                // cytoscape_nodes.push(add_node(temp_ip[m]));
-                addNode(temp_ip[m], temp_ip[m]);
-                if (m != (temp_ip.length - 1 )) {
-                  // cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1],100000));
-                  addEdge(Math.random(), temp_ip[m], temp_ip[m + 1], 1);
-                }
-              }
-
-            }
-
-          }, function errorCallback(response2) {
-            console.log("Second $http error: " + response2);
-          });
-
-
-        }
-      }
-    }
-
-  }, function errorCallback(response) {
-    console.log("First $http error: " + response);
-  });
-
-
-  $q.all([$scope.getNodes]).then(function (values) {
-
-
-  });
-  for (var i = 0; i < nodes.length; i++) {
-    GEOIP_NEKUDO.decode({ip_address: nodes[i].id}, function (decoded_ip) {
-      nodes[i].latitude = decoded_ip.location.latitude;
-      nodes[i].longitude = decoded_ip.location.longitude;
-      console.log("Latitude: " + decoded_ip.location.latitude);
-    });
-  }
-
-  // for (var i = 0; i < edges.length; i++) {
-  //   GEOIP_NEKUDO.decode({ip_address: edges[i].id}, function (decoded_ip) {
-  //     edges[i].latitude = decoded_ip.location.latitude;
-  //     edges[i].longitude = decoded_ip.location.longitude;
-  //
-  //
-  //   });
-  // }
-
-
-  function addNode(id, title) {
-    if (nodes.length > 0) {
-      var hasDuplicates = false;
-      for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].id == id) {
-          hasDuplicates = true;
-        }
-      }
-
-      if (hasDuplicates == false) {
-        nodes.push(
-          {
-            id: id,
-            latitude: 0,
-            longitude: 0,
-            title: title,
-            options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
-
-          });
-
-      }
-    } else {
-      nodes.push(
-        {
-          id: id,
-          latitude: 0,
-          longitude: 0,
-          title: title,
-          options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
-
-        });
-
-    }
-
-  }
-
-  function addEdge(id, source, target, weight) {
-
-    edges.push(
-      {
-        id: id,
-        geotracks: [{
-          latitude: source,
-          longitude: 0
-        }, {
-          latitude: target,
-          longitude: 0
-        }],
-        stroke: {
-          color: '#6060FB',
-          weight: weight
-        }
-      }
-    )
-
-  }
-
-  $scope.nodeMarkers = nodes;
-  $scope.edgeLines = edges;
-
-  //  var maps = new GMaps({
-  //   div: '#maps',
-  //   lat: 37.8668,
-  //   lng: -122.2536,
-  //   width: 'max-width',
-  //   height: '700px',
-  //   zoom: 12,
-  //   zoomControl: true,
-  //   zoomControlOpt: {
-  //     style: 'SMALL',
-  //     position: 'TOP_LEFT'
-  //   },
-  //   panControl: false
-  // });
-
-  //$scope.maps="<div id='maps'></div>"
-
-  // TracerouteResults.get({ metadata_key: '0171dee126dd433e817e21ca352bc517' }, function(data) {
-  //   //$scope.route_time = data[0].ts;
-  //   //for (i = 0; i < data[0].val.length; i++) {
-  //   //  console.log(data[0].val[i].ip)
-  //   //}
-  //
-  //
-  //   angular.forEach(data[0].val, function (item) {
-  //
-  //     if (previousIP != item.ip){
-  //       counter++
-  //
-  //       //console.log(item.ip)
-  //
-  //       GEOIP_NEKUDO.decode({ ip_address: item.ip }, function(decoded_ip) {
-  //         latitude = decoded_ip.location.latitude
-  //         longitude = decoded_ip.location.longitude
-  //
-  //         maps.setCenter(latitude, longitude)
-  //
-  //
-  //         //console.log(counter)
-  //         if (counter==1){
-  //          //w console.log(latitude)
-  //           firstLat=latitude
-  //           firstLon=longitude
-  //         }
-  //
-  //
-  //         plottingPath.push([latitude, longitude])
-  //
-  //
-  //
-  //           //maps.drawOverlay({
-  //           //  lat: latitude,
-  //           //  lng: longitude,
-  //           //  content: '<div class="overlay">'+decoded_ip.city+'</div>'
-  //           //});
-  //
-  //         maps.addMarker({
-  //           lat: latitude,
-  //           lng: longitude,
-  //           infoWindow: {
-  //             content: '<p>TTL #: '+ item.ttl + '</p>'
-  //           }
-  //
-  //
-  //         });
-  //         // FIXME: plottingPath initialized to zero when it's outside this function. Had to draw in here.
-  //         // Look into it and fix it
-  //         maps.drawPolyline({
-  //           path: plottingPath,
-  //           strokeColor: '#131540',
-  //           strokeOpacity: 0.6,
-  //           strokeWeight: 3
-  //         });
-  //
-  //
-  //       });
-  //
-  //       console.log(plottingPath.length)
-  //       previousIP = item.ip
-  //     }
-  //
-  //
-  //
-  //   })
-  //
-  //
-  // });
-
-  //plottingPath.push("x")
-
-  // plottingPath = [[37.7697, -122.3933], [-12.05449279282314, -77.03024273281858], [-12.055122327623378, -77.03039293652341], [-12.075917129727586, -77.02764635449216], [-12.07635776902266, -77.02792530422971], [-12.076819390363665, -77.02893381481931], [-12.088527520066453, -77.0241058385925], [-12.090814532191756, -77.02271108990476]];
-
-  //   maps.drawPolyline({
-  //   path: plottingPath,
-  //   strokeColor: '#131540',
-  //   strokeOpacity: 0.6,
-  //   strokeWeight: 6
-  // });
-
-
-}]);
+// traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, $http, $q, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
+//
+//   // Do stuff with your $scope.
+//   // Note: Some of the directives require at least something to be defined originally!
+//   // e.g. $scope.markers = []
+//
+//   // uiGmapGoogleMapApi is a promise.
+//   // The "then" callback function provides the google.maps object.
+//
+//   var nodes = [];
+//   var edges = [];
+//   var host1 = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+//
+//
+//   $scope.map = {
+//     center: {
+//       latitude: 1.345468,
+//       longitude: 103.956101
+//     }, zoom: 8, pan: false
+//   };
+//   $scope.options = {
+//     scrollwheel: true
+//   };
+//   $scope.marker = {key: 1, coords: {latitude: 45, longitude: -73}};
+//
+//
+//   var markers = [];
+//
+//   markers.push(
+//     {
+//       id: "first",
+//       latitude: 1.564836,
+//       longitude: 103.718025,
+//       title: "Hello1",
+//       options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
+//
+//     }
+//   );
+//   markers.push(
+//     {
+//       id: "second",
+//       latitude: 1.512557,
+//       longitude: 104.168110,
+//
+//     }
+//   );
+//
+//
+//   // $scope.randomMarkers = markers;
+//   //
+//   //
+//   // $scope.randomLines = [
+//   //
+//   //   {
+//   //     id: 1,
+//   //     geotracks: [{
+//   //       latitude: 1.564836,
+//   //       longitude: 103.718025
+//   //     }, {
+//   //       latitude: 1.512557,
+//   //       longitude: 104.168110
+//   //     }],
+//   //     stroke: {
+//   //       color: '#6060FB',
+//   //       weight: 1
+//   //     }
+//   //   }, {
+//   //     id: 2,
+//   //     geotracks: [{
+//   //       latitude: 24.0,
+//   //       longitude: 72.58
+//   //     }, {
+//   //       latitude: 23.1,
+//   //       longitude: 71.58
+//   //     }]
+//   //   }];
+//
+//
+//   uiGmapGoogleMapApi.then(function (maps) {
+//     console.log("Inside GoogleMaps Then");
+//
+//   });
+//
+//   $scope.getNodes = $http({
+//     method: 'GET',
+//     url: host1,
+//     params: {'format': 'json', 'event-type': 'packet-trace', 'time-end': (Math.floor(Date.now() / 1000)), 'limit': '1'}
+//   }).then(function successCallback(response) {
+//     // console.log("First $http Success");
+//
+//     for (var i = 0; i < response.data.length; i++) {
+//       var parentIP = response.data[i]['source'];
+//       var mainForLoopCounter = i;
+//
+//       addNode(response.data[i]['source'], response.data[i]['source']);
+//
+//       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+//         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+//
+//           $http({
+//             method: 'GET',
+//             url: response.data[i]['url'] + "packet-trace/base",
+//             params: {'format': 'json', 'limit': '1', 'time-end': (Math.floor(Date.now() / 1000))}
+//           }).then(function successCallback(response2) {
+//             // console.log("Second $http Success");
+//             //console.log(response2.data[0]['ts']);
+//
+//             for (var k = 0; k < response2.data.length; k++) {
+//               var ts = response2.data[k]['ts'];
+//               // console.log("TS: " + ts);
+//
+//               // Main Node
+//               // cytoscape_edges.push(add_edge(Math.random(), response.data[mainForLoopCounter]['source'] ,response2.data[k]['val'][0]['ip'], Math.random()));
+//               addEdge(Math.random(), response.data[mainForLoopCounter]['source'], response2.data[k]['val'][0]['ip'], 1);
+//
+//               var temp_ip = [];
+//               for (var l = 0; l < response2.data[k]['val'].length; l++) {
+//                 if (response2.data[k]['val'][l]['query'] == 1) {
+//                   temp_ip.push(response2.data[k]['val'][l]['ip']);
+//                 }
+//               }
+//
+//               // Adding Nodes and Edges
+//               for (var m = 0; m < temp_ip.length; m++) {
+//                 // cytoscape_nodes.push(add_node(temp_ip[m]));
+//                 addNode(temp_ip[m], temp_ip[m]);
+//                 if (m != (temp_ip.length - 1 )) {
+//                   // cytoscape_edges.push(add_edge(Math.random(), temp_ip[m], temp_ip[m + 1],100000));
+//                   addEdge(Math.random(), temp_ip[m], temp_ip[m + 1], 1);
+//                 }
+//               }
+//
+//             }
+//
+//           }, function errorCallback(response2) {
+//             console.log("Second $http error: " + response2);
+//           });
+//
+//
+//         }
+//       }
+//     }
+//
+//   }, function errorCallback(response) {
+//     console.log("First $http error: " + response);
+//   });
+//
+//
+//   $q.all([$scope.getNodes]).then(function (values) {
+//
+//
+//   });
+//   for (var i = 0; i < nodes.length; i++) {
+//     GEOIP_NEKUDO.decode({ip_address: nodes[i].id}, function (decoded_ip) {
+//       nodes[i].latitude = decoded_ip.location.latitude;
+//       nodes[i].longitude = decoded_ip.location.longitude;
+//       console.log("Latitude: " + decoded_ip.location.latitude);
+//     });
+//   }
+//
+//   // for (var i = 0; i < edges.length; i++) {
+//   //   GEOIP_NEKUDO.decode({ip_address: edges[i].id}, function (decoded_ip) {
+//   //     edges[i].latitude = decoded_ip.location.latitude;
+//   //     edges[i].longitude = decoded_ip.location.longitude;
+//   //
+//   //
+//   //   });
+//   // }
+//
+//
+//   function addNode(id, title) {
+//     if (nodes.length > 0) {
+//       var hasDuplicates = false;
+//       for (var i = 0; i < nodes.length; i++) {
+//         if (nodes[i].id == id) {
+//           hasDuplicates = true;
+//         }
+//       }
+//
+//       if (hasDuplicates == false) {
+//         nodes.push(
+//           {
+//             id: id,
+//             latitude: 0,
+//             longitude: 0,
+//             title: title,
+//             options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
+//
+//           });
+//
+//       }
+//     } else {
+//       nodes.push(
+//         {
+//           id: id,
+//           latitude: 0,
+//           longitude: 0,
+//           title: title,
+//           options: {labelClass: 'marker_labels', labelAnchor: '12 60', labelContent: 'm1'}
+//
+//         });
+//
+//     }
+//
+//   }
+//
+//   function addEdge(id, source, target, weight) {
+//
+//     edges.push(
+//       {
+//         id: id,
+//         geotracks: [{
+//           latitude: source,
+//           longitude: 0
+//         }, {
+//           latitude: target,
+//           longitude: 0
+//         }],
+//         stroke: {
+//           color: '#6060FB',
+//           weight: weight
+//         }
+//       }
+//     )
+//
+//   }
+//
+//   $scope.nodeMarkers = nodes;
+//   $scope.edgeLines = edges;
+//
+//   //  var maps = new GMaps({
+//   //   div: '#maps',
+//   //   lat: 37.8668,
+//   //   lng: -122.2536,
+//   //   width: 'max-width',
+//   //   height: '700px',
+//   //   zoom: 12,
+//   //   zoomControl: true,
+//   //   zoomControlOpt: {
+//   //     style: 'SMALL',
+//   //     position: 'TOP_LEFT'
+//   //   },
+//   //   panControl: false
+//   // });
+//
+//   //$scope.maps="<div id='maps'></div>"
+//
+//   // TracerouteResults.get({ metadata_key: '0171dee126dd433e817e21ca352bc517' }, function(data) {
+//   //   //$scope.route_time = data[0].ts;
+//   //   //for (i = 0; i < data[0].val.length; i++) {
+//   //   //  console.log(data[0].val[i].ip)
+//   //   //}
+//   //
+//   //
+//   //   angular.forEach(data[0].val, function (item) {
+//   //
+//   //     if (previousIP != item.ip){
+//   //       counter++
+//   //
+//   //       //console.log(item.ip)
+//   //
+//   //       GEOIP_NEKUDO.decode({ ip_address: item.ip }, function(decoded_ip) {
+//   //         latitude = decoded_ip.location.latitude
+//   //         longitude = decoded_ip.location.longitude
+//   //
+//   //         maps.setCenter(latitude, longitude)
+//   //
+//   //
+//   //         //console.log(counter)
+//   //         if (counter==1){
+//   //          //w console.log(latitude)
+//   //           firstLat=latitude
+//   //           firstLon=longitude
+//   //         }
+//   //
+//   //
+//   //         plottingPath.push([latitude, longitude])
+//   //
+//   //
+//   //
+//   //           //maps.drawOverlay({
+//   //           //  lat: latitude,
+//   //           //  lng: longitude,
+//   //           //  content: '<div class="overlay">'+decoded_ip.city+'</div>'
+//   //           //});
+//   //
+//   //         maps.addMarker({
+//   //           lat: latitude,
+//   //           lng: longitude,
+//   //           infoWindow: {
+//   //             content: '<p>TTL #: '+ item.ttl + '</p>'
+//   //           }
+//   //
+//   //
+//   //         });
+//   //         // FIXME: plottingPath initialized to zero when it's outside this function. Had to draw in here.
+//   //         // Look into it and fix it
+//   //         maps.drawPolyline({
+//   //           path: plottingPath,
+//   //           strokeColor: '#131540',
+//   //           strokeOpacity: 0.6,
+//   //           strokeWeight: 3
+//   //         });
+//   //
+//   //
+//   //       });
+//   //
+//   //       console.log(plottingPath.length)
+//   //       previousIP = item.ip
+//   //     }
+//   //
+//   //
+//   //
+//   //   })
+//   //
+//   //
+//   // });
+//
+//   //plottingPath.push("x")
+//
+//   // plottingPath = [[37.7697, -122.3933], [-12.05449279282314, -77.03024273281858], [-12.055122327623378, -77.03039293652341], [-12.075917129727586, -77.02764635449216], [-12.07635776902266, -77.02792530422971], [-12.076819390363665, -77.02893381481931], [-12.088527520066453, -77.0241058385925], [-12.090814532191756, -77.02271108990476]];
+//
+//   //   maps.drawPolyline({
+//   //   path: plottingPath,
+//   //   strokeColor: '#131540',
+//   //   strokeOpacity: 0.6,
+//   //   strokeWeight: 6
+//   // });
+//
+//
+// }]);
 
 traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($scope, TracerouteMainResults) {
 
@@ -1261,7 +1267,7 @@ traceroute.controller('tr_cytoscape', ['$scope', '$http', '$q', '$log', 'HostSer
 // }]);
 
 // http://www.dwmkerr.com/promises-in-angularjs-the-definitive-guide/
-traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', '$log', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, $log, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
 
   var host1 = HostService.getHost();
 
@@ -1312,6 +1318,12 @@ traceroute.controller('bw_cytoscape', ['$scope', '$http', '$q', 'HostService', '
       populateGraph(promises, startNode, destinationNode);
 
     }
+
+    //return $q.all(promises);
+  }).then(function (response) {
+
+    //populateGraph goes here.
+
   }).catch(function (error) {
     console.log("An error occured: " + error);
   });
@@ -1532,6 +1544,38 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 
 }]);
 
+
+traceroute.controller('updateLatency', ['$scope', '$http', '$q', '$log', 'HostService', 'CytoscapeService_Bandwidth', 'UnixTimeConverterService', function ($scope, $http, $q, $log, HostService, CytoscapeService_Bandwidth, UnixTimeConverterService) {
+
+
+  //ng click
+  $scope.analyzetr = function () {
+
+  }
+
+
+}]);
+traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', function ($scope, $log, AnalyzeTraceroute) {
+
+
+  $scope.analyzetr = function () {
+    console.log("Caller: ")
+
+
+    AnalyzeTraceroute.getAnalyzation().then(function (response) {
+      console.log(response)
+      $log.debug("MIN String?: " + (response[0]['nodes']['rttMin']))
+      //0.074
+      $log.debug("MIN String?: " + angular.isString(response[0]['nodes']['rttMin']))
+
+    });
+
+
+  }
+
+
+}]);
+
 //
 // traceroute.controller('traceroute_visjs', ['$scope', '$http', 'TracerouteMainResults', function ($scope, $http, TracerouteMainResults) {
 //
@@ -1685,29 +1729,6 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 //
 // }]);
 //
-
-traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', function ($scope, $log, AnalyzeTraceroute) {
-
-
-  $scope.analyzetr = function () {
-    console.log("Caller: ")
-
-
-
-
-    AnalyzeTraceroute.getAnalyzation().then(function (response) {
-      console.log(response)
-      $log.debug("MIN String?: " + (response[0]['nodes']['rttMin']))
-      //0.074
-      $log.debug("MIN String?: " + angular.isString(response[0]['nodes']['rttMin']))
-
-    });
-
-
-  }
-
-
-}]);
 
 // traceroute.controller('ipAddrDecoderController', ['$scope', 'GEOIP_NEKUDO', function ($scope, GEOIP_NEKUDO) {
 //   $scope.ip_address

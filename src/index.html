@@ -467,19 +467,21 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Vis
+      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Latency
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      <div class="container">
-        Focus: detection of variating/anomaly in the health of links.
-        We need to get the data over time to see if there is progressive deterioration on links.
-        look ay past data you would see the changes in latency amd bandwidth.
-        visualisation and analysis tool for the network manager.
+      <div class="container" id="cytoscape_latency" ng-controller="bw_cytoscape">
+
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
       </div>
+
+      Focus: detection of variating/anomaly in the health of links.
+      We need to get the data over time to see if there is progressive deterioration on links.
+      look ay past data you would see the changes in latency amd bandwidth.
+      visualisation and analysis tool for the network manager.
 
     </div>
     <!-- /.panel-body -->
@@ -498,22 +500,20 @@
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
 
-        <div id="tr_plot_gmaps" ng-controller="tr_gmaps">
+        <!--<div id="tr_plot_gmaps" ng-controller="tr_gmaps">-->
 
-          <ui-gmap-google-map center='map.center' zoom='map.zoom'>
-            <ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">
-              <ui-gmap-windows show="show">
-                <div ng-non-bindable>{{title}}</div>
-              </ui-gmap-windows>
-            </ui-gmap-markers>
+          <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
+            <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
+              <!--<ui-gmap-windows show="show">-->
+                <!--<div ng-non-bindable>{{title}}</div>-->
+              <!--</ui-gmap-windows>-->
+            <!--</ui-gmap-markers>-->
 
-            <ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">
+            <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
 
-            </ui-gmap-polylines>
-          </ui-gmap-google-map>
-
-
-        </div>
+            <!--</ui-gmap-polylines>-->
+          <!--</ui-gmap-google-map>-->
+        <!--</div>-->
 
       </div>
 

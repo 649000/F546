@@ -26,6 +26,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
       sourceAndDestinationList = [];
 
+
       var analyzedTRList = TracerouteResultsService.getMainResult().then(function (response) {
 
         $log.debug("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> Main Response: " + response.data.length)
@@ -70,10 +71,13 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
         var nodeAndRttList_CalculatedData = [];
         var nodeAndRttList_RawData = [];
 
+        var startDate;
+        var endDate;
+
 
         for (var i = 0; i < response.length; i++) {
 
-          $log.debug("Source: " +sourceAndDestinationList[i]['source']);
+          $log.debug("Source: " + sourceAndDestinationList[i]['source']);
           $log.debug("Destination: " + sourceAndDestinationList[i]['destination']);
 
           // Checking for 'active' servers
@@ -89,7 +93,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
                 var rtt = response[i].data[k]['val'][l]['rtt'];
                 var IPExist = false;
 
-
                 // Check if the IP Address already exist in the list.
                 for (var j = 0; j < nodeAndRttList_RawData.length; j++) {
 
@@ -98,7 +101,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
                     IPExist = true;
                     nodeAndRttList_RawData[j]['rtt'].push(rtt);
                   }
-
                 }
 
                 if (IPExist == false) {
@@ -107,7 +109,8 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
                     //source: xx,
                     //destination: xx
                     IP: IPAddr,
-                    rtt: [rtt]
+                    rtt: [rtt],
+                    date: [ts]
                   }
 
                   nodeAndRttList_RawData.push(newNode);
@@ -131,8 +134,8 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
                 rttAvg: math.mean(nodeAndRttList_RawData[i]['rtt']),
                 rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
                 rttStd: math.std(nodeAndRttList_RawData[i]['rtt']),
-                startDate:1,
-                endDate:1
+                startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
+                endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
               }
             }
           );
@@ -146,7 +149,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       });
 
       return analyzedTRList;
-
 
 
     },
