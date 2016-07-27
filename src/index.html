@@ -452,14 +452,12 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      <div class="container">
+      <button type="button" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
+      <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-        <button type="button" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
 
-        <!--<div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">-->
-        <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
 
-        </div>
+
 
       </div>
     </div>
