@@ -1555,20 +1555,34 @@ traceroute.controller('updateLatency', ['$scope', '$http', '$q', '$log', 'HostSe
 
 
 }]);
-traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', function ($scope, $log, AnalyzeTraceroute) {
+traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', 'GEOIP_NEKUDO', function ($scope, $log, AnalyzeTraceroute, GEOIP_NEKUDO) {
 
 
   $scope.analyzetr = function () {
-    console.log("Caller: ")
 
+    var xxx;
+    GEOIP_NEKUDO.decode({ip_address: '192.30.252.129'}, function (data) {
+      //$scope.latitude = data.latitude;
+      //$scope.longitude = data.longitude;
 
-    AnalyzeTraceroute.getAnalyzation().then(function (response) {
-      console.log(response)
-      $log.debug("MIN String?: " + (response[0]['nodes']['rttMin']))
-      //0.074
-      $log.debug("MIN String?: " + angular.isString(response[0]['nodes']['rttMin']))
+      xxx = data.location.latitude;
+      $log.debug(data.location.latitude);
+      $log.debug(data.location.longitude);
+
 
     });
+    $log.debug("OUTSIDE: " + xxx);
+
+    // console.log("Caller: ")
+    //
+    //
+    // AnalyzeTraceroute.getAnalyzation().then(function (response) {
+    //   console.log(response)
+    //   $log.debug("MIN String?: " + (response[0]['nodes']['rttMin']))
+    //   //0.074
+    //   $log.debug("MIN String?: " + angular.isString(response[0]['nodes']['rttMin']))
+    //
+    // });
 
 
   }
