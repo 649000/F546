@@ -17,7 +17,6 @@
     "d3": "^3.5.16",
     "cytoscape": "^2.6.5",
     "startbootstrap-sb-admin-2": "^1.0.8",
-    "angular-google-maps": "^2.3.3",
     "mathjs": "^3.3.0"
   },
   "devDependencies": {

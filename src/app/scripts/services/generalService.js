@@ -84,9 +84,9 @@ generalServices.factory('CurrentTimeUnixService', function () {
 
 generalServices.factory('HostService', [function () {
 
-  var host = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
+  // var host = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
 
-  // var host = "http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/";
+  var host = "http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/";
 
 
   return {

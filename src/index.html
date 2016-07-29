@@ -22,19 +22,7 @@
   <!-- css files will be automatically insert here -->
   <!-- endinject -->
   <!-- endbuild -->
-  <style>
 
-    .node {
-      stroke: #fff;
-      stroke-width: 1.5px;
-    }
-
-    .link {
-      stroke: #999;
-      stroke-opacity: .6;
-    }
-
-  </style>
 </head>
 <body>
 <!-- Navigation -->
@@ -383,7 +371,10 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="container">
-        <button type="button" ng-controller="testController" ng-click="analyzetr()" >Test</button>
+        <button type="button" id="123234" class="btn btn-default" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." data-original-title="" title="">
+          Popover on top
+        </button>
+        <button type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()" >Test</button>
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
         <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
@@ -424,11 +415,7 @@
           Total Nodes: {{totalNodes}}
           Date of Traceroute Test: {{tracerouteDate}}
           Time of Traceroute Test: {{tracerouteTime}}
-          <ul>
-            <li ng-repeat="x in timeOfResultsArray">
-              {{ x }}
-            </li>
-          </ul>
+
 
 
         </div>
@@ -453,7 +440,8 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       Overview of all, click, show from that clicked node perspective.
-      <button type="button" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
+      <button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
+      <button id="latencyButton" type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Latency</button>
       <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
 
@@ -472,12 +460,12 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      <div class="container" id="cytoscape_latency" ng-controller="bw_cytoscape">
+      <!--<div class="container" id="cytoscape_latency" ng-controller="bw_cytoscape">-->
 
-        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+        <!--&lt;!&ndash;<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>&ndash;&gt;-->
 
 
-      </div>
+      <!--</div>-->
 
       Focus: detection of variating/anomaly in the health of links.
       We need to get the data over time to see if there is progressive deterioration on links.
@@ -540,6 +528,21 @@
 <!-- angular templates will be automatically converted in js and inserted here -->
 <!-- endinject -->
 <!-- endbuild -->
+
+<script>
+  // tooltip demo
+  $('.tooltip-demo').tooltip({
+    selector: "[data-toggle=tooltip]",
+    container: "body"
+  })
+
+  // popover demo
+  $("#123234")
+    .popover()
+
+
+
+</script>
 
 </body>
 </html>

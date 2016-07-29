@@ -220,13 +220,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
     ]
 
     // Layout can only be done in Controller.
-
-    // layout: {
-    //   name: 'concentric',
-    // }
-
-
-  });
+   });
 
 
   return {
@@ -260,7 +254,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 
           // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
         },
-        classes: 'multiline-manual'
+        classes: 'multiline-manual'// a space separated list of class names that the element has
 
 
         // scratchpad data (usually temp or nonserialisable data)
@@ -281,7 +275,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
         //
         // grabbable: true // whether the node can be grabbed and moved by the user
 
-        // class: 'mainNode'// a space separated list of class names that the element has
+
       };
 
       // console.log("Node ID: " + ID + " created.");
@@ -291,13 +285,13 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
       return cy;
     },
 
-    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode) {
+    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey) {
 
 
       var edge = {
         group: 'edges',
         data: {
-          id: Math.random(),
+          id: ID,
           // inferred as an edge because `source` and `target` are specified:
           source: source, // the source node id (edge comes from this node)
           target: target,  // the target node id (edge goes to this node)
@@ -305,7 +299,8 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
           bandwidth: bandwidth,
           latency: latency,
           startNode: startNode,
-          endNode: endNode
+          endNode: endNode,
+          metadataKey:metadataKey
         }
       };
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
@@ -336,9 +331,9 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
       // .selector('#203.30.39.127')
       // .selector(':selected')
       // .selector('[id = "203.30.39.127"]')
-        .selector('node[mainNode = "true"]')
+        .selector(selector)
         .style({
-          'background-color': 'black'
+          'line-color': 'blue',
         }).update();
 
       return cy;
