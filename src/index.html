@@ -403,13 +403,17 @@
   <div class="panel panel-default">
 
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape - SERVICE CHECK
+      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute - No Duplicated Path
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      <div class="container">
+      Show Visualisation: <input class= "checkbox-inline" type="checkbox" ng-model="myVar">
 
-        <div ng-controller="tr_cytoscape">
+      <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl" ng-click="loadTraceroute_NoDuplicate()" >Load Traceroute</button>
+
+      <div class="container" ng-show="myVar">
+
+        <div ng-controller="Traceroute_NoDuplicateCtrl">
           Main Nodes: {{mainNodes}}
           NON - Main Nodes: {{NonMainNodes}}
           Total Nodes: {{totalNodes}}
@@ -421,7 +425,7 @@
         </div>
 
 
-        <div class="container" id="tr_plot_cytoscape_2" ng-controller="tr_cytoscape">
+        <div class="container" id="traceroute_noduplicate" ng-controller="Traceroute_NoDuplicateCtrl">
 
         </div>
 
@@ -460,12 +464,13 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      <!--<div class="container" id="cytoscape_latency" ng-controller="bw_cytoscape">-->
-
-        <!--&lt;!&ndash;<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>&ndash;&gt;-->
 
 
-      <!--</div>-->
+      <div class="container" id="latency_cytoscape" ng-controller="LatencyVisualisationCtrl">
+
+
+
+      </div>
 
       Focus: detection of variating/anomaly in the health of links.
       We need to get the data over time to see if there is progressive deterioration on links.
