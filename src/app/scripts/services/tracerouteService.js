@@ -195,7 +195,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
           'height': 20,
           'width': 20,
           'background-color': '#30c9bc',
-          'label': 'data(id)'
+          'label': 'data(label)'
         }
       },
 
@@ -209,6 +209,12 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
           'target-arrow-color': 'black',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
           'target-arrow-shape': 'triangle'
+        }
+      },
+      {
+        selector: '.multiline-manual',
+        style: {
+          'text-wrap': 'wrap'
         }
       }
     ]
@@ -247,10 +253,14 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
           id: ID,
           mainNode: mainNode,
           startNode: 0,
-          endNode: 0
+          endNode: 0,
+          country: null,
+          city: null,
+          label: ID
 
           // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
-        }
+        },
+        classes: 'multiline-manual'
 
 
         // scratchpad data (usually temp or nonserialisable data)

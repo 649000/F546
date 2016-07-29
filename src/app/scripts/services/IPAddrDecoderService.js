@@ -75,15 +75,14 @@ ipAddrDecodeServices.factory('IP_INFO_DB', ['$resource', function ($resource) {
  * .location.latitude
  * .location.longitude
  */
-// ipAddrDecodeServices.factory('GEOIP_NEKUDO', ['$resource', function ($resource) {
-//
-//   // Not any difference from promises
-//   return $resource(executionURL_GEOIP_NEKUDO, {}, {
-//     decode: {method: 'GET', params: {}, isArray: false}
-//   });
-//
-// }]);
+ipAddrDecodeServices.factory('GEOIP_NEKUDO', ['$resource', function ($resource) {
 
+  // Not any difference from promises
+  return $resource(executionURL_GEOIP_NEKUDO, {}, {
+    decode: {method: 'GET', params: {}, isArray: false}
+  });
+
+}]);
 
 
 ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$q', '$cacheFactory', '$log', function ($http, $q, $log, $cacheFactory) {
@@ -154,7 +153,7 @@ ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$q', '$cacheFactory'
 
 }]);
 
-ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$q', '$cacheFactory', '$log', function ($http, $q, $log, $cacheFactory) {
+ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$cacheFactory', '$log', function ($http, $log, $cacheFactory) {
 
   var host = "http://geoip.nekudo.com/api/";
 
@@ -178,8 +177,10 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$q', '$cacheFactor
 
         //response.data should be country
         return {
+          ip: IPAddress,
           city: response.data.city,
-          country: response.data.country.name
+          country: response.data.country.name,
+          countrycode:response.data.country.code
         }
 
 
