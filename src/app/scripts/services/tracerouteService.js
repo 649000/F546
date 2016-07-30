@@ -350,7 +350,6 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 tracerouteServices.factory('LatencyCytoscapeService', [function () {
 
 
-
   var cy = cytoscape({
     container: document.getElementById('latency_cytoscape'),
 
@@ -370,7 +369,7 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
         style: {
           'width': 2,
           'opacity': 0.8,
-          'label': 'data(bandwidth)',
+          'label': 'data(latency)',
           'line-color': '#a8ea00',
           'target-arrow-color': 'black',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
@@ -513,6 +512,67 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
 
 }]);
 
+tracerouteServices.factory('LatencyResultsService', ['$http', '$q', '$cacheFactory', '$log','HostService', function ($http, $q, $log, $cacheFactory, HostService) {
+
+
+  // cache http://stackoverflow.com/questions/21660647/angular-js-http-cache-time
+
+  var retrievedMainResult;
+  var host = HostService.getHost();
+
+  return {
+
+    getMainResult: function () {
+
+      return $http({
+        method: 'GET',
+        url: host,
+        params: {
+          'format': 'json',
+          'event-type': 'histogram-rtt'
+          // 'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          // 'time-range': timeRange
+        },
+        cache: true
+      })
+    },
+
+    getIndividualResult: function (metadataURL, timeRange) {
+
+      return $http({
+        method: 'GET',
+        url: metadataURL + "packet-trace/base",
+        params: {
+          'format': 'json',
+          // 'limit': '2',
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          'time-range': timeRange
+          //48 Hours = 172800
+          // 24 hours = 86400
+          //604800 (7days).
+        },
+        cache: true
+      });
+    },
+
+    clearCache: function () {
+      $cacheFactory.get('$http').removeAll();
+      $log.debug("TracerouteResultsService:clearCache() Cache Cleared");
+    },
+
+    setMainResult_JSON:function (mainResult){
+      retrievedMainResult = mainResult;
+    },
+    getMainResult_JSON:function (){
+      return retrievedMainResult;
+    }
+
+
+  };
+
+
+}]);
 
 
 tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFactory', '$log','HostService', function ($http, $q, $log, $cacheFactory, HostService) {

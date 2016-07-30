@@ -465,12 +465,38 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
 
+      <div ng-controller="LatencyVisualisation_DisplayOptionsCtrl">
+        <button type="button" class="btn btn-default" ng-click="displayBreathFirst();">Breath First</button>
+        <button type="button" class="btn btn-default" ng-click="displayConcentric();">Concenmetric</button>
+        <button type="button" class="btn btn-default" ng-click="displayGrid();">Grid</button>
+        <button type="button" class="btn btn-default" ng-click="displayCose();">Cose</button>
+        <button type="button" class="btn btn-default" ng-click="displayCircle();">Circle</button>
+      </div>
 
-      <div class="container" id="latency_cytoscape" ng-controller="LatencyVisualisationCtrl">
+
+      <div ng-controller="LatencyVisualisationCtrl">
+
+      <div class="container" id="latency_cytoscape" >
 
 
 
       </div>
+
+
+
+        <button type="button" class="btn btn-default" ng-click="showMe();">More Information</button>
+
+        <div id="LatencyInformation"  class="container" ng-show="show">
+          d
+        </div>
+
+
+      </div>
+
+
+
+      1. Get Traceroute if possible
+      2. Diploy owdelay and rtt etc, more metrics.
 
       Focus: detection of variating/anomaly in the health of links.
       We need to get the data over time to see if there is progressive deterioration on links.
@@ -510,6 +536,7 @@
         <!--</div>-->
 
       </div>
+
 
     </div>
     <!-- /.panel-body -->
