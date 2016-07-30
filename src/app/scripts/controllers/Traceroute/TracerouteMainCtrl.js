@@ -21,6 +21,25 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDeco
 
 }])
 
+traceroute.directive('helloWorld', function () {
+
+  // 'A' - <span ng-sparkline></span>
+  // 'E' - <ng-sparkline></ng-sparkline>
+  // 'C' - <span class="ng-sparkline"></span>
+  // 'M' - <!-- directive: ng-sparkline -->
+
+
+  return {
+    restrict: 'C',
+    link: function (scope, element, attrs) {
+
+      element.bind("click", function () {
+        alert("DIRECTIVES")
+      });
+    }
+  };
+});
+
 
 // traceroute.controller('tr_gmaps', ['$scope', '$http', '$q', 'TracerouteMainResults', 'GEOIP_NEKUDO', 'uiGmapGoogleMapApi', function ($scope, $http, $q, TracerouteMainResults, GEOIP_NEKUDO, uiGmapGoogleMapApi) {
 //
@@ -1774,13 +1793,34 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 }]);
 
 traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
+
+  $scope.TESTSCOPE = "INITIAL LOADED STATE"
+
   $scope.showMe = function () {
     $scope.show = true;
+    $scope.TESTSCOPE = "SHOWN"
+
   }
+
+  $scope.hideMe = function () {
+    $scope.show = false;
+    $scope.TESTSCOPE = "HIDDEN"
+
+  }
+
 
   var host = HostService.getHost();
   var sourceAndDestinationList;
   var nodeToIPList;
+
+  function LatencyInfo() {
+
+    // $("#LatencyInformation").toggle();
+
+    // Pass ID through LatencyInfo(XX);
+
+
+  }
 
 
   $http({
@@ -1850,14 +1890,19 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
         LatencyCytoscapeService.add_edge(response.data[i]['metadata-key'], response.data[i]['source'], response.data[i]['destination'], null, null, null, response.data[i]['source'], response.data[i]['destination'], response.data[i]['metadata-key']);
 
         // Event
-        LatencyCytoscapeService.getGraph().on('tap', 'edge[id = "' + response.data[i]['metadata-key'] + '"]', function (event) {
+
+        LatencyCytoscapeService.getGraph().getElementById(response.data[i]['metadata-key']).on('tap', function (event) {
           var element = event.cyTarget;
-          //ID: element.id()
-          //metadataKey: element.data().metadataKey
+          console.log(element.data().metadataKey)
+          $scope.$apply(function(){
+            $scope.show = true;
+            $scope.TESTSCOPE = element.data().metadataKey
+          });
+          // $scope.showMe = function () {
+          //
+          // }
 
-          $("#LatencyInformation").toggle();
-
-
+          // $scope.showMe();
 
           // search for ALL edges with same metadata, make it red, make everything else the same.
           LatencyCytoscapeService.getGraph().style().selector("edge").style({
@@ -1875,8 +1920,38 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
               'width': 4
             }).update();
 
+        })
 
-        });
+
+        // LatencyCytoscapeService.getGraph().on('tap', 'edge[id = "' + response.data[i]['metadata-key'] + '"]', function (event) {
+        //   var element = event.cyTarget;
+        //   //ID: element.id()
+        //   //metadataKey: element.data().metadataKey
+        //
+        //
+        //   LatencyInfo();
+        //
+        //   // $scope.hideMe();
+        //
+        //
+        //   // search for ALL edges with same metadata, make it red, make everything else the same.
+        //   LatencyCytoscapeService.getGraph().style().selector("edge").style({
+        //     'line-color': '#a8ea00',
+        //     'width': 2
+        //   }).update();
+        //
+        //   LatencyCytoscapeService.getGraph().style()
+        //   // .selector('#203.30.39.127')
+        //   // .selector(':selected')
+        //   // .selector('[id = "203.30.39.127"]')
+        //     .selector('edge[id = "' + element.data().metadataKey + '"]')
+        //     .style({
+        //       'line-color': 'green',
+        //       'width': 4
+        //     }).update();
+        //
+        //
+        // });
 
       }
 
@@ -1968,6 +2043,7 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
     return $q.all(promises);
 
   }).then(function (response) {
+
     // $log.debug("$q response length: " + response.length);
     // $log.debug("sourceAndDestinationList length: " + response.length);
 
@@ -2094,6 +2170,7 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
 
   });
 
+
 }]);
 
 
@@ -2106,6 +2183,11 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
 
   var host = HostService.getHost();
   var sourceAndDestinationList;
+
+  //ng click. Load ALL information about that metadatakey
+  $scope.loadLatencyInfo = function () {
+
+  }
 
   //ng click
   $scope.getLatency = function () {
@@ -2307,7 +2389,8 @@ traceroute.controller('LatencyVisualisation_DisplayOptionsCtrl', ['$scope', '$ht
       condense: false, // uses all available space on false, uses minimal space on true
       rows: undefined, // force num of rows in the grid
       cols: undefined, // force num of columns in the grid
-      position: function( node ){}, // returns { row, col } for element
+      position: function (node) {
+      }, // returns { row, col } for element
       sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
       animate: false, // whether to transition the node positions
       animationDuration: 500, // duration of animation in ms if enabled

@@ -48,7 +48,7 @@
           <a href="#">
             <div>
               <strong>John Smith</strong>
-                                    <span class="pull-right text-muted">
+              <span class="pull-right text-muted">
                                         <em>Yesterday</em>
                                     </span>
             </div>
@@ -60,7 +60,7 @@
           <a href="#">
             <div>
               <strong>John Smith</strong>
-                                    <span class="pull-right text-muted">
+              <span class="pull-right text-muted">
                                         <em>Yesterday</em>
                                     </span>
             </div>
@@ -72,7 +72,7 @@
           <a href="#">
             <div>
               <strong>John Smith</strong>
-                                    <span class="pull-right text-muted">
+              <span class="pull-right text-muted">
                                         <em>Yesterday</em>
                                     </span>
             </div>
@@ -258,7 +258,7 @@
         <li class="sidebar-search">
           <div class="input-group custom-search-form">
             <input type="text" class="form-control" placeholder="Search...">
-                                <span class="input-group-btn">
+            <span class="input-group-btn">
                                 <button class="btn btn-default" type="button">
                                     <i class="fa fa-search"></i>
                                 </button>
@@ -371,20 +371,23 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       <div class="container">
-        <button type="button" id="123234" class="btn btn-default" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." data-original-title="" title="">
+        <button type="button" id="123234" class="btn btn-default" data-placement="top"
+                data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." data-original-title=""
+                title="">
           Popover on top
         </button>
-        <button type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()" >Test</button>
+        <button type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()">Test
+        </button>
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
         <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
         <!--<div ng-controller="tr_cytoscape">-->
-          <!--Main Nodes: {{mainNodes}}-->
+        <!--Main Nodes: {{mainNodes}}-->
 
-          <!--Total Nodes: {{totalNodes}}-->
-          <!--Date of Traceroute Test: {{tracerouteDate}}-->
-          <!--Time of Traceroute Test: {{tracerouteTime}}-->
+        <!--Total Nodes: {{totalNodes}}-->
+        <!--Date of Traceroute Test: {{tracerouteDate}}-->
+        <!--Time of Traceroute Test: {{tracerouteTime}}-->
         <!--</div>-->
 
 
@@ -407,9 +410,11 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      Show Visualisation: <input class= "checkbox-inline" type="checkbox" ng-model="myVar">
+      Show Visualisation: <input class="checkbox-inline" type="checkbox" ng-model="myVar">
 
-      <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl" ng-click="loadTraceroute_NoDuplicate()" >Load Traceroute</button>
+      <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl"
+              ng-click="loadTraceroute_NoDuplicate()">Load Traceroute
+      </button>
 
       <div class="container" ng-show="myVar">
 
@@ -419,7 +424,6 @@
           Total Nodes: {{totalNodes}}
           Date of Traceroute Test: {{tracerouteDate}}
           Time of Traceroute Test: {{tracerouteTime}}
-
 
 
         </div>
@@ -444,12 +448,14 @@
     <!-- /.panel-heading -->
     <div class="panel-body">
       Overview of all, click, show from that clicked node perspective.
-      <button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Bandwidth</button>
-      <button id="latencyButton" type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()" >Get Latency</button>
+      <button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()">Get
+        Bandwidth
+      </button>
+      <button id="latencyButton" type="button" class="btn btn-default" ng-controller="updateBandwidth"
+              ng-click="getBandwidth()">Get Latency
+      </button>
       <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
         <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-
-
 
 
       </div>
@@ -476,23 +482,23 @@
 
       <div ng-controller="LatencyVisualisationCtrl">
 
-      <div class="container" id="latency_cytoscape" >
 
 
-
-      </div>
-
+        <div class="container" id="latency_cytoscape" >
 
 
-        <button type="button" class="btn btn-default" ng-click="showMe();">More Information</button>
+        </div>
 
-        <div id="LatencyInformation"  class="container" ng-show="show">
-          d
+
+        <button type="button" class="btn btn-default" ng-click="showMe();">Show</button>
+        <button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>
+        {{TESTSCOPE}}
+        <div id="LatencyInformation" ng-controller="LatencyVisualisationCtrl" class="container" ng-show="show">
+          This is a hidden box
         </div>
 
 
       </div>
-
 
 
       1. Get Traceroute if possible
@@ -522,17 +528,17 @@
 
         <!--<div id="tr_plot_gmaps" ng-controller="tr_gmaps">-->
 
-          <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
-            <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
-              <!--<ui-gmap-windows show="show">-->
-                <!--<div ng-non-bindable>{{title}}</div>-->
-              <!--</ui-gmap-windows>-->
-            <!--</ui-gmap-markers>-->
+        <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
+        <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
+        <!--<ui-gmap-windows show="show">-->
+        <!--<div ng-non-bindable>{{title}}</div>-->
+        <!--</ui-gmap-windows>-->
+        <!--</ui-gmap-markers>-->
 
-            <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
+        <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
 
-            <!--</ui-gmap-polylines>-->
-          <!--</ui-gmap-google-map>-->
+        <!--</ui-gmap-polylines>-->
+        <!--</ui-gmap-google-map>-->
         <!--</div>-->
 
       </div>
@@ -571,7 +577,6 @@
   // popover demo
   $("#123234")
     .popover()
-
 
 
 </script>

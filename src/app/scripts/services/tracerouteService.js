@@ -466,7 +466,8 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
           startNode: startNode,
           endNode: endNode,
           metadataKey:metadataKey
-        }
+        },
+        classes: 'agclick_edge'// a space separated list of class names that the element has
       };
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
       //return edge;
