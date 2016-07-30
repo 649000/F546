@@ -21,7 +21,10 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDeco
 
 }])
 
-traceroute.directive('helloWorld', function () {
+traceroute.directive('agclick_edge', function () {
+
+  //http://kirkbushell.me/when-to-use-directives-controllers-or-services-in-angular/
+  //https://www.toptal.com/angular-js/angular-js-demystifying-directives
 
   // 'A' - <span ng-sparkline></span>
   // 'E' - <ng-sparkline></ng-sparkline>
@@ -31,12 +34,7 @@ traceroute.directive('helloWorld', function () {
 
   return {
     restrict: 'C',
-    link: function (scope, element, attrs) {
 
-      element.bind("click", function () {
-        alert("DIRECTIVES")
-      });
-    }
   };
 });
 
@@ -1792,7 +1790,7 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 
 }]);
 
-traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
+traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', '$timeout', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, $timeout,HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
 
   $scope.TESTSCOPE = "INITIAL LOADED STATE"
 
@@ -1894,10 +1892,17 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
         LatencyCytoscapeService.getGraph().getElementById(response.data[i]['metadata-key']).on('tap', function (event) {
           var element = event.cyTarget;
           console.log(element.data().metadataKey)
-          $scope.$apply(function(){
+
+          // $scope.$apply(function(){
+          //   $scope.show = true;
+          //   $scope.TESTSCOPE = element.data().metadataKey
+          // });
+
+          $timeout(function () {
             $scope.show = true;
             $scope.TESTSCOPE = element.data().metadataKey
           });
+
           // $scope.showMe = function () {
           //
           // }
