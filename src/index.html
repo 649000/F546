@@ -484,7 +484,11 @@
 
 
 
-        <div class="container" id="latency_cytoscape" >
+        Date of Latency Test: {{latencyDate}}
+        <br/>
+        Time of Latency Test: {{latencyTime}}
+        //Maybe do a qtip popup instead.
+        <div class="container" id="latency_cytoscape1" >
 
 
         </div>
@@ -493,12 +497,28 @@
         <button type="button" class="btn btn-default" ng-click="showMe();">Show</button>
         <button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>
         {{TESTSCOPE}}
+
+        <div class="container" ng-controller="LatencyVisualisationCtrl" id="latency_cytoscape2" ng-show="show" >
+          adasd
+
+        </div>
+
+
+        <div class="container" ng-controller="LatencyVisualisationCtrl" id="latency_cytoscape" ng-show="show" >
+
+
+        </div>
+
         <div id="LatencyInformation" ng-controller="LatencyVisualisationCtrl" class="container" ng-show="show">
-          This is a hidden box
+
+          INFORMATION GOES HERE
+
         </div>
 
 
       </div>
+
+
 
 
       1. Get Traceroute if possible

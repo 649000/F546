@@ -450,7 +450,7 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
       return cy;
     },
 
-    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey) {
+    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey,latencyTime) {
 
 
       var edge = {
@@ -465,7 +465,8 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
           latency: latency,
           startNode: startNode,
           endNode: endNode,
-          metadataKey:metadataKey
+          metadataKey:metadataKey,
+          latencyTime: latencyTime
         }
 
       };

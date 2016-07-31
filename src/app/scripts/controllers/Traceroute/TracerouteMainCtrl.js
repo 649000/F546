@@ -1790,15 +1790,10 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 
 }]);
 
-traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', '$timeout', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, $timeout,HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
+traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', '$timeout', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, $timeout, HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
 
   $scope.TESTSCOPE = "INITIAL LOADED STATE"
 
-  $scope.showMe = function () {
-    $scope.show = true;
-    $scope.TESTSCOPE = "SHOWN"
-
-  }
 
   $scope.hideMe = function () {
     $scope.show = false;
@@ -1806,375 +1801,381 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
 
   }
 
+  $scope.showMe = function () {
+    $scope.show = true;
+    $scope.TESTSCOPE = "SHOWN"
 
-  var host = HostService.getHost();
-  var sourceAndDestinationList;
-  var nodeToIPList;
+    //To allow Cytoscape graph to load upon showing/hiding.
+    window.dispatchEvent(new Event('resize'));
 
-  function LatencyInfo() {
+    // $timeout(function () {
 
-    // $("#LatencyInformation").toggle();
+      var host = HostService.getHost();
+      var sourceAndDestinationList;
+      var nodeToIPList;
 
-    // Pass ID through LatencyInfo(XX);
+      $http({
+        method: 'GET',
+        url: host,
+        params: {
+          'format': 'json',
+          'event-type': 'histogram-rtt',
+          // 'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          // 'time-range': 86400
+        },
+        cache: true
+      }).then(function (response) {
 
+        sourceAndDestinationList = [];
+        nodeToIPList = [];
+        var promises = [];
 
-  }
+        for (var i = 0; i < response.data.length; i++) {
 
+          sourceAndDestinationList.push(
+            {
+              source: response.data[i]['source'],
+              destination: response.data[i]['destination'],
+              metadataKey: response.data[i]['metadata-key']
+            }
+          );
 
-  $http({
-    method: 'GET',
-    url: host,
-    params: {
-      'format': 'json',
-      'event-type': 'histogram-rtt',
-      // 'limit': 10,
-      // 'time-end': (Math.floor(Date.now() / 1000)),
-      // 'time-range': 86400
-    },
-    cache: true
-  }).then(function (response) {
+          //Adding DESTINATION nodes into visualisation
+          if (LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['destination'] + '"]').size() == 0) {
 
-    sourceAndDestinationList = [];
-    nodeToIPList = [];
-    var promises = [];
+            // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
+            LatencyCytoscapeService.add_node(response.data[i]['destination'], false, null, null);
+            nodeToIPList.push(response.data[i]['destination']);
 
-    for (var i = 0; i < response.data.length; i++) {
+            // Event
+            LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + response.data[i]['destination'] + '"]', function (event) {
 
-      sourceAndDestinationList.push(
-        {
-          source: response.data[i]['source'],
-          destination: response.data[i]['destination'],
-          metadataKey: response.data[i]['metadata-key']
-        }
-      );
+            });
+          }
 
-      //Adding DESTINATION nodes into visualisation
-      if (LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['destination'] + '"]').size() == 0) {
+          //Adding SOURCE nodes into visualisation
+          if (LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
 
-        // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
-        LatencyCytoscapeService.add_node(response.data[i]['destination'], false, null, null);
-        nodeToIPList.push(response.data[i]['destination']);
+            // $log.debug("Unique Source Name: " + response.data[i]['source'])
+            LatencyCytoscapeService.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
+            nodeToIPList.push(response.data[i]['source']);
 
-        // Event
-        LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + response.data[i]['destination'] + '"]', function (event) {
-
-        });
-      }
-
-      //Adding SOURCE nodes into visualisation
-      if (LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
-
-        // $log.debug("Unique Source Name: " + response.data[i]['source'])
-        LatencyCytoscapeService.add_node(response.data[i]['source'], true, response.data[i]['source'], response.data[i]['destination']);
-        nodeToIPList.push(response.data[i]['source']);
-
-        // Event
-        LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
+            // Event
+            LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
 
 
-        });
+            });
 
-      } else {
-        //update it to be source node as well.
-        LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').data({
-          mainNode: "true"
-        });
-      }
+          } else {
+            //update it to be source node as well.
+            LatencyCytoscapeService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').data({
+              mainNode: "true"
+            });
+          }
 
-      //Adding EDGES for SOURCE and DESTINATION
-      if (LatencyCytoscapeService.getGraph().elements('edge[id = "' + response.data[i]['metadata-key'] + '"]').size() == 0) {
+          //Adding EDGES for SOURCE and DESTINATION
+          if (LatencyCytoscapeService.getGraph().elements('edge[id = "' + response.data[i]['metadata-key'] + '"]').size() == 0) {
 
-        // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
-        LatencyCytoscapeService.add_edge(response.data[i]['metadata-key'], response.data[i]['source'], response.data[i]['destination'], null, null, null, response.data[i]['source'], response.data[i]['destination'], response.data[i]['metadata-key']);
+            // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
+            LatencyCytoscapeService.add_edge(response.data[i]['metadata-key'], response.data[i]['source'], response.data[i]['destination'], null, null, null, response.data[i]['source'], response.data[i]['destination'], response.data[i]['metadata-key']);
 
-        // Event
+            // Event
 
-        LatencyCytoscapeService.getGraph().getElementById(response.data[i]['metadata-key']).on('tap', function (event) {
-          var element = event.cyTarget;
-          console.log(element.data().metadataKey)
+            LatencyCytoscapeService.getGraph().getElementById(response.data[i]['metadata-key']).on('tap', function (event) {
+              var element = event.cyTarget;
+              console.log(element.data().metadataKey)
 
-          // $scope.$apply(function(){
-          //   $scope.show = true;
-          //   $scope.TESTSCOPE = element.data().metadataKey
-          // });
+              // $scope.$apply(function(){
+              //   $scope.show = true;
+              //   $scope.TESTSCOPE = element.data().metadataKey
+              // });
 
-          $timeout(function () {
-            $scope.show = true;
-            $scope.TESTSCOPE = element.data().metadataKey
-          });
+              $timeout(function () {
 
-          // $scope.showMe = function () {
-          //
-          // }
+                $scope.show = true;
+                $scope.TESTSCOPE = element.data().metadataKey
 
-          // $scope.showMe();
-
-          // search for ALL edges with same metadata, make it red, make everything else the same.
-          LatencyCytoscapeService.getGraph().style().selector("edge").style({
-            'line-color': '#a8ea00',
-            'width': 2
-          }).update();
-
-          LatencyCytoscapeService.getGraph().style()
-          // .selector('#203.30.39.127')
-          // .selector(':selected')
-          // .selector('[id = "203.30.39.127"]')
-            .selector('edge[id = "' + element.data().metadataKey + '"]')
-            .style({
-              'line-color': 'green',
-              'width': 4
-            }).update();
-
-        })
+                $scope.latencyDate = UnixTimeConverterService.getDate(element.data().latencyTime);
+                $scope.latencyTime = UnixTimeConverterService.getTime(element.data().latencyTime);
 
 
-        // LatencyCytoscapeService.getGraph().on('tap', 'edge[id = "' + response.data[i]['metadata-key'] + '"]', function (event) {
-        //   var element = event.cyTarget;
-        //   //ID: element.id()
-        //   //metadataKey: element.data().metadataKey
-        //
-        //
-        //   LatencyInfo();
-        //
-        //   // $scope.hideMe();
-        //
-        //
-        //   // search for ALL edges with same metadata, make it red, make everything else the same.
-        //   LatencyCytoscapeService.getGraph().style().selector("edge").style({
-        //     'line-color': '#a8ea00',
-        //     'width': 2
-        //   }).update();
-        //
-        //   LatencyCytoscapeService.getGraph().style()
-        //   // .selector('#203.30.39.127')
-        //   // .selector(':selected')
-        //   // .selector('[id = "203.30.39.127"]')
-        //     .selector('edge[id = "' + element.data().metadataKey + '"]')
-        //     .style({
-        //       'line-color': 'green',
-        //       'width': 4
-        //     }).update();
-        //
-        //
-        // });
-
-      }
-
-
-      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-
-        if (response.data[i]['event-types'][j]['event-type'] == 'histogram-rtt') {
-
-          for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
-
-            //Choose Aggregation or Statistics.
-
-            if (response.data[i]['event-types'][j]['summaries'][k]['summary-type'] == "statistics" && response.data[i]['event-types'][j]['summaries'][k]['summary-window'] == 0) {
-
-
-              var latencyURL = response.data[i]['url'] + "histogram-rtt/" + response.data[i]['event-types'][j]['summaries'][k]['summary-type'] + "/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window']
-
-              // $log.debug("LATENCY URL: "+ latencyURL)
-
-              var promise = $http({
-                method: 'GET',
-                url: latencyURL,
-                params: {
-                  'format': 'json',
-                  // 'limit': '2',
-                  // 'time-end': (Math.floor(Date.now() / 1000)),
-                  'time-range': 86400
-                  //48 Hours = 172800
-                  // 24 hours = 86400
-                },
-                cache: true
               });
 
-              promises.push(promise);
-            }
+              // $scope.showMe = function () {
+              //
+              // }
 
+              // $scope.showMe();
+
+              // search for ALL edges with same metadata, make it red, make everything else the same.
+              LatencyCytoscapeService.getGraph().style().selector("edge").style({
+                'line-color': '#a8ea00',
+                'width': 2
+              }).update();
+
+              LatencyCytoscapeService.getGraph().style()
+              // .selector('#203.30.39.127')
+              // .selector(':selected')
+              // .selector('[id = "203.30.39.127"]')
+                .selector('edge[id = "' + element.data().metadataKey + '"]')
+                .style({
+                  'line-color': 'green',
+                  'width': 4
+                }).update();
+
+            })
+
+
+            // LatencyCytoscapeService.getGraph().on('tap', 'edge[id = "' + response.data[i]['metadata-key'] + '"]', function (event) {
+            //   var element = event.cyTarget;
+            //   //ID: element.id()
+            //   //metadataKey: element.data().metadataKey
+            //
+            //
+            //   LatencyInfo();
+            //
+            //   // $scope.hideMe();
+            //
+            //
+            //   // search for ALL edges with same metadata, make it red, make everything else the same.
+            //   LatencyCytoscapeService.getGraph().style().selector("edge").style({
+            //     'line-color': '#a8ea00',
+            //     'width': 2
+            //   }).update();
+            //
+            //   LatencyCytoscapeService.getGraph().style()
+            //   // .selector('#203.30.39.127')
+            //   // .selector(':selected')
+            //   // .selector('[id = "203.30.39.127"]')
+            //     .selector('edge[id = "' + element.data().metadataKey + '"]')
+            //     .style({
+            //       'line-color': 'green',
+            //       'width': 4
+            //     }).update();
+            //
+            //
+            // });
 
           }
 
+
+          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+
+            if (response.data[i]['event-types'][j]['event-type'] == 'histogram-rtt') {
+
+              for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
+
+                //Choose Aggregation or Statistics.
+
+                if (response.data[i]['event-types'][j]['summaries'][k]['summary-type'] == "statistics" && response.data[i]['event-types'][j]['summaries'][k]['summary-window'] == 0) {
+
+
+                  var latencyURL = response.data[i]['url'] + "histogram-rtt/" + response.data[i]['event-types'][j]['summaries'][k]['summary-type'] + "/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window']
+
+                  // $log.debug("LATENCY URL: "+ latencyURL)
+
+                  var promise = $http({
+                    method: 'GET',
+                    url: latencyURL,
+                    params: {
+                      'format': 'json',
+                      // 'limit': '2',
+                      // 'time-end': (Math.floor(Date.now() / 1000)),
+                      'time-range': 86400
+                      //48 Hours = 172800
+                      // 24 hours = 86400
+                    },
+                    cache: true
+                  });
+
+                  promises.push(promise);
+                }
+
+
+              }
+
+            }
+          }
+
         }
-      }
-
-    }
 
 
-    // for (var i = 0; i < sourceAndDestinationList.length; i++) {
-    //
-    //   //Adding DESTINATION nodes into visualisation
-    //   if (LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].destination + '"]').size() == 0) {
-    //
-    //     // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
-    //     LatencyCytoscapeService.add_node(sourceAndDestinationList[i].destination, false, null, null);
-    //     nodeToIPList.push(sourceAndDestinationList[i].destination);
-    //
-    //     // Event
-    //     LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + sourceAndDestinationList[i].destination + '"]', function (event) {
-    //
-    //     });
-    //
-    //   }
-    // }
-    //
-    // for (var i = 0; i < sourceAndDestinationList.length; i++) {
-    //
-    //   //Adding SOURCE nodes into visualisation
-    //   if (LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].source + '"]').size() == 0) {
-    //
-    //     // $log.debug("Unique Source Name: " + response.data[i]['source'])
-    //     LatencyCytoscapeService.add_node(sourceAndDestinationList[i].source, true, sourceAndDestinationList[i].source, sourceAndDestinationList[i].destination);
-    //     nodeToIPList.push(sourceAndDestinationList[i].source);
-    //
-    //     // Event
-    //     LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + sourceAndDestinationList[i].source + '"]', function (event) {
-    //
-    //
-    //     });
-    //
-    //   } else {
-    //     //update it to be source node as well.
-    //     LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].source + '"]').data({
-    //       mainNode: "true"
-    //     });
-    //
-    //   }
-    // }
-
-
-    // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
-    return $q.all(promises);
-
-  }).then(function (response) {
-
-    // $log.debug("$q response length: " + response.length);
-    // $log.debug("sourceAndDestinationList length: " + response.length);
-
-    for (var i = 0; i < response.length; i++) {
-
-      var startNode = sourceAndDestinationList[i].source;
-      var destinationNode = sourceAndDestinationList[i].destination;
-      var metadataKey = sourceAndDestinationList[i].metadataKey;
-
-      var reversedResponse = response[i].data.reverse();
-
-      for (var j = 0; j < reversedResponse.length; j++) {
-        // $log.debug("reversedResponse Length: " + reversedResponse.length)
-        // $log.debug("ts : " + reversedResponse[j]['ts'])
-
-        var edge = LatencyCytoscapeService.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
-        var latencyMean = reversedResponse[j]['val']['mean'];
-
-        edge.data({
-          latency: math.round(latencyMean, 3)
-        })
-
-
-        // for (var k = 0; k < edges.size(); k++) {
+        // for (var i = 0; i < sourceAndDestinationList.length; i++) {
         //
-        //   // Need to check whether bw is double or string
-        //   edges[k].data({
-        //     bandwidth: bw
-        //   });
+        //   //Adding DESTINATION nodes into visualisation
+        //   if (LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].destination + '"]').size() == 0) {
         //
+        //     // $log.debug("Unique Destination Name: " + response.data[i]['destination'])
+        //     LatencyCytoscapeService.add_node(sourceAndDestinationList[i].destination, false, null, null);
+        //     nodeToIPList.push(sourceAndDestinationList[i].destination);
+        //
+        //     // Event
+        //     LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + sourceAndDestinationList[i].destination + '"]', function (event) {
+        //
+        //     });
+        //
+        //   }
+        // }
+        //
+        // for (var i = 0; i < sourceAndDestinationList.length; i++) {
+        //
+        //   //Adding SOURCE nodes into visualisation
+        //   if (LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].source + '"]').size() == 0) {
+        //
+        //     // $log.debug("Unique Source Name: " + response.data[i]['source'])
+        //     LatencyCytoscapeService.add_node(sourceAndDestinationList[i].source, true, sourceAndDestinationList[i].source, sourceAndDestinationList[i].destination);
+        //     nodeToIPList.push(sourceAndDestinationList[i].source);
+        //
+        //     // Event
+        //     LatencyCytoscapeService.getGraph().on('tap', 'node[id = "' + sourceAndDestinationList[i].source + '"]', function (event) {
+        //
+        //
+        //     });
+        //
+        //   } else {
+        //     //update it to be source node as well.
+        //     LatencyCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[i].source + '"]').data({
+        //       mainNode: "true"
+        //     });
+        //
+        //   }
         // }
 
 
-        break;
-      }
+        // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+        return $q.all(promises);
 
-    }
+      }).then(function (response) {
+
+        // $log.debug("$q response length: " + response.length);
+        // $log.debug("sourceAndDestinationList length: " + response.length);
+
+        for (var i = 0; i < response.length; i++) {
+
+          var startNode = sourceAndDestinationList[i].source;
+          var destinationNode = sourceAndDestinationList[i].destination;
+          var metadataKey = sourceAndDestinationList[i].metadataKey;
+
+          var reversedResponse = response[i].data.reverse();
+
+          for (var j = 0; j < reversedResponse.length; j++) {
+            // $log.debug("reversedResponse Length: " + reversedResponse.length)
+            // $log.debug("ts : " + reversedResponse[j]['ts'])
+
+            var edge = LatencyCytoscapeService.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
+            var latencyMean = reversedResponse[j]['val']['mean'];
+
+            edge.data({
+              latency: math.round(latencyMean, 3),
+              latencyTime: reversedResponse[j]['ts']
+            })
 
 
-    var uniqueIP = UniqueArrayService.getUnique(nodeToIPList);
-    var nodeToIP_promises = [];
+            // for (var k = 0; k < edges.size(); k++) {
+            //
+            //   // Need to check whether bw is double or string
+            //   edges[k].data({
+            //     bandwidth: bw
+            //   });
+            //
+            // }
 
-    for (var i = 0; i < uniqueIP.length; i++) {
-      nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
-    }
 
-    return $q.all(nodeToIP_promises);
+            break;
+          }
 
-  }).then(function (response) {
+        }
 
-    for (var i = 0; i < response.length; i++) {
 
-      // ('[id = "203.30.39.127"]')
-      var node = LatencyCytoscapeService.getGraph().elements('[id = "' + response[i].ip + '"]');
-      node.data({
-        label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+        var uniqueIP = UniqueArrayService.getUnique(nodeToIPList);
+        var nodeToIP_promises = [];
+
+        for (var i = 0; i < uniqueIP.length; i++) {
+          nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
+        }
+
+        return $q.all(nodeToIP_promises);
+
+      }).then(function (response) {
+
+        for (var i = 0; i < response.length; i++) {
+
+          // ('[id = "203.30.39.127"]')
+          var node = LatencyCytoscapeService.getGraph().elements('[id = "' + response[i].ip + '"]');
+          node.data({
+            label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+          });
+
+        }
+
+        //Style Options
+        LatencyCytoscapeService.getGraph().style()
+        // .selector('#203.30.39.127')
+        // .selector(':selected')
+        // .selector('[id = "203.30.39.127"]')
+          .selector('node[mainNode = "true"]')
+          .style({
+            'background-color': 'black'
+          }).update();
+
+
+        var layoutOptions1 = {
+          name: 'breadthfirst',
+          fit: true, // whether to fit the viewport to the graph
+          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+          padding: 30, // padding on fit
+          circle: false, // put depths in concentric circles if true, put depths top down if false
+          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          roots: undefined, // the roots of the trees
+          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          ready: undefined, // callback on layoutready
+          stop: undefined // callback on layoutstop
+        };
+
+        var layoutOptions2 = {
+          name: 'concentric',
+
+          fit: true, // whether to fit the viewport to the graph
+          padding: 30, // the padding on fit
+          startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+          sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+          clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
+          equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
+          minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          height: undefined, // height of layout area (overrides container height)
+          width: undefined, // width of layout area (overrides container width)
+          concentric: function (node) { // returns numeric value for each node, placing higher nodes in levels towards the centre
+            return node.degree();
+          },
+          levelWidth: function (nodes) { // the variation of concentric values in each level
+            return nodes.maxDegree() / 4;
+          },
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          ready: undefined, // callback on layoutready
+          stop: undefined // callback on layoutstop
+        };
+
+        LatencyCytoscapeService.getGraph().layout(layoutOptions2);
+
+
+      }).catch(function (error) {
+        $log.debug("TracerouteController:LatencyVisualisationCtrl ERROR:")
+        $log.debug(error);
+        $log.debug("Server Response: " + error.status);
+
       });
-
-    }
-
-    //Style Options
-    LatencyCytoscapeService.getGraph().style()
-    // .selector('#203.30.39.127')
-    // .selector(':selected')
-    // .selector('[id = "203.30.39.127"]')
-      .selector('node[mainNode = "true"]')
-      .style({
-        'background-color': 'black'
-      }).update();
-
-
-    var layoutOptions1 = {
-      name: 'breadthfirst',
-      fit: true, // whether to fit the viewport to the graph
-      directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-      padding: 30, // padding on fit
-      circle: false, // put depths in concentric circles if true, put depths top down if false
-      spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-      boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-      avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-      roots: undefined, // the roots of the trees
-      maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-      animate: false, // whether to transition the node positions
-      animationDuration: 500, // duration of animation in ms if enabled
-      animationEasing: undefined, // easing of animation if enabled
-      ready: undefined, // callback on layoutready
-      stop: undefined // callback on layoutstop
-    };
-
-    var layoutOptions2 = {
-      name: 'concentric',
-
-      fit: true, // whether to fit the viewport to the graph
-      padding: 30, // the padding on fit
-      startAngle: 3 / 2 * Math.PI, // where nodes start in radians
-      sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
-      clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
-      equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
-      minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
-      boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-      avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-      height: undefined, // height of layout area (overrides container height)
-      width: undefined, // width of layout area (overrides container width)
-      concentric: function (node) { // returns numeric value for each node, placing higher nodes in levels towards the centre
-        return node.degree();
-      },
-      levelWidth: function (nodes) { // the variation of concentric values in each level
-        return nodes.maxDegree() / 4;
-      },
-      animate: false, // whether to transition the node positions
-      animationDuration: 500, // duration of animation in ms if enabled
-      animationEasing: undefined, // easing of animation if enabled
-      ready: undefined, // callback on layoutready
-      stop: undefined // callback on layoutstop
-    };
-
-    LatencyCytoscapeService.getGraph().layout(layoutOptions2);
-
-
-  }).catch(function (error) {
-    $log.debug("TracerouteController:LatencyVisualisationCtrl ERROR:")
-    $log.debug(error);
-    $log.debug("Server Response: " + error.status);
-
-  });
-
+    // })
+  }
 
 }]);
 
