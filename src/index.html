@@ -483,42 +483,41 @@
       <div ng-controller="LatencyVisualisationCtrl">
 
 
+        <p>Date of Latency Test: {{latencyDate}}</p>
+        <p>Time of Latency Test: {{latencyTime}}</p>
 
-        Date of Latency Test: {{latencyDate}}
-        <br/>
-        Time of Latency Test: {{latencyTime}}
         //Maybe do a qtip popup instead.
-        <div class="container" id="latency_cytoscape1" >
+
+        <div class="container" id="latency_cytoscape"></div>
 
 
-        </div>
-
-
-        <button type="button" class="btn btn-default" ng-click="showMe();">Show</button>
-        <button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>
-        {{TESTSCOPE}}
-
-        <div class="container" ng-controller="LatencyVisualisationCtrl" id="latency_cytoscape2" ng-show="show" >
-          adasd
-
-        </div>
-
-
-        <div class="container" ng-controller="LatencyVisualisationCtrl" id="latency_cytoscape" ng-show="show" >
-
-
-        </div>
-
-        <div id="LatencyInformation" ng-controller="LatencyVisualisationCtrl" class="container" ng-show="show">
-
-          INFORMATION GOES HERE
-
-        </div>
+        <!--<button type="button" class="btn btn-default" ng-click="showMe();">Show</button>-->
+        <!--<button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>-->
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
 
 
       </div>
 
+      <!--ng-show="showLatencyInfo-->
+      <div id="LatencyInformation" class="container" ng-controller="LatencyVisualisationCtrl">
 
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+
+        <div class="container" ng-controller="LatencyInformationCtrl" id="latency_cytoscape_traceroute">
+          <p> TRACEROUTE GOES HERE</p>
+        </div>
+
+
+        <!--<ul>-->
+        <!--<li ng-repeat="fot in fotografia"><img src="{{latencySummaryData.type}}"></li>-->
+        <!--</ul>-->
+
+
+      </div>
 
 
       1. Get Traceroute if possible
