@@ -1794,14 +1794,16 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyMetadataService', function ($scope, $http, $q, $log, HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyMetadataService) {
 
 
-  LatencyMetadataService.getGraph().onRender( function() {
+
+// Layout Option for Traceroute path of selected Latency Result.
+  var latencyTracerouteDisplay = function () {
     LatencyMetadataService.getGraph().layout({
       name: 'breadthfirst',
       fit: true, // whether to fit the viewport to the graph
       directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
       padding: 30, // padding on fit
-      circle: false, // put depths in concentric circles if true, put depths top down if false
-      spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+      circle: true, // put depths in concentric circles if true, put depths top down if false
+      spacingFactor: 1.0, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
       boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
       avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
       roots: undefined, // the roots of the trees
@@ -1812,7 +1814,15 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
       ready: undefined, // callback on layoutready
       stop: undefined // callback on layoutstop
     });
-  })
+  }
+
+
+  LatencyCytoscapeService.getGraph().on("mouseover", latencyTracerouteDisplay);
+
+
+
+
+
 
   var host = HostService.getHost();
   var sourceAndDestinationList;
@@ -1888,14 +1898,18 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
 
           LatencyMetadataService.setMetadata(element.data().metadataKey)
 
-          var cy = LatencyMetadataService.setTracerouteGraph(element.data().startNode, element.data().endNode);
+          LatencyMetadataService.setTracerouteGraph(element.data().startNode, element.data().endNode);
 
           // Style Options
-          cy.style()
+          LatencyMetadataService.getGraph().style()
             .selector('node[mainNode = "true"]')
             .style({
-              'background-color': 'red'
+              'background-color': 'DimGray'
             }).update();
+
+          // $log.debug("RETURNED: "+ LatencyMetadataService.getErrorInTraceroute());
+          // window.dispatchEvent(new Event('resize'));
+
 
 
 
@@ -1908,12 +1922,14 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
             $scope.latencyTime = UnixTimeConverterService.getTime(element.data().latencyTime);
 
 
+
+
             //also call another controller
 
           });
 
 
-          // search for ALL edges with same metadata, make it red, make everything else the same.
+          // search for ALL edges with same metadata, make it GreenYellow, make everything else the same.
           LatencyCytoscapeService.getGraph().style().selector("edge").style({
             'line-color': 'GreenYellow',
             'width': 2
@@ -2070,12 +2086,15 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
     LatencyCytoscapeService.getGraph().layout(layoutOptions);
 
 
+
   }).catch(function (error) {
     $log.debug("TracerouteController:LatencyVisualisationCtrl ERROR:")
     $log.debug(error);
     $log.debug("Server Response: " + error.status);
 
   });
+
+
 
 
 }]);

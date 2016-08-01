@@ -376,7 +376,7 @@
                 title="">
           Popover on top
         </button>
-        <button type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()">Test
+        <button id="testButton" type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()">Test
         </button>
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
@@ -487,6 +487,7 @@
         <p>Time of Latency Test: {{latencyTime}}</p>
 
         //Maybe do a qtip popup instead.
+        <p>ISSUE: Failure in traceroute is not mentioned</p>
 
         <div class="container" id="latency_cytoscape"></div>
 
@@ -496,10 +497,10 @@
         <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
 
 
-      </div>
+
 
       <!--ng-show="showLatencyInfo-->
-      <div id="LatencyInformation" class="container" ng-controller="LatencyVisualisationCtrl">
+      <div id="LatencyInformation" class="container" >
 
         <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
         <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
@@ -507,7 +508,7 @@
         <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
         <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
 
-        <div class="container" ng-controller="LatencyInformationCtrl" id="latency_cytoscape_traceroute">
+        <div  ng-controller="LatencyInformationCtrl" id="latency_cytoscape_traceroute">
           <p> TRACEROUTE GOES HERE</p>
         </div>
 
@@ -597,6 +598,11 @@
   $("#123234")
     .popover()
 
+  $('#123234').qtip({ // Grab some elements to apply the tooltip to
+    content: {
+      text: 'My common piece of text here'
+    }
+  })
 
 </script>
 

@@ -56,10 +56,6 @@ tracerouteServices.factory('CytoscapeService', [function () {
 
     // Layout can only be done in Controller.
 
-    // layout: {
-    //   name: 'concentric',
-    // }
-
 
   });
 
@@ -349,7 +345,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 
 
 // This service draws the main Latency cytoscape graph
-tracerouteServices.factory('LatencyCytoscapeService', [function () {
+tracerouteServices.factory('LatencyCytoscapeService', [ function () {
 
 // cache http://stackoverflow.com/questions/21660647/angular-js-http-cache-time
 
@@ -385,7 +381,13 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
           'text-wrap': 'wrap'
         }
       }
-    ]
+    ],
+    ready: function () {
+      // window.cy = this;
+
+
+
+    }
 
     // Layout can only be done in Controller.
   });
@@ -552,7 +554,29 @@ tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
           'text-wrap': 'wrap'
         }
       }
-    ]
+    ],
+    ready: function () {
+      //
+      // window.cy = this;
+      // this.layout({
+      //   name: 'breadthfirst',
+      //   fit: true, // whether to fit the viewport to the graph
+      //   directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+      //   padding: 30, // padding on fit
+      //   circle: true, // put depths in concentric circles if true, put depths top down if false
+      //   spacingFactor: 1.0, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+      //   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+      //   avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+      //   roots: undefined, // the roots of the trees
+      //   maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+      //   animate: false, // whether to transition the node positions
+      //   animationDuration: 500, // duration of animation in ms if enabled
+      //   animationEasing: undefined, // easing of animation if enabled
+      //   ready: undefined, // callback on layoutready
+      //   stop: undefined // callback on layoutstop
+      // });
+
+    }
 
     // Layout can only be done in Controller.
   });
@@ -640,7 +664,6 @@ tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
       };
 
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
-      //return edge;
 
       cy.add(edge);
       return cy;
@@ -663,6 +686,8 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
   var host = HostService.getHost();
   var metadataList = [];
   var metadata = "";
+  var errorInTraceroute = null;
+
 
   return {
 
@@ -673,12 +698,6 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
       LatencyToTracerouteCytoscapeService.getGraph().remove('node');
       LatencyToTracerouteCytoscapeService.getGraph().remove('edge');
 
-      LatencyToTracerouteCytoscapeService.getGraph().on('tap', 'node', { foo: 'bar' }, function(evt){
-        console.log( evt.data.foo ); // 'bar'
-
-        var node = evt.cyTarget;
-        console.log( 'tapped ' + node.id() );
-      });
 
       $http({
         method: 'GET',
@@ -688,7 +707,7 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
           'event-type': 'packet-trace',
           // 'limit': 10,
           // 'time-end': (Math.floor(Date.now() / 1000)),
-          // 'time-range': 86400,
+          'time-range': 604800,
           'source': source,
           'destination': destination
         },
@@ -756,7 +775,6 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
         // $log.debug("sourceAndDestinationList length: " + response.length);
 
 
-
         for (var i = 0; i < response.length; i++) {
 
           var startNode = sourceAndDestinationList[i].source;
@@ -786,11 +804,31 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
             var temp_rtt = [];
 
             for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
-              if (reversedResponse[j]['val'][k]['query'] == 1) {
-                temp_ip.push(reversedResponse[j]['val'][k]['ip']);
-                temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
+
+              if (reversedResponse[j]['val'][k]['success'] == 1) {
+
+
+                if (reversedResponse[j]['val'][k]['query'] == 1) {
+                  temp_ip.push(reversedResponse[j]['val'][k]['ip']);
+                  temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
+                }
+              } else {
+                errorInTraceroute = true;
+                LatencyToTracerouteCytoscapeService.getGraph().qtip
+                ({
+                  content: 'tool tip about the core of the layout',
+                  position: {my: 'top center', at: 'bottom center'},
+                  show: {
+                    ready: false,
+                    cyBgOnly: false
+
+                  },
+                  style: {classes: 'qtip-bootstrap', tip: {width: 16, height: 8}}
+                });
               }
+
             }
+
 
             // Adding Nodes
             for (var m = 0; m < temp_ip.length; m++) {
@@ -869,16 +907,22 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
             label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
           });
 
-
         }
       }).catch(function (error) {
         $log.debug("LatencyMetadataService:setTracerouteGraph()")
         $log.debug("Server Response: " + error.status);
 
+      }).finally(function () {
+        $log.debug("FINALLY CLAUSE")
+        return errorInTraceroute;
+
       });
 
-      return LatencyToTracerouteCytoscapeService.getGraph();
 
+    },
+
+    getErrorInTraceroute: function () {
+      return errorInTraceroute;
     },
 
     addMetadataList: function (metadata_key) {
@@ -896,7 +940,7 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
       return metadata;
     },
 
-    getGraph: function (){
+    getGraph: function () {
       return LatencyToTracerouteCytoscapeService.getGraph();
     }
 
