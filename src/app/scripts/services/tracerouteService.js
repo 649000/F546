@@ -345,7 +345,7 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 
 
 // This service draws the main Latency cytoscape graph
-tracerouteServices.factory('LatencyCytoscapeService', [ function () {
+tracerouteServices.factory('LatencyCytoscapeService', [function () {
 
 // cache http://stackoverflow.com/questions/21660647/angular-js-http-cache-time
 
@@ -384,7 +384,6 @@ tracerouteServices.factory('LatencyCytoscapeService', [ function () {
     ],
     ready: function () {
       // window.cy = this;
-
 
 
     }
@@ -556,7 +555,7 @@ tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
       }
     ],
     ready: function () {
-      //
+
       // window.cy = this;
       // this.layout({
       //   name: 'breadthfirst',
@@ -814,17 +813,6 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
                 }
               } else {
                 errorInTraceroute = true;
-                LatencyToTracerouteCytoscapeService.getGraph().qtip
-                ({
-                  content: 'tool tip about the core of the layout',
-                  position: {my: 'top center', at: 'bottom center'},
-                  show: {
-                    ready: false,
-                    cyBgOnly: false
-
-                  },
-                  style: {classes: 'qtip-bootstrap', tip: {width: 16, height: 8}}
-                });
               }
 
             }
@@ -867,6 +855,8 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
 
                 }
               }
+
+
             }
 
 
@@ -882,6 +872,8 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
                 var element = event.cyTarget;
 
               });
+
+
             }
 
             // Break so that we grab only the latest traceroute path
@@ -906,6 +898,45 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
           node.data({
             label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
           });
+
+          LatencyToTracerouteCytoscapeService.getGraph().layout({
+            name: 'breadthfirst',
+            fit: true, // whether to fit the viewport to the graph
+            directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+            padding: 30, // padding on fit
+            circle: true, // put depths in concentric circles if true, put depths top down if false
+            spacingFactor: 1.0, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+            boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+            avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+            roots: undefined, // the roots of the trees
+            maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+            animate: false, // whether to transition the node positions
+            animationDuration: 500, // duration of animation in ms if enabled
+            animationEasing: undefined, // easing of animation if enabled
+            ready: undefined, // callback on layoutready
+            stop: undefined // callback on layoutstop
+          });
+
+          LatencyToTracerouteCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[0].source + '"]').qtip
+          ({
+            content: {
+              title: 'Error in Traceroute Results',
+              text: 'Traceroute may be incomplete or inaccurate.',
+              button: 'Close'
+
+            },
+            position: {my: 'bottom center', at: 'bottom top'},
+            show: {
+              ready: true,
+
+              cyBgOnly: false
+
+
+            },
+            hide: {},
+            style: {classes: 'qtip-bootstrap', tip: {width: 16, height: 8}}
+          });
+
 
         }
       }).catch(function (error) {
