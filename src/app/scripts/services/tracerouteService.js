@@ -15,16 +15,6 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 //https://docs.angularjs.org/tutorial/step_11
 
 
-//Register a custom service using a factory function
-//Passed in the name of the service - 'Phone'
-
-
-// Break down services to granular level as opposed to only calling ALL results.
-
-// TracerouteResult, TracerouteResultIndividual, TRIndividualValue
-//
-
-
 tracerouteServices.factory('CytoscapeService', [function () {
 
   var cy = cytoscape({
@@ -557,23 +547,6 @@ tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
     ready: function () {
 
       // window.cy = this;
-      // this.layout({
-      //   name: 'breadthfirst',
-      //   fit: true, // whether to fit the viewport to the graph
-      //   directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-      //   padding: 30, // padding on fit
-      //   circle: true, // put depths in concentric circles if true, put depths top down if false
-      //   spacingFactor: 1.0, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-      //   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-      //   avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-      //   roots: undefined, // the roots of the trees
-      //   maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-      //   animate: false, // whether to transition the node positions
-      //   animationDuration: 500, // duration of animation in ms if enabled
-      //   animationEasing: undefined, // easing of animation if enabled
-      //   ready: undefined, // callback on layoutready
-      //   stop: undefined // callback on layoutstop
-      // });
 
     }
 
@@ -677,7 +650,7 @@ tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
 }]);
 
 
-// This service is to transfer metadatas from the Latency Graph to Latency Information Controller
+// This service is to loads the Traceroute graph from the Latency Graph.
 tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'LatencyToTracerouteCytoscapeService', 'GeoIPNekudoService', function ($http, $q, $cacheFactory, $log, HostService, LatencyToTracerouteCytoscapeService, GeoIPNekudoService) {
 
   $log.debug("LatencyMetadataService:START");
@@ -685,7 +658,6 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
   var host = HostService.getHost();
   var metadataList = [];
   var metadata = "";
-  var errorInTraceroute = null;
 
 
   return {
@@ -693,6 +665,7 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
     setTracerouteGraph: function (source, destination) {
       var sourceAndDestinationList = [];
       var nodeList = [];
+      var errorInTraceroute = null;
 
       LatencyToTracerouteCytoscapeService.getGraph().remove('node');
       LatencyToTracerouteCytoscapeService.getGraph().remove('edge');
@@ -917,25 +890,29 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
             stop: undefined // callback on layoutstop
           });
 
-          LatencyToTracerouteCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[0].source + '"]').qtip
-          ({
-            content: {
-              title: 'Error in Traceroute Results',
-              text: 'Traceroute may be incomplete or inaccurate.',
-              button: 'Close'
+          if(errorInTraceroute==true){
+            LatencyToTracerouteCytoscapeService.getGraph().elements('node[id = "' + sourceAndDestinationList[0].source + '"]').qtip
+            ({
+              content: {
+                title: 'Error in Traceroute Results',
+                text: 'Traceroute may be incomplete or inaccurate.',
+                button: 'Close'
 
-            },
-            position: {my: 'bottom center', at: 'bottom top'},
-            show: {
-              ready: true,
+              },
+              position: {my: 'bottom center', at: 'bottom top'},
+              show: {
+                ready: true,
 
-              cyBgOnly: false
+                cyBgOnly: false
 
 
-            },
-            hide: {},
-            style: {classes: 'qtip-bootstrap', tip: {width: 16, height: 8}}
-          });
+              },
+              hide: {},
+              style: {classes: 'qtip-bootstrap', tip: {width: 16, height: 8}}
+            });
+          }
+
+
 
 
         }
@@ -943,19 +920,16 @@ tracerouteServices.factory('LatencyMetadataService', ['$http', '$q', '$cacheFact
         $log.debug("LatencyMetadataService:setTracerouteGraph()")
         $log.debug("Server Response: " + error.status);
 
-      }).finally(function () {
-        $log.debug("FINALLY CLAUSE")
-        return errorInTraceroute;
-
-      });
-
+      })
 
     },
 
-    getErrorInTraceroute: function () {
-      return errorInTraceroute;
-    },
 
+    getSummaries: function(){
+
+      //$http
+
+    },
     addMetadataList: function (metadata_key) {
       metadataList.push(metadata_key);
       return metadataList;
@@ -1080,6 +1054,9 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFa
 
 
 }]);
+
+
+
 
 
 // NOT USING ANYTHING BELOW HERE

@@ -1793,37 +1793,6 @@ traceroute.controller('updateBandwidth', ['$scope', '$http', '$q', '$log', 'Host
 
 traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyMetadataService', function ($scope, $http, $q, $log, HostService, LatencyCytoscapeService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyMetadataService) {
 
-
-
-// Layout Option for Traceroute path of selected Latency Result.
-//   var latencyTracerouteDisplay = function () {
-//     LatencyMetadataService.getGraph().layout({
-//       name: 'breadthfirst',
-//       fit: true, // whether to fit the viewport to the graph
-//       directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-//       padding: 30, // padding on fit
-//       circle: true, // put depths in concentric circles if true, put depths top down if false
-//       spacingFactor: 1.0, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-//       boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-//       avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-//       roots: undefined, // the roots of the trees
-//       maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-//       animate: false, // whether to transition the node positions
-//       animationDuration: 500, // duration of animation in ms if enabled
-//       animationEasing: undefined, // easing of animation if enabled
-//       ready: undefined, // callback on layoutready
-//       stop: undefined // callback on layoutstop
-//     });
-//   }
-//
-//
-//   LatencyCytoscapeService.getGraph().on("mouseover", latencyTracerouteDisplay);
-
-
-
-
-
-
   var host = HostService.getHost();
   var sourceAndDestinationList;
   var nodeToIPList;
@@ -1907,24 +1876,18 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
               'background-color': 'DimGray'
             }).update();
 
-          // $log.debug("RETURNED: "+ LatencyMetadataService.getErrorInTraceroute());
           // window.dispatchEvent(new Event('resize'));
 
 
-
-
-
           $scope.$apply(function () {
-
 
             // $scope.showLatencyInfo = true;
             $scope.latencyDate = UnixTimeConverterService.getDate(element.data().latencyTime);
             $scope.latencyTime = UnixTimeConverterService.getTime(element.data().latencyTime);
 
+            // $scope.latencyMetadata = element.data().metadataKey;
 
-
-
-            //also call another controller
+            $scope.$broadcast('LatencyMetadata', element.data().metadataKey);
 
           });
 
@@ -2086,7 +2049,6 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
     LatencyCytoscapeService.getGraph().layout(layoutOptions);
 
 
-
   }).catch(function (error) {
     $log.debug("TracerouteController:LatencyVisualisationCtrl ERROR:")
     $log.debug(error);
@@ -2095,151 +2057,23 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
   });
 
 
-
-
 }]);
 
 
 traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyToTracerouteCytoscapeService', 'UnixTimeConverterService', 'LatencyMetadataService', function ($scope, $http, $q, $log, HostService, LatencyToTracerouteCytoscapeService, UnixTimeConverterService, LatencyMetadataService) {
-
   $log.debug("LatencyInformationCtrl:START");
+
 
   //To allow Cytoscape graph to load upon showing/hiding.
   //window.dispatchEvent(new Event('resize'));
 
+  $scope.$on('LatencyMetadata', function (event, metadata) {
 
-  var host = HostService.getHost();
-  var latencyMetadata = LatencyMetadataService.getMetadata()
-  var metadataURL = host + latencyMetadata + "/";
-  var sourceAndDestinationList;
+    var host = HostService.getHost();
+    var latencyMetadata = metadata;
+    var metadataURL = host + latencyMetadata + "/";
 
-
-  //ng click
-  $scope.getLatency = function () {
-
-
-    // Retrieving Traceroute data
-    $http({
-      method: 'GET',
-      url: host,
-      params: {
-        'format': 'json',
-        'event-type': 'packet-trace',
-        // 'limit': 10,
-        // 'time-end': (Math.floor(Date.now() / 1000)),
-        // 'time-range': 86400,
-        'source': 1,
-        'destination': 1
-      },
-      cache: true
-
-    }).then(function (response) {
-
-      var promises = [];
-
-      // for (var i = 0; i < response.data.length; i++) {
-      //
-      //   sourceAndDestinationList.push(
-      //     {
-      //       source: response.data[i]['source'],
-      //       destination: response.data[i]['destination'],
-      //       metadataKey: response.data[i]['metadata-key']
-      //     }
-      //   );
-      //
-      //   for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-      //
-      //     if (response.data[i]['event-types'][j]['event-type'] == 'throughput') {
-      //       // Assuming that there are unique BW destination.
-      //
-      //       for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
-      //
-      //         var bw_summary_url = response.data[i]['url'] + "/throughput/averages/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window'];
-      //
-      //         var promise = $http({
-      //           method: 'GET',
-      //           url: bw_summary_url,
-      //           params: {
-      //             'format': 'json',
-      //             // 'limit': '2',
-      //             // 'time-end': (Math.floor(Date.now() / 1000)),
-      //             'time-range': response.data[i]['event-types'][j]['summaries'][k]['summary-window']
-      //             //48 Hours = 172800
-      //             // 24 hours = 86400
-      //           },
-      //           cache: false
-      //         });
-      //
-      //         promises.push(promise);
-      //       }
-      //
-      //     }
-      //   }
-      //
-      //
-      // }
-
-      return $q.all(promises);
-
-    }).then(function (response) {
-
-      for (var i = 0; i < response.length; i++) {
-
-        var startNode = sourceAndDestinationList[i].source;
-        var destinationNode = sourceAndDestinationList[i].destination;
-        var metadataKey = sourceAndDestinationList[i].metadataKey;
-
-        var reversedResponse = response[i].data.reverse();
-
-
-        for (var j = 0; j < reversedResponse.length; j++) {
-          // $log.debug("reversedResponse Length: " + reversedResponse.length)
-          // $log.debug("ts : " + reversedResponse[j]['ts'])
-
-          $scope.tracerouteTime = UnixTimeConverterService.getDate(reversedResponse[j]['ts']);
-          $scope.tracerouteDate = UnixTimeConverterService.getTime(reversedResponse[j]['ts']);
-
-
-          // var edges = CytoscapeService_Bandwidth.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"]');
-
-          //
-          // console.log("Edges Size: " + edges.size());
-          // var ts;
-          // var bw;
-          //
-          // // Becareful, bw/ts is being replaced.
-          // for (var i = 0; i < response.length; i++) {
-          //   var reversedResponse = response[i].data;
-          //   for (var k = 0; k < reversedResponse.length; k++) {
-          //
-          //     ts = reversedResponse[k]['ts'];
-          //     bw = reversedResponse[k]['val']
-          //
-          //   }
-          // }
-          //
-          // for (var k = 0; k < edges.size(); k++) {
-          //
-          //   // Need to check whether bw is double or string
-          //   edges[k].data({
-          //     bandwidth: bw
-          //   });
-          //
-          // }
-
-
-          // CytoscapeService_Bandwidth.getGraph().layout();
-
-        }
-
-
-      }
-
-    }).catch(function (error) {
-      // $log.debug("TracerouteController:updateLatency")
-      $log.debug("Server Response: " + error.status);
-
-    });
+    $scope.latencyMetadata = metadata;
 
 
     //Retrieving indepth result of that metadata
@@ -2257,20 +2091,25 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
       cache: true
     }).then(function (response) {
 
-      for (var i = 0; i < response.data.length; i++) {
+      $scope.latencySummaryData = [];
 
-        for (var j = 0; j < response.data[i]['event-types'].length; j++) {
 
-          if (response.data[i]['event-types'][j]['event-type'] == 'histogram-rtt') {
 
-            $scope.latencySummaryData = [];
-            for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
+        for (var j = 0; j < response.data['event-types'].length; j++) {
+
+          if (response.data['event-types'][j]['event-type'] == 'histogram-rtt') {
+
+
+
+            for (var k = 0; k < response.data['event-types'][j]['summaries'].length; k++) {
+
+
 
               $scope.latencySummaryData.push({
-                type: response.data[i]['event-types'][j]['summaries'][k]['summary-type'],
-                uri: response.data[i]['event-types'][j]['summaries'][k]['uri'],
-                time: response.data[i]['event-types'][j]['summaries'][k]['time'],
-                window: response.data[i]['event-types'][j]['summaries'][k]['window']
+                type: response.data['event-types'][j]['summaries'][k]['summary-type'],
+                uri: response.data['event-types'][j]['summaries'][k]['uri'],
+                time: response.data['event-types'][j]['summaries'][k]['time'],
+                window: response.data['event-types'][j]['summaries'][k]['window']
               });
 
             }
@@ -2278,11 +2117,17 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
           }
         }
 
-      }
 
-    })
 
-  }
+    }).catch(function (error) {
+      $log.debug("LatencyInformationCtrl: ERROR")
+      $log.debug(error);
+      $log.debug("Server Response: " + error.status);
+
+    });
+
+  });
+
 
 }]);
 

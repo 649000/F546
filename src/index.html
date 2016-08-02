@@ -376,7 +376,8 @@
                 title="">
           Popover on top
         </button>
-        <button id="testButton" type="button" class="btn btn-default" ng-controller="testController" ng-click="analyzetr()">Test
+        <button id="testButton" type="button" class="btn btn-default" ng-controller="testController"
+                ng-click="analyzetr()">Test
         </button>
 
         <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
@@ -494,118 +495,122 @@
 
         <!--<button type="button" class="btn btn-default" ng-click="showMe();">Show</button>-->
         <!--<button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>-->
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
 
 
+        <!--ng-show="showLatencyInfo-->
+        <div id="LatencyInformation" class="container" ng-controller="LatencyInformationCtrl">
+
+          <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
+          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+
+          <div id="latency_cytoscape_traceroute">
+            <p> TRACEROUTE GOES HERE</p>
+
+          </div>
+
+          <div id="latency_metadata_summary">
+            <p>Latency Metadata: {{latencyMetadata}}</p>
+
+            <ul>
+              <li ng-repeat="summary in latencySummaryData">
+                <p>Latency Metadata: {{summary.type}}</p>
+
+              </li>
+            </ul>
+
+          </div>
 
 
-      <!--ng-show="showLatencyInfo-->
-      <div id="LatencyInformation" class="container" >
-
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-        <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-
-        <div  ng-controller="LatencyInformationCtrl" id="latency_cytoscape_traceroute">
-          <p> TRACEROUTE GOES HERE</p>
         </div>
 
 
-        Do a ngrepeat, and do a click event for each, load each individual and display the chart using angular charts
-        <!--<ul>-->
-        <!--<li ng-repeat="fot in fotografia"><img src="{{latencySummaryData.type}}"></li>-->
-        <!--</ul>-->
+        1. Get Traceroute if possible - DONE.
+        2. Display Aggregation and Statistics.
+
+        Focus: detection of variating/anomaly in the health of links.
+        We need to get the data over time to see if there is progressive deterioration on links.
+        look ay past data you would see the changes in latency amd bandwidth.
+        visualisation and analysis tool for the network manager.
+
+      </div>
+      <!-- /.panel-body -->
+    </div>
+
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Google Maps
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <div class="container">
+
+
+          <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+
+
+          <!--<div id="tr_plot_gmaps" ng-controller="tr_gmaps">-->
+
+          <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
+          <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
+          <!--<ui-gmap-windows show="show">-->
+          <!--<div ng-non-bindable>{{title}}</div>-->
+          <!--</ui-gmap-windows>-->
+          <!--</ui-gmap-markers>-->
+
+          <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
+
+          <!--</ui-gmap-polylines>-->
+          <!--</ui-gmap-google-map>-->
+          <!--</div>-->
+
+        </div>
 
 
       </div>
-
-
-      1. Get Traceroute if possible - DONE.
-      2. Display Aggregation and Statistics.
-
-      Focus: detection of variating/anomaly in the health of links.
-      We need to get the data over time to see if there is progressive deterioration on links.
-      look ay past data you would see the changes in latency amd bandwidth.
-      visualisation and analysis tool for the network manager.
-
+      <!-- /.panel-body -->
     </div>
-    <!-- /.panel-body -->
+
+
   </div>
 
+  <!-- build:js(src) scripts/vendor.js -->
+  <!-- bower:js -->
+  <!-- run `gulp inject` to automatically populate bower script dependencies -->
+  <!-- endbower -->
+  <!-- endbuild -->
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Google Maps
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      <div class="container">
+  <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
+  <!-- inject:js -->
+  <!-- js files will be automatically insert here -->
+  <!-- endinject -->
 
+  <!-- inject:partials -->
+  <!-- angular templates will be automatically converted in js and inserted here -->
+  <!-- endinject -->
+  <!-- endbuild -->
 
-        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+  <script>
+    // tooltip demo
+    $('.tooltip-demo').tooltip({
+      selector: "[data-toggle=tooltip]",
+      container: "body"
+    })
 
+    // popover demo
+    $("#123234")
+      .popover()
 
-        <!--<div id="tr_plot_gmaps" ng-controller="tr_gmaps">-->
+    $('#123234').qtip({ // Grab some elements to apply the tooltip to
+      content: {
+        text: 'My common piece of text here'
+      }
+    })
 
-        <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
-        <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
-        <!--<ui-gmap-windows show="show">-->
-        <!--<div ng-non-bindable>{{title}}</div>-->
-        <!--</ui-gmap-windows>-->
-        <!--</ui-gmap-markers>-->
-
-        <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
-
-        <!--</ui-gmap-polylines>-->
-        <!--</ui-gmap-google-map>-->
-        <!--</div>-->
-
-      </div>
-
-
-    </div>
-    <!-- /.panel-body -->
-  </div>
-
-
-</div>
-
-<!-- build:js(src) scripts/vendor.js -->
-<!-- bower:js -->
-<!-- run `gulp inject` to automatically populate bower script dependencies -->
-<!-- endbower -->
-<!-- endbuild -->
-
-<!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
-<!-- inject:js -->
-<!-- js files will be automatically insert here -->
-<!-- endinject -->
-
-<!-- inject:partials -->
-<!-- angular templates will be automatically converted in js and inserted here -->
-<!-- endinject -->
-<!-- endbuild -->
-
-<script>
-  // tooltip demo
-  $('.tooltip-demo').tooltip({
-    selector: "[data-toggle=tooltip]",
-    container: "body"
-  })
-
-  // popover demo
-  $("#123234")
-    .popover()
-
-  $('#123234').qtip({ // Grab some elements to apply the tooltip to
-    content: {
-      text: 'My common piece of text here'
-    }
-  })
-
-</script>
+  </script>
 
 </body>
 </html>
