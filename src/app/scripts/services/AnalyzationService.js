@@ -10,13 +10,12 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', 'TracerouteResultsService', function ($http, $q, $log, HostService, TracerouteResultsService) {
+analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', function ($http, $q, $log, HostService) {
+
+  $log.debug("AnalyzationServices:AnalyzeTraceroute");
 
   var host = HostService.getHost();
-
-
   var sourceAndDestinationList;
-
 
   return {
 
@@ -157,6 +156,26 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
     getSourceAndDestination: function () {
       // returns promise of main TR result. chain it with getAnalyzation's promise.
 
+    },
+
+    getPath: function(traceroute_metadata){
+
+      //return promise.
+    },
+
+    analyzePath: function (traceroute_results) {
+      // Array newest to oldest.
+      // To consider, will traceroute path ALWAYS be the same?
+      // Take last 7 days result, find unique paths, compare it.
+    var results = {
+      ts:1,
+      path:[1,2,3,4]
+    }
+
+
+
+
+      return 1;
     }
   };
 
@@ -230,6 +249,39 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 }]);
 
 analyzationService.factory('Analyze_Bandwidth', [function () {
+  //Conditions of an anomaly
+  // 1. Values are different in a certain threshold.
+
+
+  var comparison = [];
+
+  var threshold = 100;
+
+  return {
+    compare: function (bandwidth_1, bandwidth_2) {
+
+      var diff = bandwidth_1 - bandwidth_2;
+
+      if (diff > Math.abs(diff)) {
+        // Threshold met, anomaly detected.
+        return true;
+
+      } else {
+
+        return false;
+
+      }
+
+      // Do something
+    },
+    add: {
+      //Do Something
+    }
+  }
+
+}]);
+
+analyzationService.factory('Analyze_Latency', [function () {
   //Conditions of an anomaly
   // 1. Values are different in a certain threshold.
 
