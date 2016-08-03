@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices','chart.js']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -2066,10 +2066,11 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
 
   //To allow Cytoscape graph to load upon showing/hiding.
   //window.dispatchEvent(new Event('resize'));
+  var host = HostService.getHost();
 
   $scope.$on('LatencyMetadata', function (event, metadata) {
 
-    var host = HostService.getHost();
+
     var latencyMetadata = metadata;
     var metadataURL = host + latencyMetadata + "/";
 
@@ -2094,29 +2095,29 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
       $scope.latencySummaryData = [];
 
 
+      for (var j = 0; j < response.data['event-types'].length; j++) {
 
-        for (var j = 0; j < response.data['event-types'].length; j++) {
-
-          if (response.data['event-types'][j]['event-type'] == 'histogram-rtt') {
-
+        if (response.data['event-types'][j]['event-type'] == 'histogram-rtt') {
 
 
-            for (var k = 0; k < response.data['event-types'][j]['summaries'].length; k++) {
+          for (var k = 0; k < response.data['event-types'][j]['summaries'].length; k++) {
 
 
-              $scope.latencySummaryData.push({
-                type: response.data['event-types'][j]['summaries'][k]['summary-type'],
-                uri: response.data['event-types'][j]['summaries'][k]['uri'],
-                time: UnixTimeConverterService.getTime(response.data['event-types'][j]['summaries'][k]['time-updated']),
-                date: UnixTimeConverterService.getDate(response.data['event-types'][j]['summaries'][k]['time-updated']),
-                window: response.data['event-types'][j]['summaries'][k]['summary-window']
-              });
+            $scope.latencySummaryData.push({
+              type: response.data['event-types'][j]['summaries'][k]['summary-type'],
+              uri: response.data['event-types'][j]['summaries'][k]['uri'],
+              time: UnixTimeConverterService.getTime(response.data['event-types'][j]['summaries'][k]['time-updated']),
+              date: UnixTimeConverterService.getDate(response.data['event-types'][j]['summaries'][k]['time-updated']),
+              window: response.data['event-types'][j]['summaries'][k]['summary-window'],
+              url: response.data['url'],
+              event_type: response.data['event-types'][j]['event-type']
 
-            }
+            });
 
           }
-        }
 
+        }
+      }
 
 
     }).catch(function (error) {
@@ -2128,8 +2129,104 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
 
   });
 
-  $scope.loadLatencySummaryChart = function (uri){
-    $log.debug("URI CLICKED: "+ uri);
+  $scope.loadLatencySummaryChart = function (URL, event_type, summary_type, summary_window, uri) {
+
+    $log.debug("LatencyInformationCtrl: loadLatencySummaryChart " + uri);
+
+    // var latencyURL = response.data[i]['url'] + "histogram-rtt/" + response.data[i]['event-types'][j]['summaries'][k]['summary-type'] + "/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window']
+
+    if(summary_type=="aggregation"){
+      var individualLatencyResultsURL = URL + event_type + "/" + summary_type + "s/" + summary_window;
+    }else{
+      var individualLatencyResultsURL = URL + event_type + "/" + summary_type + "/" + summary_window;
+    }
+
+    $log.debug("LatencyInformationCtrl: loadLatencySummaryChart URL:" + individualLatencyResultsURL);
+
+    $http({
+      method: 'GET',
+      url: individualLatencyResultsURL,
+      params: {
+        'format': 'json',
+        // 'event-type': 'histogram-rtt',
+        // 'limit': 10,
+        // 'time-end': (Math.floor(Date.now() / 1000)),
+        'time-range': 86400
+        // 604800 = 7 days
+        // 86400 = 24 hours
+      },
+      cache: true
+    }).then(function (response) {
+
+      $scope.IndividualLatencyResults = [];
+      // var reversedResponse = response.data.reverse();
+      var reversedResponse = response.data;
+
+      for (var i = 0; i < reversedResponse.length; i++) {
+        var labels = [];
+        var values = [];
+
+        reversedResponse[i]['val'].s
+
+        angular.forEach(reversedResponse[i]['val'], function(value, key) {
+
+          labels.push(key);
+          values.push(value);
+
+        });
+
+        $log.debug(labels);
+        $log.debug(values);
+        // for (var j = 0; j <  reversedResponse[i]['val'].length; j++) {
+        //
+        //
+        // }
+
+
+        $scope.IndividualLatencyResults.push({
+          time: UnixTimeConverterService.getTime(reversedResponse[i]['ts']),
+          date: UnixTimeConverterService.getDate(reversedResponse[i]['ts']),
+          label:labels,
+          data : values
+
+          // type: response.data['event-types'][j]['summaries'][k]['summary-type'],
+          // uri: response.data['event-types'][j]['summaries'][k]['uri'],
+          //
+          // window: response.data['event-types'][j]['summaries'][k]['summary-window'],
+          // url: response.data['url'],
+          // event_type: response.data['event-types'][j]['event-type']
+
+        });
+
+
+
+        $scope.IndividualLatencyResultIndex = 0;
+
+      }
+
+
+    }).catch(function (error) {
+      $log.debug("LatencyInformationCtrl:loadLatencySummaryChart ERROR")
+      $log.debug(error);
+      $log.debug("Server Response: " + error.status);
+
+    });
+
+
+    $scope.loadIndividualLatencyChart = function (key) {
+
+      $scope.IndividualLatencyResultIndex = key;
+
+    };
+
+
+    // $scope.labels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+    // $scope.series = ['Series A', 'Series B'];
+    //
+    // $scope.data = [
+    //   [65, 59, 80, 81, 56, 55, 40],
+    //   [28, 48, 40, 19, 86, 27, 90]
+    // ];
   }
 
 
