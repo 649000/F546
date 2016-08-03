@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices','chart.js']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -2061,8 +2061,8 @@ traceroute.controller('LatencyVisualisationCtrl', ['$scope', '$http', '$q', '$lo
 
 
 traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyToTracerouteCytoscapeService', 'UnixTimeConverterService', 'LatencyMetadataService', function ($scope, $http, $q, $log, HostService, LatencyToTracerouteCytoscapeService, UnixTimeConverterService, LatencyMetadataService) {
-  $log.debug("LatencyInformationCtrl:START");
 
+  $log.debug("LatencyInformationCtrl:START");
 
   //To allow Cytoscape graph to load upon showing/hiding.
   //window.dispatchEvent(new Event('resize'));
@@ -2104,12 +2104,12 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
             for (var k = 0; k < response.data['event-types'][j]['summaries'].length; k++) {
 
 
-
               $scope.latencySummaryData.push({
                 type: response.data['event-types'][j]['summaries'][k]['summary-type'],
                 uri: response.data['event-types'][j]['summaries'][k]['uri'],
-                time: response.data['event-types'][j]['summaries'][k]['time'],
-                window: response.data['event-types'][j]['summaries'][k]['window']
+                time: UnixTimeConverterService.getTime(response.data['event-types'][j]['summaries'][k]['time-updated']),
+                date: UnixTimeConverterService.getDate(response.data['event-types'][j]['summaries'][k]['time-updated']),
+                window: response.data['event-types'][j]['summaries'][k]['summary-window']
               });
 
             }
@@ -2127,6 +2127,10 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
     });
 
   });
+
+  $scope.loadLatencySummaryChart = function (uri){
+    $log.debug("URI CLICKED: "+ uri);
+  }
 
 
 }]);

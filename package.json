@@ -1,7 +1,9 @@
 {
   "name": "f546",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "chart.js": "^2.2.1"
+  },
   "scripts": {
     "test": "gulp test"
   },

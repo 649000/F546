@@ -28,11 +28,16 @@ generalServices.factory('IPAddressIdentifierService', function () {
 // NOTE THAT THIS IS A SERVICE
 generalServices.service('UnixTimeConverterService', function () {
 
+
+
   this.getDate = function (timestamp) {
+    var fullMonth = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var abbrMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     date = new Date(timestamp * 1000)
       datevalues = [
         date.getDate(),
-        date.getMonth() + 1,
+        fullMonth[date.getMonth()],
+        // date.getMonth() + 1,
         date.getFullYear()
 
         // date.getHours(),

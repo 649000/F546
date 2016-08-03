@@ -504,7 +504,7 @@
           <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
           <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
           <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
+
 
           <div id="latency_cytoscape_traceroute">
             <p> TRACEROUTE GOES HERE</p>
@@ -514,17 +514,44 @@
           <div id="latency_metadata_summary">
             <p>Latency Metadata: {{latencyMetadata}}</p>
 
-            <ul>
-              <li ng-repeat="summary in latencySummaryData">
-                <p>Latency Metadata: {{summary.type}}</p>
+            <div class="table-responsive">
+              <table class="table">
 
-              </li>
-            </ul>
+                <thead>
+                <tr>
+
+                  <th>Latency Summary Type</th>
+                  <th>Latency Summary Date</th>
+                  <th>Latency Summary Time</th>
+                  <th>Latency Summary Window</th>
+                  <th>Latency Histogram</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+
+                <tr ng-repeat="summary in latencySummaryData">
+                  <td>{{summary.type}}</td>
+                  <td>{{summary.date}}</td>
+                  <td>{{summary.time}}</td>
+                  <td>{{summary.window}}</td>
+                  <td><button type="button" class="btn btn-default" ng-click="loadLatencySummaryChart(summary.uri);">Load Histogram</button></td>
+                </tr>
+
+
+
+                </tbody>
+              </table>
+            </div>
+
+
 
           </div>
 
 
         </div>
+
 
 
         1. Get Traceroute if possible - DONE.
