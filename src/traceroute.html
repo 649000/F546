@@ -366,122 +366,244 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute - Duplicated Path
+      <i class="fa fa-bar-chart-o fa-fw"></i> Overview - Traceroute Path
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
-      Overview of all, click, show from that clicked node perspective.
-      <button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()">Get
-        Bandwidth
-      </button>
 
-      <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
+      <!--<button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()">Get-->
+      <!--Bandwidth-->
+      <!--</button>-->
 
-
-      </div>
+      <!--<div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">-->
+      <!---->
+      <!--</div>-->
 
       <div class="container" ng-controller="TracerouteGraphCtrl">
 
-        <div class="container" id=traceroute_graph_cytoscape></div>
+        <div class="container" id="traceroute_graph_cytoscape"></div>
 
-        Analyzation:
-        1. Changes in RTT.
-        2. Change in Path.
+      </div>
+
+
+      <div class="container" ng-controller="TracerouteTableCtrl">
+        Each Result has a Source and Destination, and MANY intermediate nodes with RTT values in between.
+
+        // Select by SOURCE, DESTINATION or NODE.
+        <div class="">
+          <label>Source</label>
+          <select class="form-control">
+            <option>1</option>
+            <option>2</option>
+          </select>
+        </div>
+
+        OR TABS
+        By Source
+        By Destination
+        By IP NODES
+
+
+        <div class="" ng-repeat="(key, val) in tracerouteResults">
+          <h4>Source: {{val.source}}, City, Country.</h4>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              Destination: {{val.destination}}, City, Country. From {{val.nodes[0].startDate}}
+              {{val.nodes[0].startTime}} To {{val.nodes[0].endDate}}{{val.nodes[0].endTime}}
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table">
+
+                  <thead>
+                  <tr>
+                    <th>Hop</th>
+                    <th>IP</th>
+                    <th>RTT</th>
+                    <th>Min RTT</th>
+                    <th>Mean RTT</th>
+                    <th>Std Deviation RTT</th>
+                    <th>Status</th>
+                    <th>Visualise</th>
+
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr ng-repeat="(key, val) in val.nodes">
+                    <td>{{key+1}}</td>
+                    <td>{{val.ip}}</td>
+                    <td>{{val.rtt}}</td>
+                    <td>{{val.rttMin}}</td>
+                    <td>{{val.rttAvg}}</td>
+                    <td>{{val.rttStd}}</td>
+
+                    <td ng-if="val.status"><span class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
+                    <td ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span></td>
+
+
+                    <td><input type="checkbox" name="vehicle" value="Car" checked></td>
+
+                  </tr>
+                  </tbody>
+
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+          </div>
+
+        </div>
+      </div>
+
+
+      <div ng-controller="TracerouteNotificationCtrl">
+
+        <p ng-click="Hello()">Click me</p>
+      </div>
+      <!-- /.panel-body -->
     </div>
-    <!-- /.panel-body -->
-  </div>
 
 
-  <!--Traceroute - Singular Path-->
-  <div class="panel panel-default">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        Traceroute Results
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <!-- Nav tabs -->
+        <ul class="nav nav-pills">
+          <li class="active"><a href="#home-pills" data-toggle="tab" aria-expanded="true">Source</a>
+          </li>
+          <li class=""><a href="#profile-pills" data-toggle="tab" aria-expanded="false">Destination</a>
+          </li>
+          <li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Intermediary Nodes</a>
+          </li>
+          <li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Erroneous Detected</a>
+          </li>
 
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute - No Duplicated Path
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+          <div class="tab-pane fade active in" id="home-pills">
+            <h4>Home Tab</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </div>
+
+          <div class="tab-pane fade" id="profile-pills">
+            <h4>Profile Tab</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </div>
+
+          <div class="tab-pane fade" id="messages-pills">
+            <h4>Messages Tab</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </div>
+
+
+        </div>
+
+      </div>
+      <!-- /.panel-body -->
     </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      Show Visualisation: <input class="checkbox-inline" type="checkbox" ng-model="myVar">
 
-      <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl"
-              ng-click="loadTraceroute_NoDuplicate()">Load Traceroute
-      </button>
 
-      <div class="container" ng-show="myVar">
 
-        <div ng-controller="Traceroute_NoDuplicateCtrl">
-          Main Nodes: {{mainNodes}}
-          NON - Main Nodes: {{NonMainNodes}}
-          Total Nodes: {{totalNodes}}
-          Date of Traceroute Test: {{tracerouteDate}}
-          Time of Traceroute Test: {{tracerouteTime}}
+    <!--Traceroute - Singular Path-->
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute - No Duplicated Path
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        Show Visualisation: <input class="checkbox-inline" type="checkbox" ng-model="myVar">
+
+        <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl"
+                ng-click="loadTraceroute_NoDuplicate()">Load Traceroute
+        </button>
+
+        <div class="container" ng-show="myVar">
+
+          <div ng-controller="Traceroute_NoDuplicateCtrl">
+            Main Nodes: {{mainNodes}}
+            NON - Main Nodes: {{NonMainNodes}}
+            Total Nodes: {{totalNodes}}
+            Date of Traceroute Test: {{tracerouteDate}}
+            Time of Traceroute Test: {{tracerouteTime}}
+
+
+          </div>
+
+
+          <div class="container" id="traceroute_noduplicate" ng-controller="Traceroute_NoDuplicateCtrl">
+
+          </div>
+
+
+        </div>
+
+      </div>
+      <!-- /.panel-body -->
+    </div>
+
+    <!--Empty Panel-->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel
+      </div>
+      <!-- /.panel-heading -->
+      <div class="panel-body">
+        <div class="container">
 
 
         </div>
 
 
-        <div class="container" id="traceroute_noduplicate" ng-controller="Traceroute_NoDuplicateCtrl">
-
-        </div>
-
-
       </div>
-
+      <!-- /.panel-body -->
     </div>
-    <!-- /.panel-body -->
-  </div>
-
-  <!--Empty Panel-->
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      <div class="container">
 
 
-      </div>
+    <!-- build:js(src) scripts/vendor.js -->
+    <!-- bower:js -->
+    <!-- run `gulp inject` to automatically populate bower script dependencies -->
+    <!-- endbower -->
+    <!-- endbuild -->
 
+    <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
+    <!-- inject:js -->
+    <!-- js files will be automatically insert here -->
+    <!-- endinject -->
 
-    </div>
-    <!-- /.panel-body -->
-  </div>
+    <!-- inject:partials -->
+    <!-- angular templates will be automatically converted in js and inserted here -->
+    <!-- endinject -->
+    <!-- endbuild -->
 
+    <script>
+      // tooltip demo
+      $('.tooltip-demo').tooltip({
+        selector: "[data-toggle=tooltip]",
+        container: "body"
+      })
 
-  <!-- build:js(src) scripts/vendor.js -->
-  <!-- bower:js -->
-  <!-- run `gulp inject` to automatically populate bower script dependencies -->
-  <!-- endbower -->
-  <!-- endbuild -->
+      // popover demo
+      $("#123234")
+        .popover()
 
-  <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
-  <!-- inject:js -->
-  <!-- js files will be automatically insert here -->
-  <!-- endinject -->
+      $('#123234').qtip({ // Grab some elements to apply the tooltip to
+        content: {
+          text: 'My common piece of text here'
+        }
+      })
 
-  <!-- inject:partials -->
-  <!-- angular templates will be automatically converted in js and inserted here -->
-  <!-- endinject -->
-  <!-- endbuild -->
-
-  <script>
-    // tooltip demo
-    $('.tooltip-demo').tooltip({
-      selector: "[data-toggle=tooltip]",
-      container: "body"
-    })
-
-    // popover demo
-    $("#123234")
-      .popover()
-
-    $('#123234').qtip({ // Grab some elements to apply the tooltip to
-      content: {
-        text: 'My common piece of text here'
-      }
-    })
-
-  </script>
+    </script>
 
 </body>
 </html>

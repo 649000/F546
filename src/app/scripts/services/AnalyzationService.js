@@ -10,7 +10,7 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', function ($http, $q, $log, HostService) {
+analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', function ($http, $q, $log, HostService, UnixTimeConverterService) {
 
   $log.debug("AnalyzationServices:AnalyzeTraceroute");
 
@@ -21,10 +21,8 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     getAnalyzation: function () {
       // For each TR result, calculate last 7 days of average min RTT, mean RTT, std deviation RTT
-      // push it into analyzedTRList
 
       sourceAndDestinationList = [];
-
 
       var analyzedTRList = TracerouteResultsService.getMainResult().then(function (response) {
 
@@ -55,11 +53,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
         }
 
-        // return promise here
-        // OR return $q.all(promises);
-        // store array or source/dest above.
-
-        $log.debug("AnalyzationServices:AnalyzeTraceroute:getAnalyzation() -> End of getMainResult(), Promises Length:  " + promises.length);
 
         return $q.all(promises);
 
@@ -158,24 +151,165 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     },
 
-    getPath: function(traceroute_metadata){
+    getRtt: function () {
 
-      //return promise.
+      $log.debug("AnalyzationServices:AnalyzeTraceroute:getRtt()");
+      var host = HostService.getHost();
+
+      return $http({
+        method: 'GET',
+        url: host,
+        params: {
+          'format': 'json',
+          'event-type': 'packet-trace'
+          // 'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          // 'time-range': timeRange
+        },
+        cache: true
+      })
+
+
     },
 
-    analyzePath: function (traceroute_results) {
+    analyzeRtt: function (individual_traceroute_results) {
+
+      $log.debug("AnalyzationServices:AnalyzeTraceroute:analyzeRtt()");
+
+      var nodeAndRttList_CalculatedData = [];
+      var nodeAndRttList_RawData = [];
+
+      var reversedResponse = individual_traceroute_results.reverse();
+
+
+      for (var k = 0; k < reversedResponse.length; k++) {
+
+        var ts = reversedResponse[k]['ts'];
+
+        for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
+
+
+          //What about Query 1,2,3?
+          if (reversedResponse[k]['val'][l]['success'] == 1) {
+
+            var IPAddr = reversedResponse[k]['val'][l]['ip'];
+            var rtt = reversedResponse[k]['val'][l]['rtt'];
+            var IPExist = false;
+
+            // Check if the IP Address already exist in the list.
+            for (var j = 0; j < nodeAndRttList_RawData.length; j++) {
+
+              //IP Address Exist. Append new rtt value.
+              if (nodeAndRttList_RawData[j]['IP'] == IPAddr) {
+                IPExist = true;
+                nodeAndRttList_RawData[j]['rtt'].push(rtt);
+                nodeAndRttList_RawData[j]['date'].push(ts)
+              }
+            }
+
+            if (IPExist == false) {
+
+              var newNode = {
+                IP: IPAddr,
+                rtt: [rtt],
+                date: [ts]
+              }
+
+              nodeAndRttList_RawData.push(newNode);
+            }
+
+          }
+
+        }
+      }
+
+
+      //Calculating Mean, Min and Std Deviation.
+      for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
+
+        var rrtResult = nodeAndRttList_RawData[i]['rtt'][0];
+        var rttMean = math.mean(nodeAndRttList_RawData[i]['rtt']);
+        var rrtStatus = false;
+
+
+        if (rrtResult < rttMean) {
+          rrtStatus = true;
+        }
+
+
+        nodeAndRttList_CalculatedData.push(
+          {
+            ip: nodeAndRttList_RawData[i]['IP'],
+            rtt: nodeAndRttList_RawData[i]['rtt'][0],
+            rttAvg: math.mean(nodeAndRttList_RawData[i]['rtt']),
+            rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
+            rttStd: math.std(nodeAndRttList_RawData[i]['rtt']),
+            // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
+            // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
+            //DATE MIGHT BE POSSIBLY WRONG
+            startDate: UnixTimeConverterService.getDate(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+            endDate: UnixTimeConverterService.getDate(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+            startTime: UnixTimeConverterService.getTime(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+            endTime: UnixTimeConverterService.getTime(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+            status: rrtStatus
+
+          }
+        );
+
+      }
+
+      return nodeAndRttList_CalculatedData;
+
+    },
+
+    getPath: function (traceroute_metadata) {
+      var host = HostService.getHost();
+
+      // This returns ALL apths of the time range for that traceroute metadata
+      // JavaScript Promise
+      return $http({
+        method: 'GET',
+        url: host + traceroute_metadata + "/packet-trace/base",
+        params: {
+          'format': 'json',
+          'event-type': 'packet-trace',
+          // 'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          'time-range': 604800
+          // 24 hours = 86400
+          // 7 days = 604800
+        },
+        cache: true
+      })
+    },
+
+    analyzePath: function (traceroute_results, latest_result) {
+
       // Array newest to oldest.
-      // To consider, will traceroute path ALWAYS be the same?
+
       // Take last 7 days result, find unique paths, compare it.
-    var results = {
-      ts:1,
-      path:[1,2,3,4]
-    }
+
+      // What if the existing path also has an error?
 
 
+      var results = {
+        ts: 1,
+        path: [1, 2, 3, 4]
+      }
+      var pathExist = false;
 
+      //Need to return the path that it found?
+      // var existedPath = [];
 
-      return 1;
+      for (var i = 0; i < traceroute_results.length; i++) {
+
+        if (JSON.stringify(traceroute_results[i].path) === JSON.stringify(latest_result)) {
+          pathExist = true;
+        }
+
+      }
+
+      return pathExist;
     }
   };
 

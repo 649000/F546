@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -371,120 +371,120 @@ traceroute.directive('agclick_edge', function () {
 //
 // }]);
 
-traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($scope, TracerouteMainResults) {
-
-  var previousIP, nodes = [], links = []
-  var width = 960, height = 500;
-
-  //var nodes = [
-  //  { x:   width/3, y: height/2 },
-  //  { x: 2*width/3, y: height/2 },
-  //  { x: 3*width/3, y: height/2 }
-  //];
-  //
-  //var links = [
-  //  { source: 0, target: 1 },
-  //  { source: 1, target: 2 }
-  //];
-
-  TracerouteResults.get({metadata_key: '8662af9e72fb46228ce307534bba5a7f'}, function (data) {
-
-    for (i = 0; i < data[0].val.length; i++) {
-      if (previousIP != data[0].val[i].ip) {
-        //console.log(data[0].val[i].ip)
-        nodes.push({x: i * width / 3, y: height / 2})
-        previousIP = data[0].val[i].ip
-      }
-    }
-    for (i = 0; i < nodes.length; i++) {
-      if (i != (nodes.length - 1)) {
-        links.push({source: i, target: (i + 1)})
-      }
-    }
-
-    //links.push({ source: 0, target: (1) })
-    //links.push({ source: 1, target: (2) })
-    //links.push({ source: 2, target: (3) })
-    //links.push({ source: 3, target: (4) })
-    //links.push({ source: 4, target: (5) })
-    //links.push({ source: 5, target: (6) })
-    //links.push({ source: 6, target: (7) })
-    //links.push({ source: 7, target: (8) })
-    //links.push({ source: 8, target: (9) })
-    //links.push({ source: 9, target: (10) })
-    //links.push({ source: 10, target: (11) })
-    //links.push({ source: 11, target: (12) })
-
-
-    //console.log("Node Size: "+ nodes.length)
-    //console.log("Edge Size: " + links.length)
-    //
-    //links.forEach(function(entry) {
-    //  console.log("Link: Source: "+entry.source + " Target: "+ entry.target);
-    //});
-    //
-    //nodes.forEach(function(entry) {
-    //  console.log("Node: X: "+entry.x + " Y: "+ entry.y);
-    //});
-
-
-    var svg = d3.select("#d3fgraph").append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-
-    var force = d3.layout.force()
-      .size([width, height])
-      .nodes(nodes)
-      .links(links);
-
-    force.linkDistance(width / 2);
-
-    var link = svg.selectAll('.link')
-      .data(links)
-      .enter().append('line')
-      .attr('class', 'link');
-
-    var node = svg.selectAll('.node')
-      .data(nodes)
-      .enter().append('circle')
-      .attr('class', 'node');
-
-
-    force.on('end', function () {
-
-      node.attr('r', width / 25)
-        .attr('cx', function (d) {
-          return d.x;
-        })
-        .attr('cy', function (d) {
-          return d.y;
-        });
-
-
-      link.attr('x1', function (d) {
-        return d.source.x;
-      })
-        .attr('y1', function (d) {
-          return d.source.y;
-        })
-        .attr('x2', function (d) {
-          return d.target.x;
-        })
-        .attr('y2', function (d) {
-          return d.target.y;
-        });
-
-    });
-
-    force.start();
-
-
-  });
-
-
-}]);
-
+// traceroute.controller('tr_d3', ['$scope', 'TracerouteMainResults', function ($scope, TracerouteMainResults) {
+//
+//   var previousIP, nodes = [], links = []
+//   var width = 960, height = 500;
+//
+//   //var nodes = [
+//   //  { x:   width/3, y: height/2 },
+//   //  { x: 2*width/3, y: height/2 },
+//   //  { x: 3*width/3, y: height/2 }
+//   //];
+//   //
+//   //var links = [
+//   //  { source: 0, target: 1 },
+//   //  { source: 1, target: 2 }
+//   //];
+//
+//   TracerouteResults.get({metadata_key: '8662af9e72fb46228ce307534bba5a7f'}, function (data) {
+//
+//     for (i = 0; i < data[0].val.length; i++) {
+//       if (previousIP != data[0].val[i].ip) {
+//         //console.log(data[0].val[i].ip)
+//         nodes.push({x: i * width / 3, y: height / 2})
+//         previousIP = data[0].val[i].ip
+//       }
+//     }
+//     for (i = 0; i < nodes.length; i++) {
+//       if (i != (nodes.length - 1)) {
+//         links.push({source: i, target: (i + 1)})
+//       }
+//     }
+//
+//     //links.push({ source: 0, target: (1) })
+//     //links.push({ source: 1, target: (2) })
+//     //links.push({ source: 2, target: (3) })
+//     //links.push({ source: 3, target: (4) })
+//     //links.push({ source: 4, target: (5) })
+//     //links.push({ source: 5, target: (6) })
+//     //links.push({ source: 6, target: (7) })
+//     //links.push({ source: 7, target: (8) })
+//     //links.push({ source: 8, target: (9) })
+//     //links.push({ source: 9, target: (10) })
+//     //links.push({ source: 10, target: (11) })
+//     //links.push({ source: 11, target: (12) })
+//
+//
+//     //console.log("Node Size: "+ nodes.length)
+//     //console.log("Edge Size: " + links.length)
+//     //
+//     //links.forEach(function(entry) {
+//     //  console.log("Link: Source: "+entry.source + " Target: "+ entry.target);
+//     //});
+//     //
+//     //nodes.forEach(function(entry) {
+//     //  console.log("Node: X: "+entry.x + " Y: "+ entry.y);
+//     //});
+//
+//
+//     var svg = d3.select("#d3fgraph").append("svg")
+//       .attr("width", width)
+//       .attr("height", height);
+//
+//
+//     var force = d3.layout.force()
+//       .size([width, height])
+//       .nodes(nodes)
+//       .links(links);
+//
+//     force.linkDistance(width / 2);
+//
+//     var link = svg.selectAll('.link')
+//       .data(links)
+//       .enter().append('line')
+//       .attr('class', 'link');
+//
+//     var node = svg.selectAll('.node')
+//       .data(nodes)
+//       .enter().append('circle')
+//       .attr('class', 'node');
+//
+//
+//     force.on('end', function () {
+//
+//       node.attr('r', width / 25)
+//         .attr('cx', function (d) {
+//           return d.x;
+//         })
+//         .attr('cy', function (d) {
+//           return d.y;
+//         });
+//
+//
+//       link.attr('x1', function (d) {
+//         return d.source.x;
+//       })
+//         .attr('y1', function (d) {
+//           return d.source.y;
+//         })
+//         .attr('x2', function (d) {
+//           return d.target.x;
+//         })
+//         .attr('y2', function (d) {
+//           return d.target.y;
+//         });
+//
+//     });
+//
+//     force.start();
+//
+//
+//   });
+//
+//
+// }]);
+//
 
 // traceroute.controller('tr_cytoscape', ['$scope', '$http', 'TracerouteMainResults', 'UnixTimeConverterService', function ($scope, $http, TracerouteMainResults, UnixTimeConverterService) {
 //
