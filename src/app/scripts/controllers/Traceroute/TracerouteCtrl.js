@@ -315,6 +315,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
       );
 
       nodeList.push(response.data[i]['source']);
+      nodeList.push(response.data[i]['destination']);
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
@@ -368,12 +369,54 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
       $scope.tracerouteResults.push({
         source: startNode,
+        sourceCity: null,
+        sourceCountry:null,
         destination: destinationNode,
+        destinationCity:null,
+        destinationCountry:null,
         nodes: aggregatedResults,
         metadata: metadataKey
       });
 
     }
+
+
+    var uniqueIP = UniqueArrayService.getUnique(nodeList);
+    var nodeToIP_promises = [];
+    for (var i = 0; i < uniqueIP.length; i++) {
+      nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
+    }
+
+    return $q.all(nodeToIP_promises);
+
+  }).then(function (response) {
+
+    for (var i = 0; i < response.length; i++) {
+
+      for (var j = 0; j < $scope.tracerouteResults.length; j++) {
+
+        if($scope.tracerouteResults[j].source==response[i].ip){
+          $scope.tracerouteResults[j].sourceCity =  response[i].city;
+          $scope.tracerouteResults[j].sourceCountry =  response[i].countrycode;
+        }
+
+        if($scope.tracerouteResults[j].destination==response[i].ip){
+          $scope.tracerouteResults[j].destinationCity =  response[i].city;
+          $scope.tracerouteResults[j].destinationCountry =  response[i].countrycode;
+        }
+
+      }
+
+
+      // var node = TracerouteGraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
+      //
+      // node.data({
+      //   label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+      // });
+
+
+    }
+
 
 
     var noOfAnomalies = 0;
@@ -395,38 +438,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
     }
 
-    // $log.debug("sizeesee" + $scope.anomalyResults.length)
-    // console.log("sizeesee" + $scope.anomalyResults.length)
     $scope.noOfAnomalies = noOfAnomalies;
-
-    var uniqueIP = UniqueArrayService.getUnique(nodeList);
-    var nodeToIP_promises = [];
-    for (var i = 0; i < uniqueIP.length; i++) {
-      nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
-    }
-
-    return $q.all(nodeToIP_promises);
-
-  }).then(function (response) {
-
-    for (var i = 0; i < response.length; i++) {
-
-      $scope.nodeLocation = {
-        city: 1,
-        country: 1
-      };
-
-
-      // ('[id = "203.30.39.127"]')
-      var node = TracerouteGraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
-
-      node.data({
-        label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
-      });
-
-
-    }
-
 
   }).catch(function (error) {
     $log.debug("TracerouteTableCtrl: Error")

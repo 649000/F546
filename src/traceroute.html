@@ -589,11 +589,11 @@
         Each Result has a Source and Destination, and MANY intermediate nodes with RTT values in between.
 
         <div class="" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">
-          <h4>Source: {{val.source}}, City, Country.</h4>
+          <h4>Source: {{val.source}}, {{val.sourceCity}}, {{val.sourceCountry}}.</h4>
 
           <div class="panel panel-default">
             <div class="panel-heading">
-              Destination: {{val.destination}}, City, Country. From {{val.nodes[0].startDate}}
+              Destination: {{val.destination}}, {{val.destinationCity}}, {{val.destinationCountry}} From {{val.nodes[0].startDate}}
               {{val.nodes[0].startTime}} To {{val.nodes[0].endDate}}{{val.nodes[0].endTime}}
             </div>
             <!-- /.panel-heading -->
