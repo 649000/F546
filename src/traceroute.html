@@ -386,11 +386,11 @@
 
           <!--</div>-->
 
-          <div id="traceroute_visualisation">
+          <div ng-controller="TracerouteGraphCtrl">
 
+            <div id="traceroute_graph_cytoscape"></div>
 
           </div>
-          BODY VISUALISATION
         </div>
         <!-- /.panel-body -->
       </div>
@@ -452,7 +452,6 @@
             </a>
 
 
-
             <a href="#" class="list-group-item">
               <i class="fa fa-refresh fa-fw"></i>
 
@@ -499,11 +498,11 @@
       <!---->
       <!--</div>-->
 
-      <div class="container" ng-controller="TracerouteGraphCtrl">
+      <!--<div class="container" ng-controller="TracerouteGraphCtrl">-->
 
-        <div class="container" id="traceroute_graph_cytoscape"></div>
+      <!--<div class="container" id="traceroute_graph_cytoscape"></div>-->
 
-      </div>
+      <!--</div>-->
 
 
       <div class="container" ng-controller="TracerouteTableCtrl">
