@@ -399,10 +399,10 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
     // console.log("sizeesee" + $scope.anomalyResults.length)
     $scope.noOfAnomalies = noOfAnomalies;
 
-
+    var uniqueIP = UniqueArrayService.getUnique(nodeList);
     var nodeToIP_promises = [];
-    for (var i = 0; i < nodeList.length; i++) {
-      nodeToIP_promises.push(GeoIPNekudoService.getCountry(nodeList[i]));
+    for (var i = 0; i < uniqueIP.length; i++) {
+      nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
     }
 
     return $q.all(nodeToIP_promises);
