@@ -241,9 +241,9 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
           {
             ip: nodeAndRttList_RawData[i]['IP'],
             rtt: nodeAndRttList_RawData[i]['rtt'][0],
-            rttAvg: math.mean(nodeAndRttList_RawData[i]['rtt']),
+            rttAvg: math.round(math.mean(nodeAndRttList_RawData[i]['rtt']), 4),
             rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
-            rttStd: math.std(nodeAndRttList_RawData[i]['rtt']),
+            rttStd: math.round(math.std(nodeAndRttList_RawData[i]['rtt']), 4),
             // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
             // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
             //DATE MIGHT BE POSSIBLY WRONG
