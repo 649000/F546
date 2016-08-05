@@ -413,19 +413,15 @@
     <div class="col-lg-3">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <i class="fa fa-gear fa-fw"></i> Overview Panel
+          <i class="fa fa-gear fa-fw"></i> Graph Panel
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
 
-
-          //Maybe separate list-group.
           <div class="list-group">
-
-            <a href="#" class="list-group-item">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
-            </a>
-
+            <h5>Graph Layout
+              <small>Sub-heading</small>
+            </h5>
             <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
                ng-click="layoutdisplayConcentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
@@ -449,7 +445,30 @@
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
+            <a href="" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="graphCentred();">
+              <i class="fa fa-wrench fa-fw"></i> Back to Centre
+            </a>
 
+          </div>
+
+          <div class="list-group">
+            <h5>Graph Nodes
+              <small>Sub-heading</small>
+            </h5>
+
+
+            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
+               ng-click="graphLoadAllResults();" data-toggle="tooltip" data-placement="left"
+               data-original-title="Resets graph to show traceroute path from ALL results.">
+              <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
+            </a>
+
+          </div>
+
+          <div class="list-group">
+            <h5>Traceroute Information
+              <small>Sub-heading</small>
+            </h5>
             <a href="#" class="list-group-item disabled">
               <i class="fa fa-asterisk fa-fw"></i>
               <span class="badge ">12</span> Total No. of Nodes:
@@ -471,9 +490,28 @@
               <span class="badge" ng-controller="TracerouteTableCtrl">{{noOfAnomalies}}</span> Erroneous Results:
             </a>
 
+          </div>
+
+
+          <div class="list-group">
+            <h5>// To Be Separated
+              <small>Sub-heading</small>
+            </h5>
+
 
             <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="clearCache();">
               <i class="fa fa-refresh fa-fw"></i> Clear Cache
+            </a>
+
+            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="removeNodes();">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>
+              <span class="badge ">abc</span> REMOVE:
+            </a>
+
+
+            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="restoreNodes();">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>
+              <span class="badge ">abc</span> RESTORE:
             </a>
 
 
@@ -481,13 +519,6 @@
               <i class="fa fa-exclamation-triangle fa-fw"></i>
               <span class="badge ">abc</span> Example:
             </a>
-            <!--<a href="#" class="list-group-item">-->
-            <!--<i class="fa fa-money fa-fw"></i> -->
-            <!--Payment Received-->
-            <!--<span class="pull-right text-muted small">-->
-            <!--<em>Yesterday</em>-->
-            <!--</span>-->
-            <!--</a>-->
 
           </div>
           <!-- /.list-group -->
@@ -501,100 +532,115 @@
   </div>
 
   <!--Anomalies Panel START-->
-  <!--<div class="panel panel-danger">-->
-  <div class="panel panel-red">
-    <div class="panel-heading">
-      Traceroute with Anomalies
-    </div>
-    <div class="panel-body">
+
+  <!--<div class="panel panel-red">-->
+    <!--<div class="panel-heading">-->
+      <!--Traceroute with Anomalies-->
+    <!--</div>-->
+    <!--<div class="panel-body">-->
 
 
-      <div ng-controller="TracerouteTableCtrl">
-        {{noOfSourceNodes}}
+      <!--<div ng-controller="TracerouteTableCtrl">-->
+        <!--{{noOfSourceNodes}}-->
 
-        <!--<div class="" ng-repeat="(key, val) in anomalyResults">-->
-          <!--<h4>Source: {{val.source}}, City, Country.</h4>-->
+        <!--&lt;!&ndash;<div class="" ng-repeat="(key, val) in anomalyResults">&ndash;&gt;-->
+        <!--&lt;!&ndash;<h4>Source: {{val.source}}, City, Country.</h4>&ndash;&gt;-->
 
-          <!--<div class="panel panel-default">-->
-            <!--<div class="panel-heading">-->
-              <!--Destination: {{val.destination}}, City, Country. From {{val.nodes[0].startDate}}-->
-              <!--{{val.nodes[0].startTime}} To {{val.nodes[0].endDate}}{{val.nodes[0].endTime}}-->
-            <!--</div>-->
-            <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
-            <!--<div class="panel-body">-->
-              <!--<div class="table-responsive">-->
-                <!--<table class="table">-->
+        <!--&lt;!&ndash;<div class="panel panel-default">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="panel-heading">&ndash;&gt;-->
+        <!--&lt;!&ndash;Destination: {{val.destination}}, City, Country. From {{val.nodes[0].startDate}}&ndash;&gt;-->
+        <!--&lt;!&ndash;{{val.nodes[0].startTime}} To {{val.nodes[0].endDate}}{{val.nodes[0].endTime}}&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash; /.panel-heading &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="panel-body">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="table-responsive">&ndash;&gt;-->
+        <!--&lt;!&ndash;<table class="table">&ndash;&gt;-->
 
-                  <!--<thead>-->
-                  <!--<tr>-->
-                    <!--<th>Hop</th>-->
-                    <!--<th>IP</th>-->
-                    <!--<th>RTT</th>-->
-                    <!--<th>Min RTT</th>-->
-                    <!--<th>Mean RTT</th>-->
-                    <!--<th>Std Deviation RTT</th>-->
-                    <!--<th>Status</th>-->
-                    <!--<th>Visualise</th>-->
+        <!--&lt;!&ndash;<thead>&ndash;&gt;-->
+        <!--&lt;!&ndash;<tr>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Hop</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>IP</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>RTT</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Min RTT</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Mean RTT</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Std Deviation RTT</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Status</th>&ndash;&gt;-->
+        <!--&lt;!&ndash;<th>Visualise</th>&ndash;&gt;-->
 
-                  <!--</tr>-->
-                  <!--</thead>-->
+        <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+        <!--&lt;!&ndash;</thead>&ndash;&gt;-->
 
-                  <!--<tbody>-->
-                  <!--<tr ng-repeat="(key, val) in val.nodes">-->
-                    <!--<span ng-if="val.status">-->
-                    <!--<td>{{key+1}}</td>-->
-                    <!--<td>{{val.ip}}</td>-->
-                    <!--<td>{{val.rtt}}</td>-->
-                    <!--<td>{{val.rttMin}}</td>-->
-                    <!--<td>{{val.rttAvg}}</td>-->
-                    <!--<td>{{val.rttStd}}</td>-->
+        <!--&lt;!&ndash;<tbody>&ndash;&gt;-->
+        <!--&lt;!&ndash;<tr ng-repeat="(key, val) in val.nodes">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span ng-if="val.status">&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{key+1}}</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{val.ip}}</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{val.rtt}}</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{val.rttMin}}</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{val.rttAvg}}</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td>{{val.rttStd}}</td>&ndash;&gt;-->
 
-                    <!--<td class="danger" ng-if="val.status"><span-->
-                      <!--class="glyphicon glyphicon-remove"> {{val.status}} </span></td>-->
-                    <!--<td class="success" ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span>-->
-                    <!--</td>-->
+        <!--&lt;!&ndash;<td class="danger" ng-if="val.status"><span&ndash;&gt;-->
+        <!--&lt;!&ndash;class="glyphicon glyphicon-remove"> {{val.status}} </span></td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<td class="success" ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</td>&ndash;&gt;-->
 
 
-                    <!--<td>-->
-                      <!--<input type="checkbox" name="vehicle" value="Car" checked>-->
-                    <!--</td>-->
-                  <!--</span>-->
-                  <!--</tr>-->
-                  <!--</tbody>-->
+        <!--&lt;!&ndash;<td>&ndash;&gt;-->
+        <!--&lt;!&ndash;<input type="checkbox" name="vehicle" value="Car" checked>&ndash;&gt;-->
+        <!--&lt;!&ndash;</td>&ndash;&gt;-->
+        <!--&lt;!&ndash;</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+        <!--&lt;!&ndash;</tbody>&ndash;&gt;-->
 
-                <!--</table>-->
-              <!--</div>-->
-              <!--&lt;!&ndash; /.table-responsive &ndash;&gt;-->
-            <!--</div>-->
-            <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
-          <!--</div>-->
-        <!--</div>-->
+        <!--&lt;!&ndash;</table>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash; /.table-responsive &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash; /.panel-body &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
 
-      </div>
+      <!--</div>-->
 
-    </div>
-  </div>
+    <!--</div>-->
+  <!--</div>-->
 
   <!--Anomalies Panel END-->
 
   <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Results
-    </div>
-    <!-- /.panel-heading -->
+
     <div class="panel-body">
 
 
       <div class="container" ng-controller="TracerouteTableCtrl">
-        Each Result has a Source and Destination, and MANY intermediate nodes with RTT values in between.
 
-        <div class="" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">
-          <h4>Source: {{val.source}}, {{val.sourceCity}}, {{val.sourceCountry}}.</h4>
 
-          <div class="panel panel-default">
+        <div class="" id="{{val.metadata}}" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">
+
+          <h3>{{val.source}}
+            <small>{{val.sourceCity}}, {{val.sourceCountry}}</small>
+            <i class="fa fa-arrow-right fa-fw"></i>
+            <!--<i class="fa fa-chevron-right fa-fw"></i>-->
+            {{val.destination}}
+            <small>{{val.destinationCity}}, {{val.destinationCountry}}</small>
+          </h3>
+
+
+          <div class="panel" ng-class="{'panel-danger': val.anomaliesExist, 'panel-default': !val.anomaliesExist}">
             <div class="panel-heading">
-              Destination: {{val.destination}}, {{val.destinationCity}}, {{val.destinationCountry}} From {{val.nodes[0].startDate}}
-              {{val.nodes[0].startTime}} To {{val.nodes[0].endDate}}{{val.nodes[0].endTime}}
+
+
+              <h4> {{val.nodes[0].startTime[0]}}:{{val.nodes[0].startTime[1]}}:{{val.nodes[0].startTime[2]}}
+                {{val.nodes[0].startTime[3]}}
+                <small>{{val.nodes[0].startDate[0]}} {{val.nodes[0].startDate[1]}} {{val.nodes[0].startDate[2]}}</small>
+                <i class="fa fa-minus fa-fw"></i>
+                {{val.nodes[0].endTime[0]}}:{{val.nodes[0].endTime[1]}}:{{val.nodes[0].endTime[2]}} {{val.nodes[0].endTime[3]}}
+                <small>
+                  {{val.nodes[0].endDate[0]}} {{val.nodes[0].endDate[1]}} {{val.nodes[0].endDate[2]}}
+                </small>
+              </h4>
+
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -610,11 +656,8 @@
                     <th>Mean RTT</th>
                     <th>Std Deviation RTT</th>
                     <th>Status</th>
-                    <th>Visualise</th>
-
                   </tr>
                   </thead>
-
                   <tbody>
                   <tr ng-repeat="(key, val) in val.nodes ">
                     <td>{{key+1}}</td>
@@ -626,12 +669,7 @@
 
                     <td class="danger" ng-if="val.status"><span
                       class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
-                    <td class="success" ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span>
-                    </td>
-
-
-                    <td>
-                      <input type="checkbox" name="vehicle" value="Car" checked>
+                    <td class="" ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span>
                     </td>
 
                   </tr>
@@ -792,12 +830,10 @@
 <!-- endbuild -->
 
 <script>
-  // tooltip demo
-  $('.tooltip-demo').tooltip({
-    selector: "[data-toggle=tooltip]",
-    container: "body"
-  })
 
+  $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
   // popover demo
   $("#123234")
     .popover()

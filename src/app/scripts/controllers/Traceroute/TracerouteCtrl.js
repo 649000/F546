@@ -7,7 +7,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
   $log.debug("TracerouteGraphCtrl: START")
 
-  var host = HostService.getHost();
+
   var sourceAndDestinationList;
   var nodeList;
 
@@ -27,7 +27,6 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
     for (var i = 0; i < response.data.length; i++) {
 
-      // $log.info("Initial Source Name: " + response.data[i]['source'])
       sourceAndDestinationList.push(
         {
           source: response.data[i]['source'],
@@ -159,20 +158,43 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 
                 // search for ALL edges with same metadata, make it red, make everything else the same.
-                TracerouteGraphService.getGraph().style().selector("edge").style({
-                  'line-color': '#a8ea00',
-                  'width': 2
-                }).update();
+                TracerouteGraphService.getGraph().style()
+                  .selector('edge[tracerouteError = "true"]')
+                  .style({
+                    'line-color': 'IndianRed',
+                    'width': 2
+                  }).update();
 
                 TracerouteGraphService.getGraph().style()
-                // .selector('#203.30.39.127')
-                // .selector(':selected')
-                // .selector('[id = "203.30.39.127"]')
-                  .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                  .selector('edge[tracerouteError = "false"]')
                   .style({
-                    'line-color': 'green',
-                    'width': 4
+                    'line-color': '#a8ea00',
+                    'width': 2
                   }).update();
+
+
+                if (element.data().tracerouteError == "true") {
+                  //Make this Dark Red
+                  TracerouteGraphService.getGraph().style()
+                  // .selector('#203.30.39.127')
+                  // .selector(':selected')
+                  // .selector('[id = "203.30.39.127"]')
+                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                    .style({
+                      'line-color': 'DarkRed',
+                      'width': 4
+                    }).update();
+                } else {
+                  TracerouteGraphService.getGraph().style()
+                  // .selector('#203.30.39.127')
+                  // .selector(':selected')
+                  // .selector('[id = "203.30.39.127"]')
+                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                    .style({
+                      'line-color': 'green',
+                      'width': 4
+                    }).update();
+                }
 
 
               });
@@ -193,20 +215,60 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
             var element = event.cyTarget;
             $log.debug("Element METADATA: " + element.data().metadataKey)
-            TracerouteGraphService.getGraph().style().selector("edge").style({
-              'line-color': '#a8ea00',
-              'width': 2
-            }).update();
 
             TracerouteGraphService.getGraph().style()
-            // .selector('#203.30.39.127')
-            // .selector(':selected')
-            // .selector('[id = "203.30.39.127"]')
-              .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+              .selector('edge[tracerouteError = "true"]')
               .style({
-                'line-color': 'green',
-                'width': 4
+                'line-color': 'IndianRed',
+                'width': 2
               }).update();
+
+            TracerouteGraphService.getGraph().style()
+              .selector('edge[tracerouteError = "false"]')
+              .style({
+                'line-color': '#a8ea00',
+                'width': 2
+              }).update();
+
+
+            if (element.data().tracerouteError == "true") {
+              //Make this Dark Red
+              TracerouteGraphService.getGraph().style()
+              // .selector('#203.30.39.127')
+              // .selector(':selected')
+              // .selector('[id = "203.30.39.127"]')
+                .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                .style({
+                  'line-color': 'DarkRed',
+                  'width': 4
+                }).update();
+            } else {
+              TracerouteGraphService.getGraph().style()
+              // .selector('#203.30.39.127')
+              // .selector(':selected')
+              // .selector('[id = "203.30.39.127"]')
+                .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                .style({
+                  'line-color': 'green',
+                  'width': 4
+                }).update();
+            }
+
+
+            // TracerouteGraphService.getGraph().style().selector("edge").style({
+            //   'line-color': '#a8ea00',
+            //   'width': 2
+            // }).update();
+            //
+            // TracerouteGraphService.getGraph().style()
+            // // .selector('#203.30.39.127')
+            // // .selector(':selected')
+            // // .selector('[id = "203.30.39.127"]')
+            //   .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+            //   .style({
+            //     'line-color': 'green',
+            //     'width': 4
+            //   }).update();
 
 
           });
@@ -285,7 +347,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
   var sourceAndDestinationList;
   var nodeList;
 
-  $scope.tracerouteResults = [];
+  var tracerouteResults = [];
 
 
   TracerouteGraphService.getMainTracerouteResult(
@@ -367,15 +429,16 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         // only 1 result available.
       }
 
-      $scope.tracerouteResults.push({
+      tracerouteResults.push({
         source: startNode,
         sourceCity: null,
-        sourceCountry:null,
+        sourceCountry: null,
         destination: destinationNode,
-        destinationCity:null,
-        destinationCountry:null,
+        destinationCity: null,
+        destinationCountry: null,
         nodes: aggregatedResults,
-        metadata: metadataKey
+        metadata: metadataKey,
+        anomaliesExist: false
       });
 
     }
@@ -393,52 +456,66 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
     for (var i = 0; i < response.length; i++) {
 
-      for (var j = 0; j < $scope.tracerouteResults.length; j++) {
+      for (var j = 0; j < tracerouteResults.length; j++) {
 
-        if($scope.tracerouteResults[j].source==response[i].ip){
-          $scope.tracerouteResults[j].sourceCity =  response[i].city;
-          $scope.tracerouteResults[j].sourceCountry =  response[i].countrycode;
+        if (tracerouteResults[j].source == response[i].ip) {
+          tracerouteResults[j].sourceCity = response[i].city;
+          tracerouteResults[j].sourceCountry = response[i].countrycode;
         }
 
-        if($scope.tracerouteResults[j].destination==response[i].ip){
-          $scope.tracerouteResults[j].destinationCity =  response[i].city;
-          $scope.tracerouteResults[j].destinationCountry =  response[i].countrycode;
+        if (tracerouteResults[j].destination == response[i].ip) {
+          tracerouteResults[j].destinationCity = response[i].city;
+          tracerouteResults[j].destinationCountry = response[i].countrycode;
         }
 
       }
 
-
-      // var node = TracerouteGraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
-      //
-      // node.data({
-      //   label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
-      // });
-
-
     }
-
 
 
     var noOfAnomalies = 0;
     $scope.anomalyResults = [];
-    for (var i = 0; i < $scope.tracerouteResults.length; i++) {
+
+    for (var i = 0; i < tracerouteResults.length; i++) {
       var anomaliesExist = false;
 
-      for (var j = 0; j < $scope.tracerouteResults[i].nodes.length; j++) {
-        if ($scope.tracerouteResults[i].nodes[j].status == true) {
+      for (var j = 0; j < tracerouteResults[i].nodes.length; j++) {
+        if (tracerouteResults[i].nodes[j].status == true) {
           noOfAnomalies++;
           anomaliesExist = true;
+
         }
       }
 
+
       if (anomaliesExist == true) {
-        $scope.anomalyResults.push($scope.tracerouteResults[i]);
+
+        $scope.anomalyResults.push(tracerouteResults[i]);
+        tracerouteResults[i].anomaliesExist = true;
+
+        TracerouteGraphService.getGraph().style().selector('edge[metadataKey = "' + tracerouteResults[i].metadata + '"]').style({
+          'line-color': 'IndianRed',
+          'width': 2
+        }).update();
+
+        var edges = TracerouteGraphService.getGraph().elements('edge[metadataKey = "' + tracerouteResults[i].metadata + '"]');
+
+        for (var k = 0; k < edges.size(); k++) {
+
+          // Need to check whether bw is double or string
+          edges[k].data({
+            tracerouteError: "true"
+          });
+
+        }
+
+
       }
-
-
     }
 
     $scope.noOfAnomalies = noOfAnomalies;
+    $scope.tracerouteResults = tracerouteResults;
+
 
   }).catch(function (error) {
     $log.debug("TracerouteTableCtrl: Error")
@@ -650,6 +727,21 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
     };
 
     TracerouteGraphService.getGraph().layout(options);
+
+  }
+
+  $scope.graphCentred = function () {
+    TracerouteGraphService.getGraph().centre();
+    TracerouteGraphService.getGraph().fit();
+    // TracerouteGraphService.getGraph().zoomingEnabled(true);
+  }
+
+  $scope.graphLoadAllResults = function () {
+
+    TracerouteGraphService.getGraph().remove('node');
+    TracerouteGraphService.getGraph().remove('edge');
+    //Calls a function to pull and load everything.
+
 
   }
 

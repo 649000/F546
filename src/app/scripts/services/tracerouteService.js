@@ -337,7 +337,6 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 // traceroute.html
 tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
 
-
   var cy = cytoscape({
     container: document.getElementById('traceroute_graph_cytoscape'),
 
@@ -412,8 +411,6 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
         cache: true
       });
     },
-
-    
 
     add_node: function (ID, sourceNode) {
       var mainNode;
@@ -505,7 +502,95 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
 
     getGraph: function () {
       return cy;
+    },
+
+    loadGraph_TracerouteOverview: function (graphArray) {
+
+      var sourceAndDestinationList;
+      var nodeList;
+
+      $http({
+        method: 'GET',
+        url: HostService.getHost(),
+        params: {
+          'format': 'json',
+          'event-type': 'packet-trace',
+          'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          'time-range': 86400
+        },
+        cache: true
+      }).then(function (response) {
+        sourceAndDestinationList = [];
+        nodeList = [];
+        var promises = [];
+
+        for (var i = 0; i < response.data.length; i++) {
+
+          sourceAndDestinationList.push(
+            {
+              source: response.data[i]['source'],
+              destination: response.data[i]['destination'],
+              metadataKey: response.data[i]['metadata-key']
+            }
+          );
+
+
+          //Adding main nodes into graph
+          if (cy.elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
+
+            // True as this is a SOURCE node.
+            TracerouteGraphService.add_node(response.data[i]['source'], true);
+            nodeList.push(response.data[i]['source']);
+
+            // Event
+            TracerouteGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
+              var element = event.cyTarget;
+              $log.debug("Clicked on Node ID: " + element.data().id)
+
+            });
+          }
+
+          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+              promises.push($http({
+                  method: 'GET',
+                  url: response.data[i]['url'] + "packet-trace/base",
+                  params:   {
+                    'format': 'json',
+                    // 'limit': '2',
+                    // 'time-end': (Math.floor(Date.now() / 1000)),
+                    'time-range': 86400
+                    // 48 Hours = 172800
+                    // 24 hours = 86400
+                  },
+                  cache: true
+                })
+              );
+
+            }
+          }
+
+
+        }
+
+        // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+        return $q.all(promises);
+
+      }).then(function (response) {
+
+
+
+      })
+
+
+
+
+
     }
+
+
   }
 
 
