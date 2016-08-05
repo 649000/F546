@@ -775,7 +775,7 @@ tracerouteServices.factory('LatencyCytoscapeService', [function () {
 tracerouteServices.factory('LatencyToTracerouteCytoscapeService', [function () {
 
   var cy = cytoscape({
-    container: document.getElementById('latency_cytoscape_traceroute'),
+    container: document.getElementById('latency_graph_cytoscape_traceroute'),
 
     style: [
       {

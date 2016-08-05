@@ -1,9 +1,0 @@
-angular.module('traceroute').controller('LatencyInformation', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyCytoscapeService', 'UnixTimeConverterService', function($scope, $http, $q, $log, HostService, LatencyCytoscapeService, UnixTimeConverterService){
-
-
-  $scope.showMe = function(){
-    $scope.show=true;
-  }
-
-
-}]);

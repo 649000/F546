@@ -37,22 +37,22 @@
 
 }
 
-#latency_cytoscape {
+#latency_graph_cytoscape {
   height: 800px;
   /*width: 1200px;*/
   /*height: 100%;*/
-  /*width: 100%;*/
-  border-style: solid;
+  width: 100%;
+  border-style: dotted;
   border-width: 1px;
 
 }
 
-#latency_cytoscape_traceroute {
-  height: 500px;
+#latency_graph_cytoscape_traceroute {
+  height: 600px;
   /*width: 1200px;*/
   /*height: 100%;*/
-  /*width: 100%;*/
-  border-style: solid;
+  width: 100%;
+  border-style: dotted;
   border-width: 1px;
 
 }
