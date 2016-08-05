@@ -15,7 +15,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 10,
+      'limit': 20,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
@@ -184,7 +184,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
                       'line-color': 'DarkRed',
                       'width': 4
                     }).update();
-                } else {
+                }
+
+                if (element.data().tracerouteError == "false") {
                   TracerouteGraphService.getGraph().style()
                   // .selector('#203.30.39.127')
                   // .selector(':selected')
@@ -242,7 +244,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
                   'line-color': 'DarkRed',
                   'width': 4
                 }).update();
-            } else {
+            }
+
+            if (element.data().tracerouteError == "false") {
               TracerouteGraphService.getGraph().style()
               // .selector('#203.30.39.127')
               // .selector(':selected')
@@ -741,6 +745,22 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
     TracerouteGraphService.getGraph().remove('node');
     TracerouteGraphService.getGraph().remove('edge');
     //Calls a function to pull and load everything.
+
+
+  }
+
+  $scope.searchNode = function (IPAddr){
+
+
+
+    $log.debug("Node Search: "+IPAddr);
+
+    // elements('node[id = "' + response.data[i]['source'] + '"]')
+
+    // TracerouteGraphService.getGraph().center('node[id = "' + IPAddr.trim() + '"]');
+    TracerouteGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+
+
 
 
   }

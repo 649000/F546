@@ -469,7 +469,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
     },
 
     add_edge: function (ID, source, target, tracerouteError, tracerouteRTT, bandwidth, startNode, endNode, metadataKey) {
-      var innerTracerouteError;
+      var innerTracerouteError = "false";
 
       if (tracerouteError == true) {
         innerTracerouteError = "true";
