@@ -362,7 +362,7 @@
   <!-- /.navbar-static-side -->
 </nav>
 <!-- End of Navigation -->
-<div id="page-wrapper">
+<div id="page-wrapper" ng-controller="IndividualTracerouteGraphPanelCtrl">
   <!--ACTUAL BODY STARTS HERE-->
 
   <div class="row">
@@ -535,16 +535,14 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
 
-          <div class="container" ng-controller="IndividualTracerouteGraphPanelCtrl">
+          <div class="container" >
             {{NoOfStuff}} HISTORY BAR
           </div>
 
           <!--Visualisation goes here-->
           <div>
 
-            <div ng-controller="IndividualTraceroutePathGraphCtrl" id="individual_traceroute_path_graph">
-
-            </div>
+            <div ng-controller="IndividualTraceroutePathGraphCtrl" id="individual_traceroute_path_graph"></div>
 
           </div>
 
@@ -563,7 +561,8 @@
 
         </div>
         <!-- /.panel-heading -->
-        <div class="panel-body" ng-controller="IndividualTracerouteGraphPanelCtrl">
+        <div class="panel-body" >
+          <!--This works-->
           {{NoOfStuff}}
 
 
@@ -605,7 +604,7 @@
               <small>Sub-heading</small>
             </h5>
 
-            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'" ng-click="loadIndividualTraceroutePath(val.metadata);">
+            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'" ng-click="loadIndividualTraceroutePath(val);">
 
               <i class="fa fa-bar-chart-o fa-fw"></i>
               S: {{val.source.ip}}

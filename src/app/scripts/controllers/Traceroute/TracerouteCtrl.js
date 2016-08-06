@@ -1019,7 +1019,7 @@ angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$
 }]);
 
 
-angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService) {
+angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope','$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope,$rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService) {
 
   $scope.layoutBreathFirst = function () {
 
@@ -1239,6 +1239,8 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   $scope.loadIndividualTraceroutePath = function (metadataKey) {
     $scope.NoOfStuff = 123;
+    // $rootScope.NoOfStuff = 123
+
     $log.debug("Individual Traceroute Metadata: "+ metadataKey);
     IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {
 
