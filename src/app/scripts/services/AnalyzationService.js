@@ -144,12 +144,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
 
     },
-//Option 1. return $q.all(promises) and do then on the controller, no source/destination.
-    // If option 1 doesn't work, try this:
-    getSourceAndDestination: function () {
-      // returns promise of main TR result. chain it with getAnalyzation's promise.
 
-    },
 
     getRtt: function () {
 
@@ -174,7 +169,9 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     analyzeRtt: function (individual_traceroute_results) {
 
-      $log.debug("AnalyzationServices:AnalyzeTraceroute:analyzeRtt()");
+      // Takes an array of individual traceroute results, and process it.
+      $log.debug("AnalyzeTraceroute:analyzeRtt() START");
+
 
       var nodeAndRttList_CalculatedData = [];
       var nodeAndRttList_RawData = [];
@@ -283,33 +280,67 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       })
     },
 
-    analyzePath: function (traceroute_results, latest_result) {
+    analyzePath: function (individual_traceroute_results) {
 
+      // Takes an array of individual traceroute results, and process it.
       // Array newest to oldest.
+      // Take last X days result, find unique paths, compare it.
+      // FIXME:What if the existing path also has an error?
 
-      // Take last 7 days result, find unique paths, compare it.
-
-      // What if the existing path also has an error?
+      $log.debug("AnalyzeTraceroute:analyzePath() START");
 
 
-      var results = {
-        ts: 1,
-        path: [1, 2, 3, 4]
-      }
+      //Index 0 being the latest traceroute results
+      var reversedResponse = individual_traceroute_results.reverse();
+
       var pathExist = false;
+      var traceroutePaths = [];
 
-      //Need to return the path that it found?
-      // var existedPath = [];
+      for (var i = 0; i < reversedResponse.length; i++) {
 
-      for (var i = 0; i < traceroute_results.length; i++) {
+        var ts = reversedResponse[i]['ts'];
+        // $log.debug(ts)
 
-        if (JSON.stringify(traceroute_results[i].path) === JSON.stringify(latest_result)) {
+        var singleExistingPath = [];
+
+        for (var j = 0; j < reversedResponse[i]['val'].length; j++) {
+
+          //FIXME: Do we ignore query 1,2, 3?
+          //FIXME: What about path with traceroute errors?
+
+
+          if (reversedResponse[i]['val'][j]['query'] == 1) {
+            // $log.debug("Adding: " + reversedResponse[i]['val'][j]['ip']);
+            singleExistingPath.push(reversedResponse[i]['val'][j]['ip']);
+          }
+
+          //Error in traceroute result, most likely request timed out.
+          if (reversedResponse[i]['val'][j]['success'] == 0) {
+            return true;
+          }
+
+        }
+        traceroutePaths.push(singleExistingPath);
+      }
+
+
+      // $log.debug("traceroutePath.length: "+ traceroutePaths.length);
+      //pastPath[0] -> Latest traceroute path to compare with.
+
+      for (var i = 1; i < traceroutePaths.length; i++) {
+
+        // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
+
+        if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
           pathExist = true;
         }
 
       }
 
+      //TODO: Figure out what else to return other than TRUE/FALSE
+      $log.debug("analyzePath() Return Msg: " + pathExist);
       return pathExist;
+
     }
   };
 

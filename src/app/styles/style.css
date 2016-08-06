@@ -56,6 +56,18 @@
   border-width: 1px;
 
 }
+/*traceroute_path.html*/
+#traceroute_path_graph_cytoscape {
+  height: 600px;
+  /*width: 1200px;*/
+  /*height: 100%;*/
+  width: 100%;
+  border-style: dotted;
+  border-width: 1px;
+
+}
+
+
 
 /*#LatencyInformation {*/
   /*height: 800px;*/

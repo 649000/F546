@@ -291,7 +291,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
   $log.debug("Latency_To_Traceroute_InfoService:START");
 
-  var host = HostService.getHost();
+
   var metadataList = [];
   var metadata = "";
 
@@ -299,7 +299,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
   return {
     //Clear traceroute path and calls info to populate
     setTracerouteGraph: function (source, destination) {
-
+      var host = HostService.getHost();
       var sourceAndDestinationList = [];
       var nodeList = [];
       var errorInTraceroute = false;

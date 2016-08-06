@@ -532,17 +532,6 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 }]);
 
 
-angular.module('traceroute').controller('TracerouteNotificationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'toastr', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, toastr) {
-
-
-  $scope.Hello = function () {
-
-    $log.debug("HELLO")
-    toastr.success('Buuussssukkk');
-
-  }
-}]);
-
 
 angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'TracerouteGraphService', function ($scope, $log, $cacheFactory, TracerouteGraphService) {
 
@@ -775,6 +764,24 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 }]);
 
 
+
+
+// Traceroute Path Related Controls
+angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TraceroutePath_GraphService', 'UnixTimeConverterService', 'GeoIPNekudoService','TraceroutePath_PopulateGraphService', function ($scope, $http, $q, $log, HostService, TraceroutePath_GraphService, UnixTimeConverterService, GeoIPNekudoService, TraceroutePath_PopulateGraphService) {
+
+  $log.debug("TraceroutePathGraphCtrl: START");
+
+  TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
+
+
+
+
+
+}]);
+
+
+
+
 //Empty Module
 
 angular.module('traceroute').controller('XXX', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, toastr) {
@@ -786,3 +793,16 @@ angular.module('traceroute').controller('XXX', ['$scope', '$http', '$q', '$log',
     toastr.success('Hello world!', '');
   }
 }]);
+
+
+angular.module('traceroute').controller('TracerouteNotificationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'toastr', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, toastr) {
+
+
+  $scope.Hello = function () {
+
+    $log.debug("HELLO")
+    toastr.success('Buuussssukkk');
+
+  }
+}]);
+
