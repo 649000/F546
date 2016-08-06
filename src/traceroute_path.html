@@ -523,7 +523,7 @@
 
   <!--Path with Anomalies-->
 
-  <div class="row" ng-controller="IndividualTraceroutePathGraphCtrl">
+  <div class="row">
     <div class="col-lg-9">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -534,11 +534,15 @@
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-          <p>HISTORY BAR</p>
+
+          <div class="container" ng-controller="IndividualTracerouteGraphPanelCtrl">
+            {{NoOfStuff}} HISTORY BAR
+          </div>
+
           <!--Visualisation goes here-->
           <div>
 
-            <div id="individual_traceroute_path_graph">
+            <div ng-controller="IndividualTraceroutePathGraphCtrl" id="individual_traceroute_path_graph">
 
             </div>
 
@@ -556,9 +560,12 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <i class="fa fa-gear fa-fw"></i> Graph Panel
+
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body" ng-controller="IndividualTracerouteGraphPanelCtrl">
+          {{NoOfStuff}}
+
 
           <div class="list-group">
             <h5>Graph Layout
@@ -598,7 +605,8 @@
               <small>Sub-heading</small>
             </h5>
 
-            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'" ng-click="loadIndividualTraceroutepath(val.metadata);">
+            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'" ng-click="loadIndividualTraceroutePath(val.metadata);">
+
               <i class="fa fa-bar-chart-o fa-fw"></i>
               S: {{val.source.ip}}
               D: {{val.destination.ip}}

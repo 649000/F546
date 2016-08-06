@@ -1237,27 +1237,32 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.loadIndividualTraceroutepath = function (metadataKey) {
-
+  $scope.loadIndividualTraceroutePath = function (metadataKey) {
+    $scope.NoOfStuff = 123;
     $log.debug("Individual Traceroute Metadata: "+ metadataKey);
     IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {
 
-
-      // var newErrorPath = {
+      // var errorPath = {
       //   source: {
-      //     ip: sourceAndDestinationList[i].source,
-      //     city: null,
-      //     country: null
+      //     ip:1,
+      //     city:1,
+      //     country:1
       //   },
-      //   sourceIP: sourceAndDestinationList[i].source,
       //   destination: {
-      //     ip: sourceAndDestinationList[i].destination,
-      //     city: null,
-      //     country: null
+      //     ip:1,
+      //     city:1,
+      //     country:1
       //   },
-      //   destinationIP: sourceAndDestinationList[i].destination,
-      //   result: [],
-      //   metadata: sourceAndDestinationList[i].metadataKey
+      //   result: [
+      //     {
+      //       ts: 1,
+      //       nodes: [
+      //         {ip:1,city:1,country:1},
+      //         {ip:1,city:1,country:1}
+      //         ]
+      //     }
+      //   ],
+      //   metadata: metadataKey
       // }
 
       for (var i = 0; i < response.length; i++) {
@@ -1265,9 +1270,11 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
         if (metadataKey == response[i].metadata) {
 
 
+
+            // $scope.NoOfStuff = response[i].result.length;
+
           IndividualTraceroutePath_GraphService.getGraph().remove('node');
           IndividualTraceroutePath_GraphService.getGraph().remove('edge');
-
 
 
 
@@ -1290,35 +1297,41 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
             });
           }
 
-          // for (var k = 0; k < response[i].result.length; k++) {
-          //   for (var m = 0; m < response[i].result[k].nodes.length; m++) {
-          //
-          //     //ADDING ADDITIONAL NOTES
-          //
-          //     if (IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + response[i].result[k].nodes[m].ip + '"]').size() == 0) {
-          //
-          //       // Adding NODES
-          //       IndividualTraceroutePath_GraphService.add_node(response[i].result[k].nodes[m].ip, false);
-          //
-          //       //Update City and Country
-          //       IndividualTraceroutePath_GraphService.getGraph().getElementById(response[i].source.ip).data({
-          //         label: response[i].result[k].nodes[m].ip + "\n" + response[i].result[k].nodes[m].city + ", " + response[i].result[k].nodes[m].country
-          //       });
-          //
-          //
-          //       // Event
-          //       IndividualTraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response[i].result[k].nodes[m].ip + '"]', function (event) {
-          //         var element = event.cyTarget;
-          //         // $log.debug("Clicked on Node ID: " + element.data().id)
-          //
-          //       });
-          //     }
-          //
-          //   }
-          //
-          // }
-          //
-          //
+
+
+
+
+          for (var k = 0; k < response[i].result.length; k++) {
+
+
+            // for (var m = 0; m < response[i].result[k].nodes.length; m++) {
+            //
+            //   //ADDING ADDITIONAL NOTES
+            //
+            //   if (IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + response[i].result[k].nodes[m].ip + '"]').size() == 0) {
+            //
+            //     // Adding NODES
+            //     IndividualTraceroutePath_GraphService.add_node(response[i].result[k].nodes[m].ip, false);
+            //
+            //     //Update City and Country
+            //     IndividualTraceroutePath_GraphService.getGraph().getElementById(response[i].source.ip).data({
+            //       label: response[i].result[k].nodes[m].ip + "\n" + response[i].result[k].nodes[m].city + ", " + response[i].result[k].nodes[m].country
+            //     });
+            //
+            //
+            //     // Event
+            //     IndividualTraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response[i].result[k].nodes[m].ip + '"]', function (event) {
+            //       var element = event.cyTarget;
+            //       // $log.debug("Clicked on Node ID: " + element.data().id)
+            //
+            //     });
+            //   }
+            //
+            // }
+
+          }
+
+
           // for (var k = 0; k < response[i].result.length; k++) {
           //   for (var m = 0; m < response[i].result[k].nodes.length; m++) {
           //
@@ -1472,6 +1485,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
     //FIXME: Perhaps do a restart as well.
   }
+
 
 
 }]);
