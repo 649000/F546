@@ -338,7 +338,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       }
 
       //TODO: Figure out what else to return other than TRUE/FALSE
-      $log.debug("analyzePath() Return Msg: " + pathExist);
+      // $log.debug("analyzePath() Return Msg: " + pathExist);
       return pathExist;
 
     }

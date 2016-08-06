@@ -367,7 +367,7 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Traceroute</h1>
+      <h1 class="page-header">Traceroute Path Analysation</h1>
     </div>
     <!-- /.col-lg-12 -->
   </div>
@@ -405,36 +405,36 @@
           <i class="fa fa-gear fa-fw"></i> Graph Panel
         </div>
         <!-- /.panel-heading -->
-        <div class="panel-body">
+        <div class="panel-body" ng-controller="TraceroutePathGraphPanelCtrl">
 
           <div class="list-group">
             <h5>Graph Layout
               <small>Sub-heading</small>
             </h5>
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
+            <a href="#" class="list-group-item"
                ng-click="layoutdisplayConcentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
+            <a href="#" class="list-group-item"
                ng-click="layoutBreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
 
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="layoutGrid();">
+            <a href="#" class="list-group-item" ng-click="layoutGrid();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Grid
             </a>
 
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="layoutCose();">
+            <a href="#" class="list-group-item" ng-click="layoutCose();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Cose
             </a>
 
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="layoutCircle();">
+            <a href="#" class="list-group-item" ng-click="layoutCircle();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
-            <a href="" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="graphCentred();">
+            <a href="" class="list-group-item" ng-click="graphCentred();">
               <i class="fa fa-wrench fa-fw"></i> Back to Centre
             </a>
 
@@ -446,7 +446,7 @@
             </h5>
 
 
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
+            <a href="#" class="list-group-item"
                ng-click="graphLoadAllResults();" data-toggle="tooltip" data-placement="left"
                data-original-title="Resets graph to show traceroute path from ALL results.">
               <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
@@ -480,9 +480,11 @@
             <!--</a>-->
 
             <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="IP Address"  ng-model="nodeSearch">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
               <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" ng-controller="TracerouteGraphPanelCtrl" ng-click="searchNode(nodeSearch);"><i
+                                                <button class="btn btn-default" type="button"
+                                                        ng-controller="TracerouteGraphPanelCtrl"
+                                                        ng-click="searchNode(nodeSearch);"><i
                                                   class="fa fa-search"></i></button>
                                             </span>
             </div>
@@ -525,6 +527,153 @@
   </div>
 
 
+  <!--Path with Anomalies-->
+
+  <div class="row">
+    <div class="col-lg-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Visualisation
+          <div class="pull-right">
+            Text here if needed
+          </div>
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+          <p>HISTORY BAR</p>
+          <!--Visualisation goes here-->
+          <div ng-controller="IndividualTraceroutePathGraphCtrl">
+
+            <div id="individual_traceroute_path_graph"></div>
+
+          </div>
+
+
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-8 -->
+
+    <div class="col-lg-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <i class="fa fa-gear fa-fw"></i> Graph Panel
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body" ng-controller="TraceroutePathGraphPanelCtrl">
+
+          <div class="list-group">
+            <h5>Graph Layout
+              <small>Sub-heading</small>
+            </h5>
+            <a href="#" class="list-group-item"
+               ng-click="layoutdisplayConcentric();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
+            </a>
+
+            <a href="#" class="list-group-item"
+               ng-click="layoutBreathFirst();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
+            </a>
+
+
+            <a href="#" class="list-group-item" ng-click="layoutGrid();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Grid
+            </a>
+
+            <a href="#" class="list-group-item" ng-click="layoutCose();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Cose
+            </a>
+
+            <a href="#" class="list-group-item" ng-click="layoutCircle();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Circle
+            </a>
+
+            <a href="" class="list-group-item" ng-click="graphCentred();">
+              <i class="fa fa-wrench fa-fw"></i> Back to Centre
+            </a>
+
+          </div>
+
+          <div class="list-group text-danger">
+            <h5>Errorneous Paths
+              <small>Sub-heading</small>
+            </h5>
+
+
+            <a href="#" class="list-group-item"
+               ng-click="graphLoadAllResults();" data-toggle="tooltip" data-placement="left"
+               data-original-title="Resets graph to show traceroute path from ALL results.">
+              <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
+            </a>
+
+            <!--ng-if="noOfAnomalies!=0"-->
+            <div class="panel panel-red" ng-controller="TracerouteTableCtrl" >
+
+              <div class="panel-heading">
+                TR:
+                <div class="pull-right">
+                  <span class="badge">123</span>
+                </div>
+              </div>
+              <!--<div class="panel-body">-->
+              <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
+              <!--</div>-->
+
+            </div>
+
+          </div>
+
+          <div class="list-group">
+            <h5>Traceroute Information
+              <small>Sub-heading</small>
+            </h5>
+
+
+            <div class="form-group input-group">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
+              <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"
+                                                        ng-controller="TracerouteGraphPanelCtrl"
+                                                        ng-click="searchNode(nodeSearch);"><i
+                                                  class="fa fa-search"></i></button>
+                                            </span>
+            </div>
+
+
+          </div>
+
+
+          <div class="list-group">
+            <h5>// To Be Separated
+              <small>Sub-heading</small>
+            </h5>
+
+
+            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="clearCache();">
+              <i class="fa fa-refresh fa-fw"></i> Clear Cache
+            </a>
+
+
+            <a href="#" class="list-group-item">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>
+              <span class="badge ">abc</span> Example:
+            </a>
+
+          </div>
+          <!-- /.list-group -->
+
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+  </div>
+
+  <!--END of Path with Anomalies-->
 
   <div class="panel panel-default">
 
@@ -534,11 +683,7 @@
       <div class="container" ng-controller="TracerouteTableCtrl">
 
 
-
-
       </div>
-
-
 
 
     </div>
@@ -607,8 +752,6 @@
     </div>
     <!-- /.panel-body -->
   </div>
-
-
 
 
   <!--Empty Panel-->

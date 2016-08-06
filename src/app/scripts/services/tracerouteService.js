@@ -15,6 +15,13 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
 //https://docs.angularjs.org/tutorial/step_11
 
 
+/*
+ NOTES
+ 1. Populating graph in Service does not allow to use $scope.emit/broadcast in clicked events of the graph, which means the graph is unable to fire off another controller such as in the Latency Graph.
+
+ */
+
+
 tracerouteServices.factory('CytoscapeService', [function () {
 
   var cy = cytoscape({
@@ -598,7 +605,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
             // Event
             TracerouteGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
               var element = event.cyTarget;
-              $log.debug("Clicked on Node ID: " + element.data().id)
+              // $log.debug("Clicked on Node ID: " + element.data().id)
 
             });
           }
@@ -847,7 +854,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
             // Event
             TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
               var element = event.cyTarget;
-              $log.debug("Clicked on Node ID: " + element.data().id)
+              // $log.debug("Clicked on Node ID: " + element.data().id)
 
             });
           }
@@ -939,6 +946,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
                 TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
                   var element = event.cyTarget;
+
 
                 })
               }
@@ -1128,7 +1136,6 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
     },
 
-
     loadGraph_ErroneousTraceroutePath: function () {
 
       $log.debug("TraceroutePath_PopulateGraphService:loadGraph_ErroneousTraceroutePath() START");
@@ -1178,7 +1185,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
             // Event
             TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
               var element = event.cyTarget;
-              $log.debug("Clicked on Node ID: " + element.data().id)
+              // $log.debug("Clicked on Node ID: " + element.data().id)
 
             });
           }
@@ -1454,6 +1461,372 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
     loadGraph_NonErroneousTraceroutePath: function () {
 
+    },
+    setClickEvent: function () {
+      TraceroutePath_GraphService.getElementById("131.243.246.66").on('tap', 'node', function (event) {
+        var element = event.cyTarget;
+
+
+        $scope.emit('LatencyMetadata2', "x");
+
+      })
+    }
+
+
+  }
+
+
+}]);
+
+
+/*
+ For INDIVIDUAL anomalies path
+ Date: August 6th 2016
+ */
+tracerouteServices.factory('IndividualTraceroutePath_GraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
+
+  var cy = cytoscape({
+    container: document.getElementById('individual_traceroute_path_graph'),
+
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
+          'label': 'data(label)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'width': 2,
+          'opacity': 0.8,
+          'label': 'data(bandwidth)',
+          'line-color': 'GreenYellow',
+          'target-arrow-color': 'black',
+          // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
+          'target-arrow-shape': 'triangle'
+        }
+      },
+      {
+        selector: '.multiline-manual',
+        style: {
+          'text-wrap': 'wrap'
+        }
+      }
+    ]
+
+    // Layout can only be done in Controller.
+  });
+
+
+  return {
+
+    add_node: function (ID, sourceNode) {
+      var mainNode;
+
+
+      if (sourceNode == true) {
+        mainNode = "true";
+      } else {
+        mainNode = "false";
+      }
+
+
+      var node = {
+        group: 'nodes',
+        // NB: id fields must be strings or numbers
+        data: {
+          // element data (put dev data here)
+
+          id: ID, // mandatory for each element, assigned automatically on undefined
+          sourceNode: mainNode,
+          country: null,
+          city: null,
+          label: ID
+
+
+        },
+        classes: 'multiline-manual'// a space separated list of class names that the element has
+
+
+        // scratchpad data (usually temp or nonserialisable data)
+        // scratch: {
+        //   foo: 'bar'
+        // },
+        //
+        // position: { // the model position of the node (optional on init, mandatory after)
+        //   x: 100,
+        //   y: 100
+        // },
+        //
+        // selected: false, // whether the element is selected (default false)
+        //
+        // selectable: true, // whether the selection state is mutable (default true)
+        //
+        // locked: false, // when locked a node's position is immutable (default false)
+        //
+        // grabbable: true // whether the node can be grabbed and moved by the user
+
+
+      };
+
+      // console.log("Node ID: " + ID + " created.");
+
+
+      cy.add(node);
+      return cy;
+    },
+
+    add_edge: function (ID, source, target, pathAnomaly, bandwidth, startNode, endNode, metadataKey) {
+      var innerTracerouteError = "false";
+
+      if (pathAnomaly == true) {
+        innerTracerouteError = "true";
+      } else {
+        innerTracerouteError = "false";
+      }
+
+      var edge = {
+        group: 'edges',
+        data: {
+          id: ID,
+          // inferred as an edge because `source` and `target` are specified:
+          source: source, // the source node id (edge comes from this node)
+          target: target,  // the target node id (edge goes to this node)
+          pathAnomaly: innerTracerouteError,
+          bandwidth: bandwidth,
+          startNode: startNode,
+          endNode: endNode,
+          metadataKey: metadataKey
+        }
+      };
+      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
+      //return edge;
+
+      cy.add(edge);
+      return cy;
+    },
+
+    getGraph: function () {
+      return cy;
+    },
+
+
+  }
+
+
+}]);
+
+tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, IndividualTraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroute, UniqueArrayService) {
+
+  $log.debug("IndividualTraceroutePath_PopulateGraphService: START");
+
+  return {
+
+    //
+
+    getMetadataOfErroneousPath: function () {
+
+      $log.debug("IndividualTraceroutePath_PopulateGraphService:getMetadataOfErroneousPath() START");
+
+
+    },
+
+
+    getErroneousTraceroutePath: function () {
+
+
+      $log.debug("TraceroutePath_PopulateGraphService:loadGraph_ErroneousTraceroutePath() START");
+
+      var sourceAndDestinationList;
+      var nodeList;
+      var errorPathList = [];
+
+      // var errorPath = {
+      //   source: {
+      //     ip:1,
+      //     city:1,
+      //     country:1
+      //   },
+      //   destination: {
+      //     ip:1,
+      //     city:1,
+      //     country:1
+      //   },
+      //   result: [
+      //     {
+      //       ts: 1,
+      //       nodes: [
+      //         {ip:1,city:1,country:1},
+      //         {ip:1,city:1,country:1}
+      //         ]
+      //     }
+      //   ],
+      //   metadata: metadataKey
+      // }
+
+
+      return TracerouteResultsService.getMainResult(
+        {
+          'format': 'json',
+          'event-type': 'packet-trace',
+          'limit': 10,
+          // 'time-end': (Math.floor(Date.now() / 1000)),
+          'time-range': 86400
+          // 48 Hours = 172800
+          // 24 hours = 86400
+          // 7 days = 604800
+        }
+      ).then(function (response) {
+
+        sourceAndDestinationList = [];
+        nodeList = [];
+        var promises = [];
+
+        for (var i = 0; i < response.data.length; i++) {
+
+          sourceAndDestinationList.push(
+            {
+              source: response.data[i]['source'],
+              destination: response.data[i]['destination'],
+              metadataKey: response.data[i]['metadata-key']
+            }
+          );
+
+          nodeList.push(response.data[i]['source']);
+          nodeList.push(response.data[i]['destination']);
+
+
+          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+              promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+                {
+                  'format': 'json',
+                  // 'limit': '2',
+                  // 'time-end': (Math.floor(Date.now() / 1000)),
+                  'time-range': 86400
+                  // 48 Hours = 172800
+                  // 24 hours = 86400
+                  // 7 days = 604800
+                }
+              ));
+
+            }
+          }
+
+
+        }
+
+        // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+        return $q.all(promises);
+
+      }).then(function (response) {
+
+        // $log.debug("loadGraph_ErroneousTraceroutePath().response.length: " + response.length);
+
+        for (var i = 0; i < response.length; i++) {
+
+          var pathAnomaly = false;
+
+          //Analyzation of Path begins:
+          if (response[i].data.length > 1) {
+            pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
+
+          } else {
+            // only 1 result available.
+            //This also means that traceroute path with only 1 results will never have an anomaly.
+          }
+
+
+          var errorInTraceroute = null;
+
+          // Path is reversed to get the latest Traceroute data.
+          var reversedResponse = response[i].data.reverse();
+
+
+          if (pathAnomaly == true) {
+
+            var newErrorPath = {
+              source: {
+                ip: sourceAndDestinationList[i].source,
+                city: null,
+                country: null
+              },
+              destination: {
+                ip: sourceAndDestinationList[i].destination,
+                city: null,
+                country: null
+              },
+              result: [],
+              metadata: sourceAndDestinationList[i].metadataKey
+            }
+
+            for (var j = 0; j < reversedResponse.length; j++) {
+
+              var trResult = {
+                ts: reversedResponse[j]['ts'],
+                nodes: []
+              }
+
+
+              for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+
+                // if (reversedResponse[j]['val'][k]['success'] == 1)
+
+                if (reversedResponse[j]['val'][k]['query'] == 1) {
+
+                  nodeList.push(reversedResponse[j]['val'][k]['ip']);
+
+                  trResult.nodes.push({
+                    ip: reversedResponse[j]['val'][k]['ip'],
+                    city:null,
+                    country: null
+                  });
+                }
+              }
+
+              newErrorPath.result.push(trResult);
+            }
+
+            errorPathList.push(newErrorPath);
+          }
+
+        }
+
+
+        var nodeToIP_promises = [];
+        var uniqueNodes = UniqueArrayService.getUnique(nodeList);
+        for (var i = 0; i < uniqueNodes.length; i++) {
+          nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueNodes[i]));
+        }
+
+      }).then(function (response) {
+
+        for (var i = 0; i < response.length; i++) {
+
+          // var node = TraceroutePath_GraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
+          // node.data({
+          //   label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+          // });
+
+        }
+      }).catch(function (error) {
+        $log.debug("TracerouteController:bw_cytoscape")
+        $log.debug("Server Response: " + error.status);
+
+      });
+
+
+    },
+
+    getListOfErroneousPath: function () {
+
+      return
     }
 
   }
