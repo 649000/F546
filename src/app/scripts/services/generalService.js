@@ -57,11 +57,15 @@ generalServices.service('UnixTimeConverterService', function () {
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
       minutes = minutes < 10 ? '0'+minutes : minutes;
+      var seconds = date.getSeconds();
+      if(seconds<10){
+        seconds = "0"+seconds;
+      }
       timevalues = [
 
         hours,
         minutes,
-        date.getSeconds(),
+        seconds,
         ampm
       ];
 

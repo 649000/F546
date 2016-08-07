@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices','IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices','IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr','ui.bootstrap']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -35,6 +35,21 @@ traceroute.directive('agclick_edge', function () {
   return {
     restrict: 'C',
 
+  };
+});
+
+traceroute.directive('bsTooltip', function(){
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs){
+      $(element).hover(function(){
+        // on mouseenter
+        $(element).tooltip('show');
+      }, function(){
+        // on mouseleave
+        $(element).tooltip('hide');
+      });
+    }
   };
 });
 

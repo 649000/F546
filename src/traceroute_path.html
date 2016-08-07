@@ -362,8 +362,13 @@
   <!-- /.navbar-static-side -->
 </nav>
 <!-- End of Navigation -->
-<div id="page-wrapper" ng-controller="IndividualTracerouteGraphPanelCtrl">
+<div id="page-wrapper">
   <!--ACTUAL BODY STARTS HERE-->
+  <span id="firstController" ng-controller="TraceroutePathGraphCtrl">
+  <span id="secondController" ng-controller="TraceroutePathGraphPanelCtrl">
+  <span id="thirdController" ng-controller="IndividualTracerouteGraphPanelCtrl">
+  <span id="fouthController" ng-controller="IndividualTraceroutePathGraphCtrl">
+
 
   <div class="row">
     <div class="col-lg-12">
@@ -376,7 +381,7 @@
     <div class="col-lg-9">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Visualisation
+          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Path Overview
           <div class="pull-right">
             Text here if needed
           </div>
@@ -385,7 +390,7 @@
         <div class="panel-body">
 
           <!--Visualisation goes here-->
-          <div ng-controller="TraceroutePathGraphCtrl">
+          <div>
 
             <div id="traceroute_path_graph_cytoscape"></div>
 
@@ -405,36 +410,36 @@
           <i class="fa fa-gear fa-fw"></i> Graph Panel
         </div>
         <!-- /.panel-heading -->
-        <div class="panel-body" ng-controller="TraceroutePathGraphPanelCtrl">
+        <div class="panel-body">
 
           <div class="list-group">
             <h5>Graph Layout
               <small>Sub-heading</small>
             </h5>
             <a href="#" class="list-group-item"
-               ng-click="layoutdisplayConcentric();">
+               ng-click="mainGraph_layoutdisplayConcentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
             <a href="#" class="list-group-item"
-               ng-click="layoutBreathFirst();">
+               ng-click="mainGraph_layoutBreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
 
-            <a href="#" class="list-group-item" ng-click="layoutGrid();">
+            <a href="#" class="list-group-item" ng-click="mainGraph_layoutGrid();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Grid
             </a>
 
-            <a href="#" class="list-group-item" ng-click="layoutCose();">
+            <a href="#" class="list-group-item" ng-click="mainGraph_layoutCose();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Cose
             </a>
 
-            <a href="#" class="list-group-item" ng-click="layoutCircle();">
+            <a href="#" class="list-group-item" ng-click="mainGraph_layoutCircle();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
-            <a href="" class="list-group-item" ng-click="graphCentred();">
+            <a href="" class="list-group-item" ng-click="mainGraph_graphCentred();">
               <i class="fa fa-wrench fa-fw"></i> Back to Centre
             </a>
 
@@ -449,8 +454,19 @@
               <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
             <span class="input-group-btn">
             <button class="btn btn-default" type="button"
-                    ng-click="searchNode(nodeSearch);"><i
+                    ng-click="mainGraph_searchNode(nodeSearch);"><i
               class="fa fa-search"></i></button>
+            </span>
+            </div>
+
+            //Tentative
+             <div class="form-group input-group">
+              <input type="text" class="form-control" placeholder="No. of Results to Load"
+                     ng-model="mainGraph_NoOfResults">
+            <span class="input-group-btn">
+            <button class="btn btn-default" type="button"
+                    ng-click="mainGraph_searchNode(nodeSearch);"><i
+              class="fa fa-repeat"></i></button>
             </span>
             </div>
 
@@ -470,28 +486,6 @@
                   <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
               <span class="badge ">123</span>
             </span>
-            <!--<div class="panel panel-red">-->
-
-              <!--<div class="panel-heading">-->
-                <!--Erroneous Traceroute Results:-->
-                <!--<div class="pull-right">-->
-                  <!--<span class="badge">0</span>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--&lt;!&ndash;<div class="panel-body">&ndash;&gt;-->
-              <!--&lt;!&ndash;<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>&ndash;&gt;-->
-              <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-            <!--</div>-->
-
-            <!--<a href="" class="list-group-item">-->
-            <!--<i class="fa fa-search fa-fw"></i>-->
-
-            <!--<span class="badge" ng-controller="TracerouteTableCtrl"></span> Search:-->
-            <!--</a>-->
-
-
-
 
           </div>
 
@@ -502,7 +496,7 @@
             </h5>
 
 
-            <!--<a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="clearCache();">-->
+            <!--<a href="#" class="list-group-item" ng-click="clearCache();">-->
             <!--<i class="fa fa-refresh fa-fw"></i> Clear Cache-->
             <!--</a>-->
 
@@ -524,7 +518,7 @@
   </div>
 
 
-  <!--Path with Anomalies-->
+    <!--Path with Anomalies-->
 
   <div class="row">
     <div class="col-lg-9">
@@ -538,14 +532,34 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
 
-          <div class="container" >
-            {{NoOfStuff}} HISTORY BAR
+          <div class="container">
+
+
+{{individualPath_PastResults.length}}
+
+    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="12"  ng-model="currentPage" class="pagination-sm" ng-change="loadPast(currentPage,metadata123)" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+
+
+
+<div class="btn-group" role="group" ng-repeat="(key, val) in individualPath_PastResults">
+ <button tooltip-placement="top" uib-tooltip="{{val.date[0]}} {{val.date[1]}} {{val.date[2]}} {{val.time[0]}}:{{val.time[1]}}:{{val.time[2]}} {{val.time[3]}}" type="button" class="btn btn-default">{{key+1}}</button>
+</div>
+
+
+
+
+
+            <div ng-repeat="(key, val) in individualPath_PastResults">
+{{val.time}}
+
+
+            </div>
           </div>
 
           <!--Visualisation goes here-->
           <div>
 
-            <div ng-controller="IndividualTraceroutePathGraphCtrl" id="individual_traceroute_path_graph"></div>
+            <div id="individual_traceroute_path_graph"></div>
 
           </div>
 
@@ -564,50 +578,49 @@
 
         </div>
         <!-- /.panel-heading -->
-        <div class="panel-body" >
-          <!--This works-->
-          {{NoOfStuff}}
-
+        <div class="panel-body">
 
           <div class="list-group">
             <h5>Graph Layout
               <small>Sub-heading</small>
             </h5>
             <a href="" class="list-group-item"
-               ng-click="layoutdisplayConcentric();">
+               ng-click="individualGraph_layoutdisplayConcentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
             <a href="" class="list-group-item"
-               ng-click="layoutBreathFirst();">
+               ng-click="individualGraph_layoutBreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
 
-            <a href="" class="list-group-item" ng-click="layoutGrid();">
+            <a href="" class="list-group-item" ng-click="individualGraph_layoutGrid();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Grid
             </a>
 
-            <a href="" class="list-group-item" ng-click="layoutCose();">
+            <a href="" class="list-group-item" ng-click="individualGraph_layoutCose();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Cose
             </a>
 
-            <a href="" class="list-group-item" ng-click="layoutCircle();">
+            <a href="" class="list-group-item" ng-click="individualGraph_layoutCircle();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
-            <a href="" class="list-group-item" ng-click="graphCentred();">
+            <a href="" class="list-group-item" ng-click="individualGraph_graphCentred();">
               <i class="fa fa-wrench fa-fw"></i> Back to Centre
             </a>
 
           </div>
 
-          <div ng-controller="IndividualTraceroutePathGraphCtrl" class="list-group text-danger panel-red" ng-if="errorTracerouteResultsLength!=0">
+          <div class="list-group text-danger panel-red"
+               ng-if="errorTracerouteResultsLength!=0">
             <h5>Erroneous Traceroute Paths
               <small></small>
             </h5>
 
-            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'" ng-click="loadIndividualTraceroutePath(val);">
+            <a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'"
+               ng-click="individualGraph_loadTraceroutePath(val.metadata);">
 
               <i class="fa fa-bar-chart-o fa-fw"></i>
               S: {{val.source.ip}}
@@ -638,7 +651,7 @@
             <!--<input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">-->
             <!--<span class="input-group-btn">-->
             <!--<button class="btn btn-default" type="button"-->
-                        <!--ng-click="searchNode(nodeSearch);"><i-->
+            <!--ng-click="searchNode(nodeSearch);"><i-->
             <!--class="fa fa-search"></i></button>-->
             <!--</span>-->
             <!--</div>-->
@@ -653,7 +666,7 @@
             </h5>
 
 
-            <!--<a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="clearCache();">-->
+            <!--<a href="#" class="list-group-item" ng-click="clearCache();">-->
             <!--<i class="fa fa-refresh fa-fw"></i> Clear Cache-->
             <!--</a>-->
 
@@ -674,7 +687,7 @@
     <!-- /.col-lg-4 -->
   </div>
 
-  <!--END of Path with Anomalies-->
+    <!--END of Path with Anomalies-->
 
   <div class="panel panel-default">
 
@@ -755,7 +768,7 @@
   </div>
 
 
-  <!--Empty Panel-->
+    <!--Empty Panel-->
   <div class="panel panel-default">
     <div class="panel-heading">
       <i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel
@@ -771,6 +784,13 @@
     </div>
     <!-- /.panel-body -->
   </div>
+
+
+    </span>
+    </span>
+    </span>
+  </span>
+
 
 </div>
 <!-- build:js(src) scripts/vendor.js -->

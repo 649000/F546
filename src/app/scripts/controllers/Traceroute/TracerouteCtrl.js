@@ -5,7 +5,6 @@
 //This traceroute graphs shows duplicated paths
 angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService) {
 
-  $log.debug("TracerouteGraphCtrl: START")
 
 
   var sourceAndDestinationList;
@@ -765,6 +764,23 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
 
   $log.debug("TraceroutePathGraphCtrl: START");
 
+  $scope.totalItems = 30;
+  $scope.currentPage = 4;
+
+  $scope.setPage = function (pageNo) {
+    $scope.currentPage = pageNo;
+  };
+
+  $scope.pageChanged = function() {
+    $log.log('Page changed to: ' + $scope.currentPage);
+  };
+
+  $scope.maxSize = 5;
+  $scope.bigTotalItems = 175;
+  $scope.bigCurrentPage = 1;
+
+  $log.debug("TracerouteGraphCtrl: START")
+
   TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
 
 
@@ -773,7 +789,7 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
 
 angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'TraceroutePath_GraphService', function ($scope, $log, $cacheFactory, TraceroutePath_GraphService) {
 
-  $scope.layoutBreathFirst = function () {
+  $scope.mainGraph_layoutBreathFirst = function () {
 
     var options = {
       name: 'breadthfirst',
@@ -797,7 +813,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
     TraceroutePath_GraphService.getGraph().layout(options);
   }
 
-  $scope.layoutdisplayConcentric = function () {
+  $scope.mainGraph_layoutdisplayConcentric = function () {
 
     var options = {
       name: 'concentric',
@@ -830,7 +846,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.layoutGrid = function () {
+  $scope.mainGraph_layoutGrid = function () {
     var options = {
       name: 'grid',
 
@@ -856,7 +872,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.layoutCose = function () {
+  $scope.mainGraph_layoutCose = function () {
 
     var options = {
       name: 'cose',
@@ -936,7 +952,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.layoutCircle = function () {
+  $scope.mainGraph_layoutCircle = function () {
 
     var options = {
       name: 'circle',
@@ -961,13 +977,13 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.graphCentred = function () {
+  $scope.mainGraph_graphCentred = function () {
     TraceroutePath_GraphService.getGraph().centre();
     TraceroutePath_GraphService.getGraph().fit();
     // TracerouteGraphService.getGraph().zoomingEnabled(true);
   }
 
-  $scope.graphLoadAllResults = function () {
+  $scope.mainGraph_graphLoadAllResults = function () {
 
     TraceroutePath_GraphService.getGraph().remove('node');
     TraceroutePath_GraphService.getGraph().remove('edge');
@@ -976,7 +992,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.searchNode = function (IPAddr) {
+  $scope.mainGraph_searchNode = function (IPAddr) {
 
 
     $log.debug("Node Search: " + IPAddr);
@@ -989,7 +1005,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   }
 
-  $scope.clearCache = function () {
+  $scope.mainGraph_clearCache = function () {
     $cacheFactory.get('$http').removeAll();
 
     //FIXME: Perhaps do a restart as well.
@@ -1019,9 +1035,9 @@ angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$
 }]);
 
 
-angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope','$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope,$rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService) {
+angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope', '$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService','UnixTimeConverterService', function ($scope, $rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService,UnixTimeConverterService) {
 
-  $scope.layoutBreathFirst = function () {
+  $scope.individualGraph_layoutBreathFirst = function () {
 
     var options = {
       name: 'breadthfirst',
@@ -1045,7 +1061,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
     IndividualTraceroutePath_GraphService.getGraph().layout(options);
   }
 
-  $scope.layoutdisplayConcentric = function () {
+  $scope.individualGraph_layoutdisplayConcentric = function () {
 
     var options = {
       name: 'concentric',
@@ -1078,7 +1094,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.layoutGrid = function () {
+  $scope.individualGraph_layoutGrid = function () {
     var options = {
       name: 'grid',
 
@@ -1104,7 +1120,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.layoutCose = function () {
+  $scope.individualGraph_layoutCose = function () {
 
     var options = {
       name: 'cose',
@@ -1184,7 +1200,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.layoutCircle = function () {
+  $scope.individualGraph_layoutCircle = function () {
 
     var options = {
       name: 'circle',
@@ -1209,13 +1225,13 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.graphCentred = function () {
+  $scope.individualGraph_graphCentred = function () {
     IndividualTraceroutePath_GraphService.getGraph().centre();
     IndividualTraceroutePath_GraphService.getGraph().fit();
     // TracerouteGraphService.getGraph().zoomingEnabled(true);
   }
 
-  $scope.graphLoadAllResults = function () {
+  $scope.individualGraph_graphLoadAllResults = function () {
 
     IndividualTraceroutePath_GraphService.getGraph().remove('node');
     IndividualTraceroutePath_GraphService.getGraph().remove('edge');
@@ -1224,7 +1240,7 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.searchNode = function (IPAddr) {
+  $scope.individualGraph_searchNode = function (IPAddr) {
 
 
     $log.debug("Node Search: " + IPAddr);
@@ -1237,11 +1253,10 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
   }
 
-  $scope.loadIndividualTraceroutePath = function (metadataKey) {
-    $scope.NoOfStuff = 123;
-    // $rootScope.NoOfStuff = 123
+  $scope.individualGraph_loadTraceroutePath = function (metadataKey) {
 
-    $log.debug("Individual Traceroute Metadata: "+ metadataKey);
+
+    $log.debug("Individual Traceroute Metadata: " + metadataKey);
     IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {
 
       // var errorPath = {
@@ -1272,12 +1287,10 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
         if (metadataKey == response[i].metadata) {
 
 
-
-            // $scope.NoOfStuff = response[i].result.length;
+          var pastResultsList = [];
 
           IndividualTraceroutePath_GraphService.getGraph().remove('node');
           IndividualTraceroutePath_GraphService.getGraph().remove('edge');
-
 
 
           //Adding SOURCE/MAIN node
@@ -1300,12 +1313,15 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
           }
 
 
-
-
-
           for (var k = 0; k < response[i].result.length; k++) {
 
 
+            pastResultsList.push({
+
+              time: UnixTimeConverterService.getTime(response[i].result[k].ts),
+              date: UnixTimeConverterService.getDate(response[i].result[k].ts),
+              nodes: response[i].result[k].nodes
+            });
             // for (var m = 0; m < response[i].result[k].nodes.length; m++) {
             //
             //   //ADDING ADDITIONAL NOTES
@@ -1332,6 +1348,8 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
             // }
 
           }
+
+          $scope.individualPath_PastResults = pastResultsList;
 
 
           // for (var k = 0; k < response[i].result.length; k++) {
@@ -1473,9 +1491,6 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
           IndividualTraceroutePath_GraphService.getGraph().layout(layoutOptions);
 
 
-
-
-
         }
       }
 
@@ -1488,8 +1503,11 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
     //FIXME: Perhaps do a restart as well.
   }
 
+  $scope.loadPast = function(x,y){
+    alert("PAGE NUMBER: "+x + " "+ y)
+  }
 
-
+  $scope.metadata123 = 'sadasd';
 }]);
 
 
