@@ -291,31 +291,31 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
 
       //Index 0 being the latest traceroute results
-      var reversedResponse = individual_traceroute_results.reverse();
+
 
       var pathExist = false;
       var traceroutePaths = [];
 
-      for (var i = 0; i < reversedResponse.length; i++) {
+      for (var i = 0; i < individual_traceroute_results.length; i++) {
 
-        var ts = reversedResponse[i]['ts'];
+        var ts = individual_traceroute_results[i]['ts'];
         // $log.debug(ts)
 
         var singleExistingPath = [];
 
-        for (var j = 0; j < reversedResponse[i]['val'].length; j++) {
+        for (var j = 0; j < individual_traceroute_results[i]['val'].length; j++) {
 
           //FIXME: Do we ignore query 1,2, 3?
           //FIXME: What about path with traceroute errors?
 
 
-          if (reversedResponse[i]['val'][j]['query'] == 1) {
-            // $log.debug("Adding: " + reversedResponse[i]['val'][j]['ip']);
-            singleExistingPath.push(reversedResponse[i]['val'][j]['ip']);
+          if (individual_traceroute_results[i]['val'][j]['query'] == 1) {
+            // $log.debug("Adding: " + individual_traceroute_results[i]['val'][j]['ip']);
+            singleExistingPath.push(individual_traceroute_results[i]['val'][j]['ip']);
           }
 
           //Error in traceroute result, most likely request timed out.
-          if (reversedResponse[i]['val'][j]['success'] == 0) {
+          if (individual_traceroute_results[i]['val'][j]['success'] == 0) {
             return true;
           }
 

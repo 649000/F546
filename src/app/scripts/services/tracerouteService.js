@@ -1465,7 +1465,6 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
     }
 
 
-
   }
 
 
@@ -1652,7 +1651,6 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
       // }
 
 
-
       return TracerouteResultsService.getMainResult(
         {
           'format': 'json',
@@ -1714,12 +1712,14 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
         // $log.debug("getErroneousTraceroutePath().response.length: " + response.length);
 
         for (var i = 0; i < response.length; i++) {
+          // Path is reversed to get the latest Traceroute data.
+          var reversedResponse = response[i].data.reverse();
 
           var pathAnomaly = false;
 
           //Analyzation of Path begins:
           if (response[i].data.length > 1) {
-            pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
+            pathAnomaly = AnalyzeTraceroute.analyzePath(reversedResponse);
 
 
           } else {
@@ -1730,12 +1730,10 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 
           var errorInTraceroute = null;
 
-          // Path is reversed to get the latest Traceroute data.
-          var reversedResponse = response[i].data.reverse();
-
-
 
           if (pathAnomaly == true) {
+
+            $log.debug("Metadata: " + sourceAndDestinationList[i].metadataKey)
 
             var newErrorPath = {
               source: {
@@ -1749,12 +1747,20 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
                 city: null,
                 country: null
               },
-              destinationIP:sourceAndDestinationList[i].destination,
+              destinationIP: sourceAndDestinationList[i].destination,
               result: [],
               metadata: sourceAndDestinationList[i].metadataKey
             }
 
             for (var j = 0; j < reversedResponse.length; j++) {
+
+              console.log("FIRST DATE: " + reversedResponse[0]['ts'])
+
+              // if (reversedResponse[0]['ts'] > reversedResponse[j]['ts']) {
+              //   // console.log("TRUE LATEST")
+              // } else if (reversedResponse[0]['ts'] < reversedResponse[j]['ts']) {
+              //   // console.log("FALSE FIRST DATE IS EARLIER")
+              // }
 
               var trResult = {
                 ts: reversedResponse[j]['ts'],
@@ -1804,7 +1810,6 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
           var country = response[i].countrycode;
 
 
-
           // var errorPath = {
           //   source: {
           //     ip:1,
@@ -1831,18 +1836,18 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 
           for (var j = 0; j < errorPathList.length; j++) {
 
-            if(errorPathList[j].source.ip == ip){
+            if (errorPathList[j].source.ip == ip) {
               errorPathList[j].source.city = city;
               errorPathList[j].source.country = country;
             }
 
-            if(errorPathList[j].destination.ip == ip){
+            if (errorPathList[j].destination.ip == ip) {
               errorPathList[j].destination.city = city;
               errorPathList[j].destination.country = country;
             }
             for (var k = 0; k < errorPathList[j].result.length; k++) {
               for (var m = 0; m < errorPathList[j].result[k].nodes.length; m++) {
-                if(errorPathList[j].result[k].nodes[m].ip == ip){
+                if (errorPathList[j].result[k].nodes[m].ip == ip) {
                   errorPathList[j].result[k].nodes[m].city = city;
                   errorPathList[j].result[k].nodes[m].country = country;
                 }
@@ -1867,7 +1872,7 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 
     },
 
-    loadGraph_IndividualErroneousPath: function(resultArray){
+    loadGraph_IndividualErroneousPath: function (resultArray) {
 
 
       IndividualTraceroutePath_GraphService.getGraph().remove('node');
@@ -1876,7 +1881,6 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
       //Call Cytoscape add etc.
 
     }
-
 
 
   }

@@ -6,7 +6,6 @@
 angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService) {
 
 
-
   var sourceAndDestinationList;
   var nodeList;
 
@@ -764,22 +763,6 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
 
   $log.debug("TraceroutePathGraphCtrl: START");
 
-  $scope.totalItems = 30;
-  $scope.currentPage = 4;
-
-  $scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
-
-  $scope.pageChanged = function() {
-    $log.log('Page changed to: ' + $scope.currentPage);
-  };
-
-  $scope.maxSize = 5;
-  $scope.bigTotalItems = 175;
-  $scope.bigCurrentPage = 1;
-
-  $log.debug("TracerouteGraphCtrl: START")
 
   TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
 
@@ -1035,7 +1018,7 @@ angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$
 }]);
 
 
-angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope', '$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService','UnixTimeConverterService', function ($scope, $rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService,UnixTimeConverterService) {
+angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope', '$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService', 'UnixTimeConverterService', function ($scope, $rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService, UnixTimeConverterService) {
 
   $scope.individualGraph_layoutBreathFirst = function () {
 
@@ -1289,30 +1272,6 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
           var pastResultsList = [];
 
-          IndividualTraceroutePath_GraphService.getGraph().remove('node');
-          IndividualTraceroutePath_GraphService.getGraph().remove('edge');
-
-
-          //Adding SOURCE/MAIN node
-          if (IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + response[i].source.ip + '"]').size() == 0) {
-
-            // True as this is a SOURCE node.
-            IndividualTraceroutePath_GraphService.add_node(response[i].source.ip, true);
-
-            //Update City and Country
-            IndividualTraceroutePath_GraphService.getGraph().getElementById(response[i].source.ip).data({
-              label: response[i].source.ip + "\n" + response[i].source.city + ", " + response[i].source.country
-            });
-
-            // Event
-            IndividualTraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response[i]['source'] + '"]', function (event) {
-              var element = event.cyTarget;
-              // $log.debug("Clicked on Node ID: " + element.data().id)
-
-            });
-          }
-
-
           for (var k = 0; k < response[i].result.length; k++) {
 
 
@@ -1322,173 +1281,14 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
               date: UnixTimeConverterService.getDate(response[i].result[k].ts),
               nodes: response[i].result[k].nodes
             });
-            // for (var m = 0; m < response[i].result[k].nodes.length; m++) {
-            //
-            //   //ADDING ADDITIONAL NOTES
-            //
-            //   if (IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + response[i].result[k].nodes[m].ip + '"]').size() == 0) {
-            //
-            //     // Adding NODES
-            //     IndividualTraceroutePath_GraphService.add_node(response[i].result[k].nodes[m].ip, false);
-            //
-            //     //Update City and Country
-            //     IndividualTraceroutePath_GraphService.getGraph().getElementById(response[i].source.ip).data({
-            //       label: response[i].result[k].nodes[m].ip + "\n" + response[i].result[k].nodes[m].city + ", " + response[i].result[k].nodes[m].country
-            //     });
-            //
-            //
-            //     // Event
-            //     IndividualTraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response[i].result[k].nodes[m].ip + '"]', function (event) {
-            //       var element = event.cyTarget;
-            //       // $log.debug("Clicked on Node ID: " + element.data().id)
-            //
-            //     });
-            //   }
-            //
-            // }
+
 
           }
 
           $scope.individualPath_PastResults = pastResultsList;
+          $scope.individualPath_PastResultsCount = pastResultsList.length;
 
 
-          // for (var k = 0; k < response[i].result.length; k++) {
-          //   for (var m = 0; m < response[i].result[k].nodes.length; m++) {
-          //
-          //     if (m != (response[i].result[k].nodes.length - 1 )) {
-          //
-          //       var edgeID = Math.random();
-          //
-          //       if (IndividualTraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-          //
-          //
-          //         IndividualTraceroutePath_GraphService.add_edge(edgeID, response[i].result[k].nodes[m].ip, response[i].result[k].nodes[m + 1].ip, true, null, response[i].source.ip, response[i].destination.ip, response[i].metadata);
-          //
-          //         // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-          //         //   var element = event.cyTarget;
-          //         //   //ID: element.id()
-          //         //   //metadataKey: element.data().metadataKey
-          //         //
-          //         //   // search for ALL edges with same metadata, make it red, make everything else the same.
-          //         //   TraceroutePath_GraphService.getGraph().style()
-          //         //     .selector('edge[pathAnomaly = "true"]')
-          //         //     .style({
-          //         //       'line-color': 'IndianRed',
-          //         //       'width': 2
-          //         //     }).update();
-          //         //
-          //         //   TraceroutePath_GraphService.getGraph().style()
-          //         //     .selector('edge[pathAnomaly = "false"]')
-          //         //     .style({
-          //         //       'line-color': '#a8ea00',
-          //         //       'width': 2
-          //         //     }).update();
-          //         //
-          //         //
-          //         //   if (element.data().pathAnomaly == "true") {
-          //         //     //Make this Dark Red
-          //         //     TraceroutePath_GraphService.getGraph().style()
-          //         //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-          //         //       .style({
-          //         //         'line-color': 'DarkRed',
-          //         //         'width': 4
-          //         //       }).update();
-          //         //   }
-          //         //
-          //         //   if (element.data().pathAnomaly == "false") {
-          //         //     TraceroutePath_GraphService.getGraph().style()
-          //         //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-          //         //       .style({
-          //         //         'line-color': 'green',
-          //         //         'width': 4
-          //         //       }).update();
-          //         //   }
-          //         //
-          //         //
-          //         // });
-          //
-          //       }
-          //
-          //     }
-          //
-          //   }
-          //
-          //   var edgeID = Math.random();
-          //
-          //   if (IndividualTraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-          //
-          //     IndividualTraceroutePath_GraphService.add_edge(edgeID, response[i].source.ip, response[i].result[k].nodes[response[i].result[k].nodes.length - 1].ip, true, null, response[i].source.ip, response[i].destination.ip, response[i].metadata);
-          //
-          //     // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-          //     //   var element = event.cyTarget;
-          //     //   $log.debug("Element METADATA: " + element.data().metadataKey)
-          //     //
-          //     //   TraceroutePath_GraphService.getGraph().style()
-          //     //     .selector('edge[pathAnomaly = "true"]')
-          //     //     .style({
-          //     //       'line-color': 'IndianRed',
-          //     //       'width': 2
-          //     //     }).update();
-          //     //
-          //     //   TraceroutePath_GraphService.getGraph().style()
-          //     //     .selector('edge[pathAnomaly = "false"]')
-          //     //     .style({
-          //     //       'line-color': '#a8ea00',
-          //     //       'width': 2
-          //     //     }).update();
-          //     //
-          //     //
-          //     //   if (element.data().pathAnomaly == "true") {
-          //     //     //Make this Dark Red
-          //     //     TraceroutePath_GraphService.getGraph().style()
-          //     //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-          //     //       .style({
-          //     //         'line-color': 'DarkRed',
-          //     //         'width': 4
-          //     //       }).update();
-          //     //   }
-          //     //
-          //     //   if (element.data().pathAnomaly == "false") {
-          //     //     TraceroutePath_GraphService.getGraph().style()
-          //     //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-          //     //       .style({
-          //     //         'line-color': 'green',
-          //     //         'width': 4
-          //     //       }).update();
-          //     //   }
-          //     //
-          //     //
-          //     // });
-          //   }
-          // }
-
-          //Style Options
-          IndividualTraceroutePath_GraphService.getGraph().style()
-            .selector('node[sourceNode = "true"]')
-            .style({
-              'background-color': 'black'
-            }).update();
-
-
-          var layoutOptions = {
-            name: 'breadthfirst',
-            fit: true, // whether to fit the viewport to the graph
-            directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-            padding: 30, // padding on fit
-            circle: false, // put depths in concentric circles if true, put depths top down if false
-            spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-            boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-            avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-            roots: undefined, // the roots of the trees
-            maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-            animate: false, // whether to transition the node positions
-            animationDuration: 500, // duration of animation in ms if enabled
-            animationEasing: undefined, // easing of animation if enabled
-            ready: undefined, // callback on layoutready
-            stop: undefined // callback on layoutstop
-          };
-
-          IndividualTraceroutePath_GraphService.getGraph().layout(layoutOptions);
 
 
         }
@@ -1500,14 +1300,158 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
   $scope.clearCache = function () {
     $cacheFactory.get('$http').removeAll();
 
-    //FIXME: Perhaps do a restart as well.
+    //FIXME: Perhaps do a refresh as well.
   }
 
-  $scope.loadPast = function(x,y){
-    alert("PAGE NUMBER: "+x + " "+ y)
+  $scope.individualGraph_loadNextTraceroutePath = function (index, resultsArray) {
+    // alert("PAGE NUMBER: " + index + " " + resultsArray[index].time)
+
+    $scope.individualPath_time = resultsArray[index].time[0] +":"+resultsArray[index].time[1]+":"+resultsArray[index].time[2]+" "+resultsArray[index].time[3]
+    $scope.individualPath_date = resultsArray[index].date[0]+" "+resultsArray[index].date[1] +" "+resultsArray[index].date[2]
+
+    IndividualTraceroutePath_GraphService.getGraph().remove('node');
+    IndividualTraceroutePath_GraphService.getGraph().remove('edge');
+
+
+    //       nodes: [
+    //         {ip:1,city:1,country:1},
+    //         {ip:1,city:1,country:1}
+    //         ]
+
+
+
+    for (var i = 0; i < resultsArray[index].nodes.length; i++) {
+
+      console.log(i)
+      console.log("XXXX: "+ resultsArray[index].nodes.length)
+      console.log(resultsArray[index].nodes[i].ip)
+      var sourceNode = false;
+
+      //Adding SOURCE/MAIN node
+      if (IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + resultsArray[index].nodes[i].ip + '"]').size() == 0) {
+
+        // True as this is a SOURCE node.
+
+        if(i==0){
+          sourceNode = true;
+        }
+
+        IndividualTraceroutePath_GraphService.add_node(resultsArray[index].nodes[i].ip, sourceNode);
+        //
+        // // //Update City and Country
+        IndividualTraceroutePath_GraphService.getGraph().elements('node[id = "' + resultsArray[index].nodes[i].ip + '"]').data({
+          label: resultsArray[index].nodes[i].ip + "\n" + resultsArray[index].nodes[i].city + ", " + resultsArray[index].nodes[i].country
+        });
+
+
+        //   .getElementById(resultsArray[index].nodes[i].ip).data({
+        //   label: resultsArray[index].nodes[i].ip + "\n" + resultsArray[index].nodes[i].city + ", " + resultsArray[index].nodes[i].country
+        // });
+
+        // // Event
+        IndividualTraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + resultsArray[index].nodes[i].ip + '"]', function (event) {
+          var element = event.cyTarget;
+          // $log.debug("Clicked on Node ID: " + element.data().id)
+
+        });
+      }
+
+    }
+
+    for (var m = 0; m < resultsArray[index].nodes.length; m++) {
+
+      if (m != (resultsArray[index].nodes.length - 1 )) {
+
+        var edgeID = Math.random();
+
+        if (IndividualTraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+
+
+          IndividualTraceroutePath_GraphService.add_edge(edgeID, resultsArray[index].nodes[m].ip, resultsArray[index].nodes[m + 1].ip, true, null, null, null, null);
+
+          // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+          //   var element = event.cyTarget;
+          //   //ID: element.id()
+          //   //metadataKey: element.data().metadataKey
+          //
+          //   // search for ALL edges with same metadata, make it red, make everything else the same.
+          //   TraceroutePath_GraphService.getGraph().style()
+          //     .selector('edge[pathAnomaly = "true"]')
+          //     .style({
+          //       'line-color': 'IndianRed',
+          //       'width': 2
+          //     }).update();
+          //
+          //   TraceroutePath_GraphService.getGraph().style()
+          //     .selector('edge[pathAnomaly = "false"]')
+          //     .style({
+          //       'line-color': '#a8ea00',
+          //       'width': 2
+          //     }).update();
+          //
+          //
+          //   if (element.data().pathAnomaly == "true") {
+          //     //Make this Dark Red
+          //     TraceroutePath_GraphService.getGraph().style()
+          //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //       .style({
+          //         'line-color': 'DarkRed',
+          //         'width': 4
+          //       }).update();
+          //   }
+          //
+          //   if (element.data().pathAnomaly == "false") {
+          //     TraceroutePath_GraphService.getGraph().style()
+          //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //       .style({
+          //         'line-color': 'green',
+          //         'width': 4
+          //       }).update();
+          //   }
+          //
+          //
+          // });
+
+        }
+
+      }
+
+    }
+
+
+    IndividualTraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size();
+
+    //Style Options
+    IndividualTraceroutePath_GraphService.getGraph().style()
+      .selector('node[sourceNode = "true"]')
+      .style({
+        'background-color': 'black'
+      }).update();
+
+
+    var layoutOptions = {
+      name: 'breadthfirst',
+      fit: true, // whether to fit the viewport to the graph
+      directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+      padding: 30, // padding on fit
+      circle: false, // put depths in concentric circles if true, put depths top down if false
+      spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+      boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+      avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+      roots: undefined, // the roots of the trees
+      maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+      animate: false, // whether to transition the node positions
+      animationDuration: 500, // duration of animation in ms if enabled
+      animationEasing: undefined, // easing of animation if enabled
+      ready: undefined, // callback on layoutready
+      stop: undefined // callback on layoutstop
+    };
+
+    IndividualTraceroutePath_GraphService.getGraph().layout(layoutOptions);
+
   }
 
-  $scope.metadata123 = 'sadasd';
+
 }]);
 
 

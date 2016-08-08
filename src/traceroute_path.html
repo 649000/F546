@@ -535,25 +535,17 @@
           <div class="container">
 
 
-{{individualPath_PastResults.length}}
-
-    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="12"  ng-model="currentPage" class="pagination-sm" ng-change="loadPast(currentPage,metadata123)" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
 
 
+    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length" ng-model="individualPastResultscurrentPage"
+        class="pagination-sm" ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)" previous-text="&lsaquo;"
+        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
 
-<div class="btn-group" role="group" ng-repeat="(key, val) in individualPath_PastResults">
- <button tooltip-placement="top" uib-tooltip="{{val.date[0]}} {{val.date[1]}} {{val.date[2]}} {{val.time[0]}}:{{val.time[1]}}:{{val.time[2]}} {{val.time[3]}}" type="button" class="btn btn-default">{{key+1}}</button>
-</div>
-
+{{individualPath_time}}
+            {{individualPath_date}}
 
 
 
-
-            <div ng-repeat="(key, val) in individualPath_PastResults">
-{{val.time}}
-
-
-            </div>
           </div>
 
           <!--Visualisation goes here-->
