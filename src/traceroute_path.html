@@ -536,13 +536,20 @@
 
 
 
+<div ng-if="individualPath_PastResults!==undefined" class="text-center">
+    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length"
+        ng-model="individualPastResultscurrentPage"
+        class="pagination-sm"
+        ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"
+        previous-text="&lsaquo;"
+        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
 
-    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length" ng-model="individualPastResultscurrentPage"
-        class="pagination-sm" ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)" previous-text="&lsaquo;"
-        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
+    </ul>
+       <p>{{individualPath_time}}
+        {{individualPath_date}}
+       </p>
+</div>
 
-{{individualPath_time}}
-            {{individualPath_date}}
 
 
 
@@ -621,55 +628,7 @@
 
           </div>
 
-          <div class="list-group">
-            <h5>Traceroute Information
-              <small>Sub-heading</small>
-            </h5>
 
-            <div class="panel panel-red">
-
-              <div class="panel-heading">
-                TR:
-                <div class="pull-right">
-                  <span class="badge">123</span>
-                </div>
-              </div>
-              <!--<div class="panel-body">-->
-              <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
-              <!--</div>-->
-            </div>
-
-            <!--<div class="form-group input-group">-->
-            <!--<input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">-->
-            <!--<span class="input-group-btn">-->
-            <!--<button class="btn btn-default" type="button"-->
-            <!--ng-click="searchNode(nodeSearch);"><i-->
-            <!--class="fa fa-search"></i></button>-->
-            <!--</span>-->
-            <!--</div>-->
-
-
-          </div>
-
-
-          <div class="list-group">
-            <h5>// To Be Separated
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <!--<a href="#" class="list-group-item" ng-click="clearCache();">-->
-            <!--<i class="fa fa-refresh fa-fw"></i> Clear Cache-->
-            <!--</a>-->
-
-
-            <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Example:
-            </a>
-
-          </div>
-          <!-- /.list-group -->
 
         </div>
         <!-- /.panel-body -->

@@ -1733,7 +1733,7 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 
           if (pathAnomaly == true) {
 
-            $log.debug("Metadata: " + sourceAndDestinationList[i].metadataKey)
+            // $log.debug("Metadata: " + sourceAndDestinationList[i].metadataKey)
 
             var newErrorPath = {
               source: {
@@ -1754,7 +1754,7 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 
             for (var j = 0; j < reversedResponse.length; j++) {
 
-              console.log("FIRST DATE: " + reversedResponse[0]['ts'])
+              // console.log("FIRST DA?TE: " + reversedResponse[0]['ts'])
 
               // if (reversedResponse[0]['ts'] > reversedResponse[j]['ts']) {
               //   // console.log("TRUE LATEST")
