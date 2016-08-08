@@ -763,7 +763,7 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
 
   $log.debug("TraceroutePathGraphCtrl: START");
 
-
+ $scope.host = HostService.getHost();
   TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
 
 

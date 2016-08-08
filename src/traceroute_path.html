@@ -27,6 +27,10 @@
 </head>
 
 <body>
+<span id="firstController" ng-controller="TraceroutePathGraphCtrl">
+  <span id="secondController" ng-controller="TraceroutePathGraphPanelCtrl">
+  <span id="thirdController" ng-controller="IndividualTracerouteGraphPanelCtrl">
+  <span id="fouthController" ng-controller="IndividualTraceroutePathGraphCtrl">
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
@@ -41,18 +45,17 @@
   <!-- /.navbar-header -->
 
   <ul class="nav navbar-top-links navbar-right">
+    Host: {{host}}
     <li class="dropdown">
       <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+        <i class="fa  fa-gears fa-fw"></i> <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-messages">
         <li>
           <a href="#">
             <div>
-              <strong>John Smith</strong>
-              <span class="pull-right text-muted">
-                                        <em>Yesterday</em>
-                                    </span>
+              <strong>Host</strong>
+
             </div>
             <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
           </a>
@@ -364,10 +367,7 @@
 <!-- End of Navigation -->
 <div id="page-wrapper">
   <!--ACTUAL BODY STARTS HERE-->
-  <span id="firstController" ng-controller="TraceroutePathGraphCtrl">
-  <span id="secondController" ng-controller="TraceroutePathGraphPanelCtrl">
-  <span id="thirdController" ng-controller="IndividualTracerouteGraphPanelCtrl">
-  <span id="fouthController" ng-controller="IndividualTraceroutePathGraphCtrl">
+
 
 
   <div class="row">
