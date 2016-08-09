@@ -510,121 +510,7 @@
     <!-- /.col-lg-4 -->
   </div>
 
-  <div class="panel panel-default">
 
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Path of Latency Test {{tracerouteTime}} {{tracerouteDate}} Metadata: {{latencyMetadata}}
-      <div class="pull-right">
-
-        <button type="button" class="btn btn-default btn-xs" ng-controller="LatencyGraphPanelCtrl"
-                ng-click="tracerouteGraphCentred();">
-          Centred
-        </button>
-
-
-      </div>
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-
-      <!--TRACEROUTE GRAPH HERE-->
-      <!--<div id="latency_graph_cytoscape_traceroute">-->
-      <!--</div>-->
-
-
-
-
-    </div>
-    <!-- /.panel-body -->
-  </div>
-
-
-  <!--Latency Information Panel-->
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Latency History
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-
-      <div>
-
-        <div id="latency_metadata_summary">
-
-
-          <!--<div class="table-responsive">-->
-          <!--<table class="table">-->
-
-          <!--<thead>-->
-          <!--<tr>-->
-
-          <!--<th>Latency Summary Type</th>-->
-          <!--<th>Latency Summary Date</th>-->
-          <!--<th>Latency Summary Time</th>-->
-          <!--<th>Latency Summary Window</th>-->
-          <!--<th>Latency Histogram</th>-->
-          <!--</tr>-->
-          <!--</thead>-->
-
-          <!--<tbody>-->
-
-
-          <!--<tr ng-repeat="summary in latencySummaryData">-->
-          <!--<td>{{summary.type}}</td>-->
-          <!--<td>{{summary.date}}</td>-->
-          <!--<td>{{summary.time}}</td>-->
-          <!--<td>{{summary.window}}</td>-->
-
-          <!--<td>-->
-          <!--<button type="button" class="btn btn-default"-->
-          <!--ng-click="loadLatencySummaryChart(summary.url, summary.event_type, summary.type, summary.window, summary.uri);">-->
-          <!--Load Histogram-->
-          <!--</button>-->
-          <!--</td>-->
-          <!--</tr>-->
-
-
-          <!--</tbody>-->
-          <!--</table>-->
-          <!--</div>-->
-
-          <!--<div>-->
-          <!--<p>Histogram</p>-->
-
-
-          <!--<ul class="pagination" ng-repeat="(key, val) in IndividualLatencyResults">-->
-          <!--<li><a href="" ng-click="loadIndividualLatencyChart(key)">{{key+1}}</a></li>-->
-
-          <!--</ul>-->
-
-          <!--&lt;!&ndash;<div ng-repeat="(key, val) in IndividualLatencyResults">&ndash;&gt;-->
-          <!--&lt;!&ndash;<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">&ndash;&gt;-->
-          <!--&lt;!&ndash;</canvas>&ndash;&gt;-->
-
-          <!--&lt;!&ndash;</div>&ndash;&gt;-->
-
-          <!--<div ng-repeat="(key, val) in IndividualLatencyResults">-->
-          <!--<p>Date: {{val.date}}</p>-->
-          <!--<p>Time: {{val.time}}</p>-->
-          <!--<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">-->
-          <!--</canvas>-->
-
-          <!--</div>-->
-
-
-          <!--<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series">-->
-          <!--</canvas>-->
-
-          <!--</div>-->
-
-
-        </div>
-      </div>
-
-
-    </div>
-    <!-- /.panel-body -->
-  </div>
 
 
   <div class="panel panel-default">
@@ -634,7 +520,7 @@
       <i class="fa fa-bar-chart-o fa-fw"></i> Latency History {{tracerouteTime}} {{tracerouteDate}} Metadata: {{latencyMetadata}}
       <div class="pull-right">
 
-        <button type="button" class="btn btn-default btn-xs"
+        <button ng-show="showTraceroute" type="button" class="btn btn-default btn-xs"
                 ng-click="tracerouteGraphCentred();">
           Centred
         </button>
@@ -677,9 +563,8 @@
 
 
 
-              <h2>{{val.date}}
-                                <small>{{val.time}}</small>
-                            </h2>
+              <h2>{{val.date}}<small>{{val.time}}</small></h2>
+
               <div class="table-responsive">
               <table class="table table-striped text-center">
 
@@ -700,7 +585,7 @@
               </thead>
 
               <tbody>
-              <tr >
+              <tr>
 
               <td>{{val.mean}}</td>
               <td>{{val.stddev}}</td>

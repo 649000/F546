@@ -688,16 +688,17 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
   }
 
   $scope.tracerouteGraphCentred = function () {
+    window.dispatchEvent(new Event('resize'));
     Latency_To_Traceroute_GraphService.getGraph().centre();
     Latency_To_Traceroute_GraphService.getGraph().fit();
 
   }
 
-  $scope.graphCentred_traceroute = function () {
-    //FIXME: Insert the
-    LatencyGraphService.getGraph().centre();
-    LatencyGraphService.getGraph().fit();
-  }
+  // $scope.graphCentred_traceroute = function () {
+  //   //FIXME: Insert the
+  //   LatencyGraphService.getGraph().centre();
+  //   LatencyGraphService.getGraph().fit();
+  // }
 
   $scope.graphLoadAllResults = function () {
 
