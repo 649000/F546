@@ -28,9 +28,9 @@
 
 <body>
 <span id="firstController" ng-controller="TraceroutePathGraphCtrl">
-  <span id="secondController" ng-controller="TraceroutePathGraphPanelCtrl">
-  <span id="thirdController" ng-controller="IndividualTracerouteGraphPanelCtrl">
-  <span id="fouthController" ng-controller="IndividualTraceroutePathGraphCtrl">
+    <span id="secondController" ng-controller="TraceroutePathGraphPanelCtrl">
+    <span id="thirdController" ng-controller="IndividualTracerouteGraphPanelCtrl">
+    <span id="fouthController" ng-controller="IndividualTraceroutePathGraphCtrl">
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
@@ -364,7 +364,7 @@
   </div>
   <!-- /.navbar-static-side -->
 </nav>
-<!-- End of Navigation -->
+      <!-- End of Navigation -->
 <div id="page-wrapper">
   <!--ACTUAL BODY STARTS HERE-->
 
@@ -518,9 +518,9 @@
   </div>
 
 
-    <!--Path with Anomalies-->
+  <!--Path with Anomalies-->
 
-  <div class="row">
+  <div class="row" >
     <div class="col-lg-9">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -536,7 +536,7 @@
 
 
 
-<div ng-if="individualPath_PastResults!==undefined" class="text-center">
+            <div ng-if="individualPath_PastResults!==undefined" class="text-center">
     <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length"
         ng-model="individualPastResultscurrentPage"
         class="pagination-sm"
@@ -548,7 +548,7 @@
        <p>{{individualPath_time}}
         {{individualPath_date}}
        </p>
-</div>
+      </div>
 
 
 
@@ -638,7 +638,7 @@
     <!-- /.col-lg-4 -->
   </div>
 
-    <!--END of Path with Anomalies-->
+  <!--END of Path with Anomalies-->
 
   <div class="panel panel-default">
 
@@ -719,7 +719,7 @@
   </div>
 
 
-    <!--Empty Panel-->
+  <!--Empty Panel-->
   <div class="panel panel-default">
     <div class="panel-heading">
       <i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel
@@ -737,28 +737,24 @@
   </div>
 
 
-    </span>
-    </span>
-    </span>
-  </span>
 
 
 </div>
-<!-- build:js(src) scripts/vendor.js -->
-<!-- bower:js -->
-<!-- run `gulp inject` to automatically populate bower script dependencies -->
-<!-- endbower -->
-<!-- endbuild -->
+      <!-- build:js(src) scripts/vendor.js -->
+      <!-- bower:js -->
+      <!-- run `gulp inject` to automatically populate bower script dependencies -->
+      <!-- endbower -->
+      <!-- endbuild -->
 
-<!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
-<!-- inject:js -->
-<!-- js files will be automatically insert here -->
-<!-- endinject -->
+      <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
+      <!-- inject:js -->
+      <!-- js files will be automatically insert here -->
+      <!-- endinject -->
 
-<!-- inject:partials -->
-<!-- angular templates will be automatically converted in js and inserted here -->
-<!-- endinject -->
-<!-- endbuild -->
+      <!-- inject:partials -->
+      <!-- angular templates will be automatically converted in js and inserted here -->
+      <!-- endinject -->
+      <!-- endbuild -->
 
 <script>
 
@@ -769,6 +765,10 @@
 
 </script>
 
+    </span>
+    </span>
+    </span>
+  </span>
 </body>
 
 </html>

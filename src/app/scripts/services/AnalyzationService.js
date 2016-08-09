@@ -290,9 +290,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       $log.debug("AnalyzeTraceroute:analyzePath() START");
 
 
-      //Index 0 being the latest traceroute results
-
-
+      var anomaliesExist = false;
       var pathExist = false;
       var traceroutePaths = [];
 
@@ -316,7 +314,8 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
           //Error in traceroute result, most likely request timed out.
           if (individual_traceroute_results[i]['val'][j]['success'] == 0) {
-            return true;
+
+            // return true;
           }
 
         }
@@ -327,26 +326,42 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // $log.debug("traceroutePath.length: "+ traceroutePaths.length);
       //pastPath[0] -> Latest traceroute path to compare with.
 
+
+      //Checking if the latest path, index 0 exist in anything.
+      // for (var i = 1; i < traceroutePaths.length; i++) {
+      //
+      //   // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
+      //
+      //   if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
+      //     pathExist = true;
+      //   }
+      //
+      // }
+      //
+      // if(pathExist==false){
+      //   anomaliesExist = true;
+      // }
+
+
+      //FIXME: For Demonstration purposes, the above is commented out, and the below is added in.
+
       for (var i = 1; i < traceroutePaths.length; i++) {
 
-        // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
-
-        if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
+        if (JSON.stringify(traceroutePaths[0]) !== JSON.stringify(traceroutePaths[i])) {
           pathExist = true;
         }
 
       }
 
+      if(pathExist==false){
+        anomaliesExist = true;
+      }
+
+
+
       //TODO: Figure out what else to return other than TRUE/FALSE
-
-      //FIXME: The following is for demonstrating purposes.
-      // if(Math.random()%2==0){
-      //   pathExist = true;
-      // }else{
-      //   pathExist = false;
-      // }
-
        // $log.debug("analyzePath() Return Msg: " + pathExist);
+      // return anomaliesExist;
       return pathExist;
 
     }
