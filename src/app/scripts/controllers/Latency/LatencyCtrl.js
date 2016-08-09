@@ -372,49 +372,94 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
       cache: true
     }).then(function (response) {
 
-      $scope.IndividualLatencyResults = [];
-      // var reversedResponse = response.data.reverse();
-      var reversedResponse = response.data;
+      if (summary_type == "aggregation") {
 
-      for (var i = 0; i < reversedResponse.length; i++) {
-        var labels = [];
-        var values = [];
+        $scope.resultTypeAggregation = true;
+        $scope.individualLatencyResults = [];
+        // var reversedResponse = response.data.reverse();
+        var reversedResponse = response.data;
 
-        // reversedResponse[i]['val'].s
+        for (var i = 0; i < reversedResponse.length; i++) {
+          var labels = [];
+          var values = [];
 
-        angular.forEach(reversedResponse[i]['val'], function (value, key) {
+          // reversedResponse[i]['val'].s
 
-          labels.push(key);
-          values.push(value);
+          angular.forEach(reversedResponse[i]['val'], function (value, key) {
 
-        });
+            labels.push(key);
+            values.push(value);
 
-        $log.debug(labels);
-        $log.debug(values);
+          });
 
-        var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
-        var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
+          $log.debug(labels);
+          $log.debug(values);
 
-
-
-        $scope.IndividualLatencyResults.push({
-          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
-          date: date[0] + " " + date[1] + " " + date[2],
-          label: labels,
-          data: values
-
-          // type: response.data['event-types'][j]['summaries'][k]['summary-type'],
-          // uri: response.data['event-types'][j]['summaries'][k]['uri'],
-          //
-          // window: response.data['event-types'][j]['summaries'][k]['summary-window'],
-          // url: response.data['url'],
-          // event_type: response.data['event-types'][j]['event-type']
-
-        });
+          var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
+          var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
 
 
-        $scope.IndividualLatencyResultIndex = 0;
+          $scope.individualLatencyResults.push({
+            time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
+            date: date[0] + " " + date[1] + " " + date[2],
+            label: labels,
+            data: values
 
+            // type: response.data['event-types'][j]['summaries'][k]['summary-type'],
+            // uri: response.data['event-types'][j]['summaries'][k]['uri'],
+            //
+            // window: response.data['event-types'][j]['summaries'][k]['summary-window'],
+            // url: response.data['url'],
+            // event_type: response.data['event-types'][j]['event-type']
+
+          });
+
+
+          // $scope.IndividualLatencyResultIndex = 0;
+
+        }
+      }
+
+      if (summary_type == "statistics") {
+        $scope.resultTypeAggregation = false;
+        $scope.individualLatencyResults = [];
+        // var reversedResponse = response.data.reverse();
+        var reversedResponse = response.data;
+
+        for (var i = 0; i < reversedResponse.length; i++) {
+
+
+          // reversedResponse[i]['val'].s
+
+
+          $log.debug(labels);
+          $log.debug(values);
+
+          var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
+          var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
+
+
+          $scope.individualLatencyResults.push({
+            time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
+            date: date[0] + " " + date[1] + " " + date[2],
+            stddev: reversedResponse[i]['val']['standard-deviation'],
+            median: reversedResponse[i]['val']['median'],
+            maximum: reversedResponse[i]['val']['maximum'],
+            minimum: reversedResponse[i]['val']['minimum'],
+            percentile75: reversedResponse[i]['val']['percentile-75'],
+            percentile95: reversedResponse[i]['val']['percentile-95'],
+            percentile25: reversedResponse[i]['val']['percentile-25'],
+            variance: reversedResponse[i]['val']['variance'],
+            mean: reversedResponse[i]['val']['mean']
+
+          });
+
+
+          // $scope.IndividualLatencyResultIndex = 0;
+
+        }
+
+        $scope.individualLatencyResults.reverse();
       }
 
 
@@ -446,7 +491,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 }]);
 
 
-angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'LatencyGraphService','Latency_To_Traceroute_GraphService', function ($scope, $log, $cacheFactory, LatencyGraphService,Latency_To_Traceroute_GraphService) {
+angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'LatencyGraphService', 'Latency_To_Traceroute_GraphService', function ($scope, $log, $cacheFactory, LatencyGraphService, Latency_To_Traceroute_GraphService) {
 
   $scope.layoutBreathFirst = function () {
 
@@ -684,9 +729,6 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
 
 }]);
-
-
-
 
 
 // Empty Module

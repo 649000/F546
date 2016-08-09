@@ -553,67 +553,67 @@
 
 
           <!--<div class="table-responsive">-->
-            <!--<table class="table">-->
+          <!--<table class="table">-->
 
-              <!--<thead>-->
-              <!--<tr>-->
+          <!--<thead>-->
+          <!--<tr>-->
 
-                <!--<th>Latency Summary Type</th>-->
-                <!--<th>Latency Summary Date</th>-->
-                <!--<th>Latency Summary Time</th>-->
-                <!--<th>Latency Summary Window</th>-->
-                <!--<th>Latency Histogram</th>-->
-              <!--</tr>-->
-              <!--</thead>-->
+          <!--<th>Latency Summary Type</th>-->
+          <!--<th>Latency Summary Date</th>-->
+          <!--<th>Latency Summary Time</th>-->
+          <!--<th>Latency Summary Window</th>-->
+          <!--<th>Latency Histogram</th>-->
+          <!--</tr>-->
+          <!--</thead>-->
 
-              <!--<tbody>-->
-
-
-              <!--<tr ng-repeat="summary in latencySummaryData">-->
-                <!--<td>{{summary.type}}</td>-->
-                <!--<td>{{summary.date}}</td>-->
-                <!--<td>{{summary.time}}</td>-->
-                <!--<td>{{summary.window}}</td>-->
-
-                <!--<td>-->
-                  <!--<button type="button" class="btn btn-default"-->
-                          <!--ng-click="loadLatencySummaryChart(summary.url, summary.event_type, summary.type, summary.window, summary.uri);">-->
-                    <!--Load Histogram-->
-                  <!--</button>-->
-                <!--</td>-->
-              <!--</tr>-->
+          <!--<tbody>-->
 
 
-              <!--</tbody>-->
-            <!--</table>-->
+          <!--<tr ng-repeat="summary in latencySummaryData">-->
+          <!--<td>{{summary.type}}</td>-->
+          <!--<td>{{summary.date}}</td>-->
+          <!--<td>{{summary.time}}</td>-->
+          <!--<td>{{summary.window}}</td>-->
+
+          <!--<td>-->
+          <!--<button type="button" class="btn btn-default"-->
+          <!--ng-click="loadLatencySummaryChart(summary.url, summary.event_type, summary.type, summary.window, summary.uri);">-->
+          <!--Load Histogram-->
+          <!--</button>-->
+          <!--</td>-->
+          <!--</tr>-->
+
+
+          <!--</tbody>-->
+          <!--</table>-->
           <!--</div>-->
 
           <!--<div>-->
-            <!--<p>Histogram</p>-->
+          <!--<p>Histogram</p>-->
 
 
-            <!--<ul class="pagination" ng-repeat="(key, val) in IndividualLatencyResults">-->
-              <!--<li><a href="" ng-click="loadIndividualLatencyChart(key)">{{key+1}}</a></li>-->
+          <!--<ul class="pagination" ng-repeat="(key, val) in IndividualLatencyResults">-->
+          <!--<li><a href="" ng-click="loadIndividualLatencyChart(key)">{{key+1}}</a></li>-->
 
-            <!--</ul>-->
+          <!--</ul>-->
 
-            <!--&lt;!&ndash;<div ng-repeat="(key, val) in IndividualLatencyResults">&ndash;&gt;-->
-            <!--&lt;!&ndash;<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">&ndash;&gt;-->
-            <!--&lt;!&ndash;</canvas>&ndash;&gt;-->
+          <!--&lt;!&ndash;<div ng-repeat="(key, val) in IndividualLatencyResults">&ndash;&gt;-->
+          <!--&lt;!&ndash;<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">&ndash;&gt;-->
+          <!--&lt;!&ndash;</canvas>&ndash;&gt;-->
 
-            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+          <!--&lt;!&ndash;</div>&ndash;&gt;-->
 
-            <!--<div ng-repeat="(key, val) in IndividualLatencyResults">-->
-              <!--<p>Date: {{val.date}}</p>-->
-              <!--<p>Time: {{val.time}}</p>-->
-              <!--<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">-->
-              <!--</canvas>-->
+          <!--<div ng-repeat="(key, val) in IndividualLatencyResults">-->
+          <!--<p>Date: {{val.date}}</p>-->
+          <!--<p>Time: {{val.time}}</p>-->
+          <!--<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">-->
+          <!--</canvas>-->
 
-            <!--</div>-->
+          <!--</div>-->
 
 
-            <!--<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series">-->
-            <!--</canvas>-->
+          <!--<canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series">-->
+          <!--</canvas>-->
 
           <!--</div>-->
 
@@ -658,12 +658,14 @@
 
     </uib-tab>
 
-    <uib-tab index="key+1" ng-repeat="(key, val) in latencySummaryData" ng-click="loadLatencySummaryChart(val.url, val.event_type, val.type, val.window, val.uri);">
+    <uib-tab index="key+1" ng-repeat="(key, val) in latencySummaryData"
+             ng-click="loadLatencySummaryChart(val.url, val.event_type, val.type, val.window, val.uri);">
       <uib-tab-heading>
-    {{val.type}}:{{val.window/60}}
+    {{val.type}}:{{val.window}}
       </uib-tab-heading>
 
-            <div ng-repeat="(key, val) in IndividualLatencyResults" class="text-center">
+            <div ng-repeat="(key, val) in individualLatencyResults" class="text-center" ng-if="resultTypeAggregation">
+
               <p>Date: {{val.date}}</p>
               <p>Time: {{val.time}}</p>
               <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">
@@ -671,9 +673,55 @@
 
             </div>
 
+            <div class="" ng-if="!resultTypeAggregation" ng-repeat="(key, val) in individualLatencyResults">
 
-            <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series">
-            </canvas>
+
+
+              <h2>{{val.date}}
+                                <small>{{val.time}}</small>
+                            </h2>
+              <div class="table-responsive">
+              <table class="table table-striped text-center">
+
+              <thead>
+              <tr>
+
+              <th>Mean</th>
+              <th>Std Deviation</th>
+              <th>Variance</th>
+              <th>Median</th>
+              <th>Maximum</th>
+              <th>Minimum</th>
+              <th>95th Percentile</th>
+              <th>75th Percentile</th>
+              <th>25th Percentile</th>
+
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr >
+
+              <td>{{val.mean}}</td>
+              <td>{{val.stddev}}</td>
+              <td>{{val.variance}}</td>
+              <td>{{val.median}}</td>
+              <td>{{val.maximum}}</td>
+              <td>{{val.minimum}}</td>
+              <td>{{val.percentile95}}</td>
+              <td>{{val.percentile75}}</td>
+              <td>{{val.percentile25}}</td>
+
+              </tr>
+
+
+              </tbody>
+              </table>
+              </div>
+
+            </div>
+
+
       </uib-tab>
 
 
