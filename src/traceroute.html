@@ -27,6 +27,9 @@
 </head>
 
 <body>
+<span id="firstController">
+<span id="secondController">
+<span id="thirdController">
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
@@ -451,19 +454,6 @@
 
           </div>
 
-          <div class="list-group">
-            <h5>Graph Nodes
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl"
-               ng-click="graphLoadAllResults();" data-toggle="tooltip" data-placement="left"
-               data-original-title="Resets graph to show traceroute path from ALL results.">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
-            </a>
-
-          </div>
 
           <div class="list-group">
             <h5>Traceroute Information
@@ -491,9 +481,11 @@
             <!--</a>-->
 
             <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="IP Address"  ng-model="nodeSearch">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
               <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" ng-controller="TracerouteGraphPanelCtrl" ng-click="searchNode(nodeSearch);"><i
+                                                <button class="btn btn-default" type="button"
+                                                        ng-controller="TracerouteGraphPanelCtrl"
+                                                        ng-click="searchNode(nodeSearch);"><i
                                                   class="fa fa-search"></i></button>
                                             </span>
             </div>
@@ -691,11 +683,6 @@
       </div>
 
 
-      <div ng-controller="TracerouteNotificationCtrl">
-
-        <p ng-click="Hello()">Click me</p>
-      </div>
-
     </div>
     <!-- /.panel-body -->
   </div>
@@ -839,16 +826,13 @@
   $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
-  // popover demo
-  $("#123234")
-    .popover()
 
-  $('#123234').qtip({ // Grab some elements to apply the tooltip to
-    content: {
-      text: 'My common piece of text here'
-    }
-  })
 </script>
+
+</span>
+</span>
+</span>
+
 
 </body>
 

@@ -145,27 +145,27 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     },
 
-
-    getRtt: function () {
-
-      $log.debug("AnalyzationServices:AnalyzeTraceroute:getRtt()");
-      var host = HostService.getHost();
-
-      return $http({
-        method: 'GET',
-        url: host,
-        params: {
-          'format': 'json',
-          'event-type': 'packet-trace'
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          // 'time-range': timeRange
-        },
-        cache: true
-      })
-
-
-    },
+    //
+    // getRtt: function () {
+    //
+    //   $log.debug("AnalyzationServices:AnalyzeTraceroute:getRtt()");
+    //   var host = HostService.getHost();
+    //
+    //   return $http({
+    //     method: 'GET',
+    //     url: host,
+    //     params: {
+    //       'format': 'json',
+    //       'event-type': 'packet-trace'
+    //       // 'limit': 10,
+    //       // 'time-end': (Math.floor(Date.now() / 1000)),
+    //       // 'time-range': timeRange
+    //     },
+    //     cache: true
+    //   })
+    //
+    //
+    // },
 
     analyzeRtt: function (individual_traceroute_results) {
 
@@ -226,10 +226,11 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
         var rrtResult = nodeAndRttList_RawData[i]['rtt'][0];
         var rttMean = math.mean(nodeAndRttList_RawData[i]['rtt']);
+        var rttStdDev = math.std(nodeAndRttList_RawData[i]['rtt']);
         var rrtStatus = false;
 
 
-        if (rrtResult < rttMean) {
+        if (rrtResult >= (rttMean+rttStdDev) || rrtResult <= (rttMean-rttStdDev)) {
           rrtStatus = true;
         }
 
@@ -237,10 +238,10 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
         nodeAndRttList_CalculatedData.push(
           {
             ip: nodeAndRttList_RawData[i]['IP'],
-            rtt: nodeAndRttList_RawData[i]['rtt'][0],
-            rttAvg: math.round(math.mean(nodeAndRttList_RawData[i]['rtt']), 4),
+            rtt: rrtResult,
+            rttAvg: math.round(rttMean, 4),
             rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
-            rttStd: math.round(math.std(nodeAndRttList_RawData[i]['rtt']), 4),
+            rttStd: math.round(rttStdDev, 4),
             // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
             // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
             //DATE MIGHT BE POSSIBLY WRONG
@@ -259,26 +260,26 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     },
 
-    getPath: function (traceroute_metadata) {
-      var host = HostService.getHost();
-
-      // This returns ALL apths of the time range for that traceroute metadata
-      // JavaScript Promise
-      return $http({
-        method: 'GET',
-        url: host + traceroute_metadata + "/packet-trace/base",
-        params: {
-          'format': 'json',
-          'event-type': 'packet-trace',
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          'time-range': 604800
-          // 24 hours = 86400
-          // 7 days = 604800
-        },
-        cache: true
-      })
-    },
+    // getPath: function (traceroute_metadata) {
+    //   var host = HostService.getHost();
+    //
+    //   // This returns ALL apths of the time range for that traceroute metadata
+    //   // JavaScript Promise
+    //   return $http({
+    //     method: 'GET',
+    //     url: host + traceroute_metadata + "/packet-trace/base",
+    //     params: {
+    //       'format': 'json',
+    //       'event-type': 'packet-trace',
+    //       // 'limit': 10,
+    //       // 'time-end': (Math.floor(Date.now() / 1000)),
+    //       'time-range': 604800
+    //       // 24 hours = 86400
+    //       // 7 days = 604800
+    //     },
+    //     cache: true
+    //   })
+    // },
 
     analyzePath: function (individual_traceroute_results) {
 

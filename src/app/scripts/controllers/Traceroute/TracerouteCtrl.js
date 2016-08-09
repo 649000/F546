@@ -13,7 +13,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 20,
+      'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
