@@ -277,6 +277,9 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
   $scope.$on('LatencyMetadata', function (event, metadata) {
 
 
+    $scope.showTraceroute = true;
+
+    window.dispatchEvent(new Event('resize'));
     var latencyMetadata = metadata;
     var metadataURL = host + latencyMetadata + "/";
 
@@ -335,7 +338,12 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
   });
 
+  $scope.showTracerouteFunction = function () {
+    $scope.showTraceroute = true;
+  }
+
   $scope.loadLatencySummaryChart = function (URL, event_type, summary_type, summary_window, uri) {
+    $scope.showTraceroute = false;
 
     $log.debug("LatencyInformationCtrl: loadLatencySummaryChart " + uri);
 
@@ -372,7 +380,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
         var labels = [];
         var values = [];
 
-        reversedResponse[i]['val'].s
+        // reversedResponse[i]['val'].s
 
         angular.forEach(reversedResponse[i]['val'], function (value, key) {
 
@@ -383,15 +391,15 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
         $log.debug(labels);
         $log.debug(values);
-        // for (var j = 0; j <  reversedResponse[i]['val'].length; j++) {
-        //
-        //
-        // }
+
+        var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
+        var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
+
 
 
         $scope.IndividualLatencyResults.push({
-          time: UnixTimeConverterService.getTime(reversedResponse[i]['ts']),
-          date: UnixTimeConverterService.getDate(reversedResponse[i]['ts']),
+          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
+          date: date[0] + " " + date[1] + " " + date[2],
           label: labels,
           data: values
 
@@ -438,7 +446,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 }]);
 
 
-angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'LatencyGraphService', function ($scope, $log, $cacheFactory, LatencyGraphService) {
+angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'LatencyGraphService','Latency_To_Traceroute_GraphService', function ($scope, $log, $cacheFactory, LatencyGraphService,Latency_To_Traceroute_GraphService) {
 
   $scope.layoutBreathFirst = function () {
 
@@ -634,6 +642,12 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
     // LatencyGraphService.getGraph().zoomingEnabled(true);
   }
 
+  $scope.tracerouteGraphCentred = function () {
+    Latency_To_Traceroute_GraphService.getGraph().centre();
+    Latency_To_Traceroute_GraphService.getGraph().fit();
+
+  }
+
   $scope.graphCentred_traceroute = function () {
     //FIXME: Insert the
     LatencyGraphService.getGraph().centre();
@@ -670,6 +684,9 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
 
 }]);
+
+
+
 
 
 // Empty Module
