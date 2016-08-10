@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices','IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr','ui.bootstrap']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices','IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr','ui.bootstrap','angular-cache']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -17,9 +17,17 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
 
   // Turn debugging on/off
   // http://stackoverflow.com/questions/15561853/how-to-turn-on-off-log-debug-in-angularjs
+
   $logProvider.debugEnabled(true);
 
 }])
+//   .run(function ($http, CacheFactory) {
+//   $http.defaults.cache = CacheFactory('defaultCache', {
+//     maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
+//     cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
+//     deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
+//   });
+// });
 
 traceroute.directive('agclick_edge', function () {
 

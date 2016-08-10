@@ -168,7 +168,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
     // },
 
     analyzeRtt: function (individual_traceroute_results) {
-
       // Takes an array of individual traceroute results, and process it.
       $log.debug("AnalyzeTraceroute:analyzeRtt() START");
 
@@ -176,21 +175,20 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       var nodeAndRttList_CalculatedData = [];
       var nodeAndRttList_RawData = [];
 
-      var reversedResponse = individual_traceroute_results.reverse();
 
 
-      for (var k = 0; k < reversedResponse.length; k++) {
+      for (var k = 0; k < individual_traceroute_results.length; k++) {
 
-        var ts = reversedResponse[k]['ts'];
+        var ts = individual_traceroute_results[k]['ts'];
 
-        for (var l = 0; l < reversedResponse[k]['val'].length; l++) {
+        for (var l = 0; l < individual_traceroute_results[k]['val'].length; l++) {
 
 
           //What about Query 1,2,3?
-          if (reversedResponse[k]['val'][l]['success'] == 1) {
+          if (individual_traceroute_results[k]['val'][l]['success'] == 1) {
 
-            var IPAddr = reversedResponse[k]['val'][l]['ip'];
-            var rtt = reversedResponse[k]['val'][l]['rtt'];
+            var IPAddr = individual_traceroute_results[k]['val'][l]['ip'];
+            var rtt = individual_traceroute_results[k]['val'][l]['rtt'];
             var IPExist = false;
 
             // Check if the IP Address already exist in the list.

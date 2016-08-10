@@ -414,12 +414,15 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
         selector: 'edge',
         style: {
           'width': 2,
-          'opacity': 0.8,
+          'opacity': 1,
           'label': 'data(bandwidth)',
           'line-color': 'GreenYellow',
           'target-arrow-color': 'black',
+          //Note that this is expensive to load.
+          'curve-style': 'bezier',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
-          'target-arrow-shape': 'triangle'
+          'target-arrow-shape': 'triangle',
+          'min-zoomed-font-size':50
         }
       },
       {
@@ -434,7 +437,11 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
           'background-color': 'black'
         }
       }
-    ]
+    ],
+    pixelRatio: 1,
+    textureOnViewport: true,
+    //Might want to consider to true if graph is taking a long time to load.
+    hideEdgesOnViewport:false
 
     // Layout can only be done in Controller.
   });
@@ -538,7 +545,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
 
       if (tracerouteError == true) {
         innerTracerouteError = "true";
-      } else {
+      } else if (tracerouteError == false){
         innerTracerouteError = "false";
       }
 
@@ -546,7 +553,6 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
         group: 'edges',
         data: {
           id: ID,
-          // inferred as an edge because `source` and `target` are specified:
           source: source, // the source node id (edge comes from this node)
           target: target,  // the target node id (edge goes to this node)
           tracerouteError: innerTracerouteError,
@@ -555,7 +561,8 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
           startNode: startNode,
           endNode: endNode,
           metadataKey: metadataKey
-        }
+        },
+        selectable: false
       };
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
       //return edge;

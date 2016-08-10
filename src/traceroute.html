@@ -29,7 +29,7 @@
 <body>
 <span id="firstController" ng-controller="TracerouteGraphCtrl">
 <span id="secondController" ng-controller="TracerouteGraphPanelCtrl">
-<span id="thirdController">
+<span id="thirdController" ng-controller="TracerouteTableCtrl">
 <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
@@ -411,26 +411,26 @@
           <div class="list-group">
             <h5>Graph Layout
             </h5>
-            <a href="#" class="list-group-item"
+            <a href="" class="list-group-item"
                ng-click="mainGraphLayout_Concentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
-            <a href="#" class="list-group-item"
+            <a href="" class="list-group-item"
                ng-click="mainGraphLayout_BreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
 
-            <a href="#" class="list-group-item" ng-click="mainGraphLayout_Grid();">
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Grid();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Grid
             </a>
 
-            <a href="#" class="list-group-item" ng-click="mainGraphLayout_Cose();">
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Cose();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Cose
             </a>
 
-            <a href="#" class="list-group-item" ng-click="mainGraphLayout_Circle();">
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Circle();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
@@ -443,10 +443,10 @@
 
           <div class="list-group">
             <h5>Traceroute Information
-              <small>Sub-heading</small>
+
             </h5>
 
-            <div class="panel panel-red" ng-controller="TracerouteTableCtrl" ng-if="noOfAnomalies!=0">
+            <div class="panel panel-red"  ng-if="noOfAnomalies!=0">
 
               <div class="panel-heading">
                 Erroneous RTTs:
@@ -478,7 +478,7 @@
 
             <a href="#" class="list-group-item disabled">
               <i class="fa fa-asterisk fa-fw"></i>
-              <span class="badge" ng-controller="TracerouteTableCtrl">{{noOfSourceNodes}}</span> No. of Source Nodes:
+              <span class="badge" >{{noOfSourceNodes}}</span> No. of Source Nodes:
               {{noOfSourceNodes}}
             </a>
 
@@ -490,10 +490,6 @@
               <small>Sub-heading</small>
             </h5>
 
-
-            <a href="#" class="list-group-item" ng-controller="TracerouteGraphPanelCtrl" ng-click="clearCache();">
-              <i class="fa fa-refresh fa-fw"></i> Clear Cache
-            </a>
 
 
             <a href="#" class="list-group-item">
@@ -518,7 +514,7 @@
     <div class="panel-body">
 
 
-      <div ng-controller="TracerouteTableCtrl">
+      <div >
 
 
         <div class="" id="{{val.metadata}}" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">

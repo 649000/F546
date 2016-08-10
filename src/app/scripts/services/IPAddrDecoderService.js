@@ -71,21 +71,18 @@ ipAddrDecodeServices.factory('IP_INFO_DB', ['$resource', function ($resource) {
 
 }]);
 
-/**
- * .location.latitude
- * .location.longitude
- */
-ipAddrDecodeServices.factory('GEOIP_NEKUDO', ['$resource', function ($resource) {
 
-  // Not any difference from promises
-  return $resource(executionURL_GEOIP_NEKUDO, {}, {
-    decode: {method: 'GET', params: {}, isArray: false}
-  });
-
-}]);
+// ipAddrDecodeServices.factory('GEOIP_NEKUDO', ['$resource', function ($resource) {
+//
+//   // Not any difference from promises
+//   return $resource(executionURL_GEOIP_NEKUDO, {}, {
+//     decode: {method: 'GET', params: {}, isArray: false}
+//   });
+//
+// }]);
 
 
-ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$q', '$cacheFactory', '$log', function ($http, $q, $log, $cacheFactory) {
+ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$log', function ($http, $log) {
 
 // https://freegeoip.net
 // 10,000 queries per hour
@@ -114,79 +111,86 @@ ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$q', '$cacheFactory'
           // 'time-range': timeRange
         },
         cache: true
-      }).then(function (response) {
+      })
 
-        //response.data should be country
-        return {
-          city: response.data.city,
-          country: response.data.country_name
-        }
+        .then(function (response) {
 
+          //response.data should be country
+          return {
+            ip: IPAddress,
+            city: response.data.city,
+            country: response.data.country_name,
+            countrycode: response.data.country_code
+          }
 
-      });
+        });
 
       return country;
     },
 
-    getCoordinates: function (IPAddress) {
-      var coordinates = [];
-
-      coordinates = $http({
-        method: 'GET',
-        url: host + IPAddress,
-        params: {
-
-          // 'format': 'json',
-          // 'event-type': 'packet-trace'
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          // 'time-range': timeRange
-        },
-        cache: true
-      }).then(function (response) {
-
-        return [response.data, response.data];
-      });
-      return coordinates;
-    }
   };
 
 }]);
 
-ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$cacheFactory', '$log', function ($http, $log, $cacheFactory) {
+ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
   var host = "http://geoip.nekudo.com/api/";
+
+  var IPAddr_LocationCache;
+//IPAddr_Location
+  if (!CacheFactory.get("IPAddr_Location")) {
+    IPAddr_LocationCache = CacheFactory('IPAddr_Location', {
+      maxAge: 10080 * 60 * 1000, // Items added to this cache expire after 1 week,
+      //10080 minutes = 1 week
+      deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
+      storageMode: 'localStorage' // This cache will use `localStorage`.
+    });
+  }
+
+  //3.25 when set to 0 seconds
+  // 5 seconds initial
 
   return {
 
     getCountry: function (IPAddress) {
 
-      var country = $http({
-        method: 'GET',
-        url: host + IPAddress,
-        params: {
-          //SET PARAMS HERE
-          // 'format': 'json',
-          // 'event-type': 'packet-trace'
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          // 'time-range': timeRange
-        },
-        cache: true
-      }).then(function (response) {
 
-        //response.data should be country
-        return {
-          ip: IPAddress,
-          city: response.data.city,
-          country: response.data.country.name,
-          countrycode:response.data.country.code
-        }
+      if (CacheFactory.get("IPAddr_Location").get(IPAddress)) {
+        return CacheFactory.get("IPAddr_Location").get(IPAddress);
+
+      } else {
+        var country = $http({
+          method: 'GET',
+          url: host + IPAddress,
+          params: {
+            //SET PARAMS HERE
+            // 'format': 'json',
+            // 'event-type': 'packet-trace'
+            // 'limit': 10,
+            // 'time-end': (Math.floor(Date.now() / 1000)),
+            // 'time-range': timeRange
+          },
+          cache: true
+        }).then(function (response) {
+
+          var geocodedIP = {
+            ip: IPAddress,
+            city: response.data.city,
+            country: response.data.country.name,
+            countrycode: response.data.country.code
+          }
+
+          IPAddr_LocationCache.put(IPAddress, geocodedIP);
+
+          return geocodedIP;
+
+        });
+
+        return country;
+
+      }
 
 
-      });
-
-      return country;
     },
 
     getCoordinates: function (IPAddress) {

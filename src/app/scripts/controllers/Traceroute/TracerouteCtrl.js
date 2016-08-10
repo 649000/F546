@@ -16,7 +16,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 10,
+      'limit': 20,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
@@ -59,11 +59,12 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             {
               //FIXME: The real issue is how to get ONLY the latest, this is not sustainable as it pulls a lot of data.
               'format': 'json',
-              // 'limit': '2',
-              'time-range': 86400
+              // 'limit': '1',
+              // 'time-range': 86400
               // 48 Hours = 172800
               // 24 hours = 86400
               // 1 hour = 3600
+              'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
             }
           ));
 
@@ -126,11 +127,11 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
             TracerouteGraphService.add_node(tempResultList[m].ip, false);
             nodeList.push(tempResultList[m].ip);
-
-            TracerouteGraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
-
-
-            })
+            // Event
+            // TracerouteGraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
+            //
+            //
+            // })
           }
 
         }
@@ -153,39 +154,40 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 
                 // search for ALL edges with same metadata, make it red, make everything else the same.
-                TracerouteGraphService.getGraph().style()
-                  .selector('edge[tracerouteError = "true"]')
-                  .style({
-                    'line-color': 'IndianRed',
-                    'width': 2
-                  }).update();
-
-                TracerouteGraphService.getGraph().style()
-                  .selector('edge[tracerouteError = "false"]')
-                  .style({
-                    'line-color': '#a8ea00',
-                    'width': 2
-                  }).update();
 
 
-                if (element.data().tracerouteError == "true") {
-                  //Make this Dark Red
-                  TracerouteGraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'DarkRed',
-                      'width': 4
-                    }).update();
-                }
+                // TracerouteGraphService.getGraph().style()
+                //   .selector('edge[tracerouteError = "true"]')
+                //   .style({
+                //     'line-color': 'IndianRed',
+                //     'width': 2
+                //   }).update();
+                //
+                // TracerouteGraphService.getGraph().style()
+                //   .selector('edge[tracerouteError = "false"]')
+                //   .style({
+                //     'line-color': '#a8ea00',
+                //     'width': 2
+                //   }).update();
+                //
+                // if (element.data().tracerouteError == "true") {
+                //   //Make this Dark Red
+                //   TracerouteGraphService.getGraph().style()
+                //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                //     .style({
+                //       'line-color': 'DarkRed',
+                //       'width': 4
+                //     }).update();
+                // }
 
-                if (element.data().tracerouteError == "false") {
-                  TracerouteGraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'green',
-                      'width': 4
-                    }).update();
-                }
+                // if (element.data().tracerouteError == "false") {
+                //   TracerouteGraphService.getGraph().style()
+                //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                //     .style({
+                //       'line-color': 'green',
+                //       'width': 4
+                //     }).update();
+                // }
 
 
               });
@@ -206,39 +208,39 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             var element = event.cyTarget;
             // $log.debug("Element METADATA: " + element.data().metadataKey)
 
-            TracerouteGraphService.getGraph().style()
-              .selector('edge[tracerouteError = "true"]')
-              .style({
-                'line-color': 'IndianRed',
-                'width': 2
-              }).update();
+            // TracerouteGraphService.getGraph().style()
+            //   .selector('edge[tracerouteError = "true"]')
+            //   .style({
+            //     'line-color': 'IndianRed',
+            //     'width': 2
+            //   }).update();
 
-            TracerouteGraphService.getGraph().style()
-              .selector('edge[tracerouteError = "false"]')
-              .style({
-                'line-color': '#a8ea00',
-                'width': 2
-              }).update();
+            // TracerouteGraphService.getGraph().style()
+            //   .selector('edge[tracerouteError = "false"]')
+            //   .style({
+            //     'line-color': '#a8ea00',
+            //     'width': 2
+            //   }).update();
 
 
-            if (element.data().tracerouteError == "true") {
-              //Make this Dark Red
-              TracerouteGraphService.getGraph().style()
-                .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                .style({
-                  'line-color': 'DarkRed',
-                  'width': 4
-                }).update();
-            }
+            // if (element.data().tracerouteError == "true") {
+            //   //Make this Dark Red
+            //   TracerouteGraphService.getGraph().style()
+            //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+            //     .style({
+            //       'line-color': 'DarkRed',
+            //       'width': 4
+            //     }).update();
+            // }
 
-            if (element.data().tracerouteError == "false") {
-              TracerouteGraphService.getGraph().style()
-                .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                .style({
-                  'line-color': 'green',
-                  'width': 4
-                }).update();
-            }
+            // if (element.data().tracerouteError == "false") {
+            //   TracerouteGraphService.getGraph().style()
+            //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+            //     .style({
+            //       'line-color': 'green',
+            //       'width': 4
+            //     }).update();
+            // }
 
           });
         }
@@ -261,20 +263,12 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
   }).then(function (response) {
 
     for (var i = 0; i < response.length; i++) {
-
       var node = TracerouteGraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
       node.data({
         label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
       });
 
     }
-
-    //Style Options
-    // TracerouteGraphService.getGraph().style()
-    //   .selector('node[sourceNode = "true"]')
-    //   .style({
-    //     'background-color': 'black'
-    //   }).update();
 
     var layoutOptions = {
       name: 'breadthfirst',
@@ -297,6 +291,47 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     TracerouteGraphService.getGraph().layout(layoutOptions);
 
 
+    TracerouteGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
+      var element = event.cyTarget;
+
+      // $log.debug("Element METADATA: " + element.data().metadataKey)
+
+      TracerouteGraphService.getGraph().style()
+        .selector('edge[tracerouteError = "true"]')
+        .style({
+          'line-color': 'IndianRed',
+          'width': 2
+        }).update();
+
+      TracerouteGraphService.getGraph().style()
+        .selector('edge[tracerouteError = "false"]')
+        .style({
+          'line-color': '#a8ea00',
+          'width': 2
+        }).update();
+
+
+      console.log("STATUS: " + element.data().tracerouteError)
+      if (element.data().tracerouteError == "true") {
+        //Make this Dark Red
+        TracerouteGraphService.getGraph().style()
+          .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          .style({
+            'line-color': 'DarkRed',
+            'width': 4
+          }).update();
+      } else if (element.data().tracerouteError == "false") {
+        TracerouteGraphService.getGraph().style()
+          .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          .style({
+            'line-color': 'green',
+            'width': 4
+          }).update();
+      }
+
+    });
+
+
   }).catch(function (error) {
     $log.debug("TracerouteGraphCtrl");
     $log.error(error);
@@ -310,188 +345,184 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService) {
 
-  $log.debug("TracerouteTableCtrl: START");
 
-  var sourceAndDestinationList;
-  var nodeList;
+  TracerouteGraphService.getGraph().one('mouseover',function () {
+    var sourceAndDestinationList;
+    var nodeList;
+    var tracerouteResults = [];
 
-  var tracerouteResults = [];
-
-
-  TracerouteGraphService.getMainTracerouteResult(
-    {
-      'format': 'json',
-      'event-type': 'packet-trace',
-      'limit': 10,
-      // 'time-end': (Math.floor(Date.now() / 1000)),
-      'time-range': 86400
-      // 48 Hours = 172800
-      // 24 hours = 86400
-    }
-  ).then(function (response) {
-
-    sourceAndDestinationList = [];
-    nodeList = [];
-    var promises = [];
-
-    for (var i = 0; i < response.data.length; i++) {
-
-      sourceAndDestinationList.push(
-        {
-          source: response.data[i]['source'],
-          destination: response.data[i]['destination'],
-          metadataKey: response.data[i]['metadata-key']
-        }
-      );
-
-      nodeList.push(response.data[i]['source']);
-      nodeList.push(response.data[i]['destination']);
-
-      for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-        if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-          promises.push(TracerouteGraphService.getIndividualTracerouteResult(response.data[i]['url'],
-            {
-              'format': 'json',
-              // 'limit': '2',
-              // 'time-end': (Math.floor(Date.now() / 1000)),
-              'time-range': 86400
-              // 48 Hours = 172800
-              // 24 hours = 86400
-            }
-          ));
-
-        }
+    TracerouteGraphService.getMainTracerouteResult(
+      {
+        'format': 'json',
+        'event-type': 'packet-trace',
+        'limit': 20,
+        // 'time-end': (Math.floor(Date.now() / 1000)),
+        'time-range': 86400
+        // 48 Hours = 172800
+        // 24 hours = 86400
       }
+    ).then(function (response) {
 
-    }
+      sourceAndDestinationList = [];
+      nodeList = [];
+      var promises = [];
 
-    var uniqueNodes = UniqueArrayService.getUnique(nodeList);
-    $scope.noOfSourceNodes = uniqueNodes.length;
+      for (var i = 0; i < response.data.length; i++) {
 
-    // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
-    return $q.all(promises);
+        sourceAndDestinationList.push(
+          {
+            source: response.data[i]['source'],
+            destination: response.data[i]['destination'],
+            metadataKey: response.data[i]['metadata-key']
+          }
+        );
 
-  }).then(function (response) {
+        nodeList.push(response.data[i]['source']);
+        nodeList.push(response.data[i]['destination']);
 
-    // $log.debug("TracerouteTableCtrl:getIndividualTracerouteResult().response.length: " + response.length);
+        for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+          if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-    for (var i = 0; i < response.length; i++) {
+            promises.push(TracerouteGraphService.getIndividualTracerouteResult(response.data[i]['url'],
+              {
+                'format': 'json',
+                // 'limit': '2',
+                // 'time-end': (Math.floor(Date.now() / 1000)),
+                'time-range': 86400
+                // 48 Hours = 172800
+                // 24 hours = 86400
+              }
+            ));
 
-      var reversedResponse = response[i].data;
-
-      var startNode = sourceAndDestinationList[i].source;
-      var destinationNode = sourceAndDestinationList[i].destination;
-      var metadataKey = sourceAndDestinationList[i].metadataKey;
-      var aggregatedResults;
-      var errorInTraceroute = null;
-
-      // SOURCE
-      // Array of results of the same source/destination.
-      // Checking for 'active' servers
-
-      if (reversedResponse.length > 1) {
-        aggregatedResults = AnalyzeTraceroute.analyzeRtt(reversedResponse);
-        // AnalyzeTraceroute.analyzeRtt();
-      } else {
-        // only 1 result available.
-      }
-
-      tracerouteResults.push({
-        source: startNode,
-        sourceCity: null,
-        sourceCountry: null,
-        destination: destinationNode,
-        destinationCity: null,
-        destinationCountry: null,
-        nodes: aggregatedResults,
-        metadata: metadataKey,
-        anomaliesExist: false
-      });
-
-    }
-
-
-    var uniqueIP = UniqueArrayService.getUnique(nodeList);
-    var nodeToIP_promises = [];
-    for (var i = 0; i < uniqueIP.length; i++) {
-      nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
-    }
-
-    return $q.all(nodeToIP_promises);
-
-  }).then(function (response) {
-
-    for (var i = 0; i < response.length; i++) {
-
-      for (var j = 0; j < tracerouteResults.length; j++) {
-
-        if (tracerouteResults[j].source == response[i].ip) {
-          tracerouteResults[j].sourceCity = response[i].city;
-          tracerouteResults[j].sourceCountry = response[i].countrycode;
-        }
-
-        if (tracerouteResults[j].destination == response[i].ip) {
-          tracerouteResults[j].destinationCity = response[i].city;
-          tracerouteResults[j].destinationCountry = response[i].countrycode;
+          }
         }
 
       }
 
-    }
+
+      $scope.noOfSourceNodes = UniqueArrayService.getUnique(nodeList).length;
+
+      // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+      return $q.all(promises);
+
+    }).then(function (response) {
 
 
-    var noOfAnomalies = 0;
-    $scope.anomalyResults = [];
+      for (var i = 0; i < response.length; i++) {
 
-    for (var i = 0; i < tracerouteResults.length; i++) {
-      var anomaliesExist = false;
+        //Array is an object reference
+        var reversedResponse = response[i].data.reverse()
 
-      for (var j = 0; j < tracerouteResults[i].nodes.length; j++) {
-        if (tracerouteResults[i].nodes[j].status == true) {
-          noOfAnomalies++;
-          anomaliesExist = true;
+        var startNode = sourceAndDestinationList[i].source;
+        var destinationNode = sourceAndDestinationList[i].destination;
+        var metadataKey = sourceAndDestinationList[i].metadataKey;
+        var aggregatedResults;
+        var errorInTraceroute = null;
 
-        }
-      }
+        // SOURCE
+        // Array of results of the same source/destination.
+        // Checking for 'active' servers
 
+        if (reversedResponse.length > 1) {
+          aggregatedResults = AnalyzeTraceroute.analyzeRtt(reversedResponse);
+          // AnalyzeTraceroute.analyzeRtt();
 
-      if (anomaliesExist == true) {
-
-        $scope.anomalyResults.push(tracerouteResults[i]);
-        tracerouteResults[i].anomaliesExist = true;
-
-        TracerouteGraphService.getGraph().style().selector('edge[metadataKey = "' + tracerouteResults[i].metadata + '"]').style({
-          'line-color': 'IndianRed',
-          'width': 2
-        }).update();
-
-        var edges = TracerouteGraphService.getGraph().elements('edge[metadataKey = "' + tracerouteResults[i].metadata + '"]');
-
-        for (var k = 0; k < edges.size(); k++) {
-
-          // Need to check whether bw is double or string
-          edges[k].data({
-            tracerouteError: "true"
+          tracerouteResults.push({
+            source: startNode,
+            sourceCity: null,
+            sourceCountry: null,
+            destination: destinationNode,
+            destinationCity: null,
+            destinationCountry: null,
+            nodes: aggregatedResults,
+            metadata: metadataKey,
+            anomaliesExist: false
           });
-
+        } else {
+          // only 1 result available.
         }
 
 
       }
-    }
-
-    $scope.noOfAnomalies = noOfAnomalies;
-    $scope.tracerouteResults = tracerouteResults;
 
 
-  }).catch(function (error) {
-    $log.debug("TracerouteTableCtrl: Error")
-    $log.debug(error)
-    $log.debug("Server Response: " + error.status);
+      var uniqueIP = UniqueArrayService.getUnique(nodeList);
+      var nodeToIP_promises = [];
+      for (var i = 0; i < uniqueIP.length; i++) {
+        nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueIP[i]));
+      }
 
+      return $q.all(nodeToIP_promises);
+
+    }).then(function (response) {
+
+      for (var i = 0; i < response.length; i++) {
+
+        for (var j = 0; j < tracerouteResults.length; j++) {
+
+          if (tracerouteResults[j].source == response[i].ip) {
+            tracerouteResults[j].sourceCity = response[i].city;
+            tracerouteResults[j].sourceCountry = response[i].countrycode;
+          }
+
+          if (tracerouteResults[j].destination == response[i].ip) {
+            tracerouteResults[j].destinationCity = response[i].city;
+            tracerouteResults[j].destinationCountry = response[i].countrycode;
+          }
+        }
+      }
+
+
+      var noOfAnomalies = 0;
+      $scope.anomalyResults = [];
+
+      for (var i = 0; i < tracerouteResults.length; i++) {
+        var anomaliesExist = false;
+
+        for (var j = 0; j < tracerouteResults[i].nodes.length; j++) {
+          if (tracerouteResults[i].nodes[j].status == true) {
+            noOfAnomalies++;
+            anomaliesExist = true;
+
+          }
+        }
+
+
+        if (anomaliesExist == true) {
+
+          tracerouteResults[i].anomaliesExist = true;
+          $scope.anomalyResults.push(tracerouteResults[i]);
+
+
+          TracerouteGraphService.getGraph().style().selector('edge[metadataKey = "' + tracerouteResults[i].metadata + '"]').style({
+            'line-color': 'IndianRed',
+            'width': 2
+          }).update();
+
+          var edges = TracerouteGraphService.getGraph().edges('[metadataKey = "' + tracerouteResults[i].metadata + '"]');
+          console.log("edges SIZE: "+ edges.size())
+          for (var k = 0; k < edges.size(); k++) {
+
+            // Need to check whether bw is double or string
+            edges[k].data({
+              tracerouteError: "true"
+            });
+          }
+
+        }
+      }
+
+      $scope.noOfAnomalies = noOfAnomalies;
+      $scope.tracerouteResults = tracerouteResults;
+
+
+    }).catch(function (error) {
+      $log.debug("TracerouteTableCtrl: Error")
+      $log.error(error)
+      $log.debug("Server Response: " + error.status);
+
+    });
   });
-
 
 }]);
 
