@@ -11,12 +11,12 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
   var sourceAndDestinationList;
   var nodeList;
-
+//FIXME: CHANGE THIS TO USE THE UNIVERSAL SERVICE
   TracerouteGraphService.getMainTracerouteResult(
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 20,
+      'limit': 1,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
@@ -355,11 +355,12 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
       {
         'format': 'json',
         'event-type': 'packet-trace',
-        'limit': 20,
+        // 'limit': 20,
         // 'time-end': (Math.floor(Date.now() / 1000)),
-        'time-range': 86400
+        'time-range': 604800
         // 48 Hours = 172800
         // 24 hours = 86400
+        // 7 days = 604800
       }
     ).then(function (response) {
 
@@ -388,9 +389,10 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
                 'format': 'json',
                 // 'limit': '2',
                 // 'time-end': (Math.floor(Date.now() / 1000)),
-                'time-range': 86400
+                'time-range': 604800
                 // 48 Hours = 172800
                 // 24 hours = 86400
+                //7 days = 604800
               }
             ));
 

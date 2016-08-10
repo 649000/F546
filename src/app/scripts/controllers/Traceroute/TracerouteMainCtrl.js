@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices','IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js','ngAnimate', 'toastr','ui.bootstrap','angular-cache']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'ngWebworker']).config(['$logProvider', function ($logProvider) {
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -46,14 +46,14 @@ traceroute.directive('agclick_edge', function () {
   };
 });
 
-traceroute.directive('bsTooltip', function(){
+traceroute.directive('bsTooltip', function () {
   return {
     restrict: 'A',
-    link: function(scope, element, attrs){
-      $(element).hover(function(){
+    link: function (scope, element, attrs) {
+      $(element).hover(function () {
         // on mouseenter
         $(element).tooltip('show');
-      }, function(){
+      }, function () {
         // on mouseleave
         $(element).tooltip('hide');
       });
@@ -2141,9 +2141,9 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
 
     // var latencyURL = response.data[i]['url'] + "histogram-rtt/" + response.data[i]['event-types'][j]['summaries'][k]['summary-type'] + "/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window']
 
-    if(summary_type=="aggregation"){
+    if (summary_type == "aggregation") {
       var individualLatencyResultsURL = URL + event_type + "/" + summary_type + "s/" + summary_window;
-    }else{
+    } else {
       var individualLatencyResultsURL = URL + event_type + "/" + summary_type + "/" + summary_window;
     }
 
@@ -2174,7 +2174,7 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
 
         reversedResponse[i]['val'].s
 
-        angular.forEach(reversedResponse[i]['val'], function(value, key) {
+        angular.forEach(reversedResponse[i]['val'], function (value, key) {
 
           labels.push(key);
           values.push(value);
@@ -2192,8 +2192,8 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
         $scope.IndividualLatencyResults.push({
           time: UnixTimeConverterService.getTime(reversedResponse[i]['ts']),
           date: UnixTimeConverterService.getDate(reversedResponse[i]['ts']),
-          label:labels,
-          data : values
+          label: labels,
+          data: values
 
           // type: response.data['event-types'][j]['summaries'][k]['summary-type'],
           // uri: response.data['event-types'][j]['summaries'][k]['uri'],
@@ -2203,7 +2203,6 @@ traceroute.controller('LatencyInformationCtrl', ['$scope', '$http', '$q', '$log'
           // event_type: response.data['event-types'][j]['event-type']
 
         });
-
 
 
         $scope.IndividualLatencyResultIndex = 0;
@@ -2628,4 +2627,37 @@ traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', 
 //
 //
 // }]);
+
+
+traceroute.controller('WebWorkerController', ['$scope', '$http', 'Webworker', 'TracerouteResultsService', function ($scope, $http, Webworker, TracerouteResultsService) {
+  $scope.testMsg = "CAN YOUSEE ME"
+  console.log("ENTERED")
+
+  // function doubler(num) {
+  //
+  //   console.log("WEB WORKER CALLED")
+  //   return $http({
+  //     method: 'GET',
+  //     url: HostService.getHost(),
+  //     params: params,
+  //
+  //     // {
+  //     //   'format': 'json',
+  //     //   'event-type': 'packet-trace',
+  //     //   'limit': 10,
+  //     //   // 'time-end': (Math.floor(Date.now() / 1000)),
+  //     //   'time-range': 86400
+  //     // },
+  //     cache: true
+  //   })
+  // }
+  //
+  // var myWorker = Webworker.create(doubler);
+  //
+  // myWorker.run($scope.value).then(function (result) {
+  //   console.log(result)
+  // });
+
+
+}]);
 
