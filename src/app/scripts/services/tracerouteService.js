@@ -427,6 +427,12 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
         style: {
           'text-wrap': 'wrap'
         }
+      },
+      {
+        selector: 'node[sourceNode = "true"]',
+        style: {
+          'background-color': 'black'
+        }
       }
     ]
 
