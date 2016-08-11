@@ -6,17 +6,17 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService','TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService,TracerouteResultsService) {
 
 
   var sourceAndDestinationList;
   var nodeList;
 //FIXME: CHANGE THIS TO USE THE UNIVERSAL SERVICE
-  TracerouteGraphService.getMainTracerouteResult(
+  TracerouteResultsService.getMainResult(
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 1,
+      'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
@@ -55,7 +55,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-          promises.push(TracerouteGraphService.getIndividualTracerouteResult(response.data[i]['url'],
+          promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
             {
               //FIXME: The real issue is how to get ONLY the latest, this is not sustainable as it pulls a lot of data.
               'format': 'json',
@@ -258,6 +258,8 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       nodeToIP_promises.push(GeoIPNekudoService.getCountry(tempUniqueIP[i]));
     }
 
+    $scope.noOfNodes = tempUniqueIP.length;
+
     return $q.all(nodeToIP_promises);
 
   }).then(function (response) {
@@ -294,7 +296,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     TracerouteGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
       var element = event.cyTarget;
 
-      // $log.debug("Element METADATA: " + element.data().metadataKey)
+      $log.debug("Element METADATA: " + element.data().metadataKey)
 
       TracerouteGraphService.getGraph().style()
         .selector('edge[tracerouteError = "true"]')
@@ -329,7 +331,16 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           }).update();
       }
 
+      $scope.selectedTraceroutePathInfo = "X";
+
+      //measurement-agent
+      //Latest Time Taken
+      //Source
+      //Destination
+
     });
+
+
 
 
   }).catch(function (error) {
@@ -343,7 +354,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 }]);
 
 
-angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService) {
+angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService','TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService,TracerouteResultsService) {
 
 
   TracerouteGraphService.getGraph().one('mouseover',function () {
@@ -351,11 +362,11 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
     var nodeList;
     var tracerouteResults = [];
 
-    TracerouteGraphService.getMainTracerouteResult(
+    TracerouteResultsService.getMainResult(
       {
         'format': 'json',
         'event-type': 'packet-trace',
-        // 'limit': 20,
+        // 'limit': 15,
         // 'time-end': (Math.floor(Date.now() / 1000)),
         'time-range': 604800
         // 48 Hours = 172800
@@ -384,7 +395,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         for (var j = 0; j < response.data[i]['event-types'].length; j++) {
           if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-            promises.push(TracerouteGraphService.getIndividualTracerouteResult(response.data[i]['url'],
+            promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
               {
                 'format': 'json',
                 // 'limit': '2',
