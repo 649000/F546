@@ -16,20 +16,20 @@ var tracerouteServices = angular.module('TracerouteServices', ['ngResource', 'Ge
 
  */
 
+
 /*
  MAIN SERVICE: Used to call Traceroute Results
- Date: August 6th 2016
+ Checked on August 12th 2016
  */
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', 'CacheFactory', 'IndividualTracerouteCacheService','TracerouteResultsIndexedDBService', function ($http, $log, HostService, CacheFactory, IndividualTracerouteCacheService,TracerouteResultsIndexedDBService) {
+
 
   return {
-
     getMainResult: function (params) {
       return $http({
         method: 'GET',
         url: HostService.getHost(),
         params: params,
-
         // {
         //   'format': 'json',
         //   'event-type': 'packet-trace',
@@ -43,22 +43,75 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFa
     },
 
     getIndividualResult: function (url, params) {
+    //URL is the response[i]['url'] taken from the getMainResult();
 
-      //URL is the response[i]['url'] taken from the getMainTracerouteResult();
-      return $http({
-        method: 'GET',
-        url: url + "packet-trace/base",
-        params: params,
-        // {
-        //   'format': 'json',
-        //   // 'limit': '2',
-        //   // 'time-end': (Math.floor(Date.now() / 1000)),
-        //   'time-range': 86400
-        //   //48 Hours = 172800
-        //   // 24 hours = 86400
-        // },
-        cache: true
-      });
+
+      // var toAppend = "?"
+      //
+      // angular.forEach(params, function (value, key) {
+      //   toAppend = toAppend + key + "=" + value + "&"
+      //
+      // });
+      //
+      // var x= TracerouteResultsIndexedDBService.addResult(toCheck,"HELLO")
+      // console.log(x)
+
+
+      // console.log(IndividualTracerouteCacheService.getCacheObject().keys())
+
+      for (var i = 0; i < IndividualTracerouteCacheService.getCacheObject().keys().length; i++) {
+        var toAppend = "?"
+
+        angular.forEach(params, function (value, key) {
+          toAppend = toAppend + key + "=" + value + "&"
+
+        });
+
+        var toCheck = url + "packet-trace/base" + toAppend
+
+        if (IndividualTracerouteCacheService.getCacheObject().keys()[i] == toCheck.slice(0, -1)) {
+
+
+
+          // console.log("CACHE IS CALLED")
+
+          return $http({
+            method: 'GET',
+            url: url + "packet-trace/base",
+            params: params,
+            // {
+            //   'format': 'json',
+            //   // 'limit': '2',
+            //   // 'time-end': (Math.floor(Date.now() / 1000)),
+            //   'time-range': 86400
+            //   //48 Hours = 172800
+            //   // 24 hours = 86400
+            // },
+            cache: IndividualTracerouteCacheService.getCacheObject()
+          });
+        }
+
+      }
+
+
+
+
+
+        var toCache = true
+        if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
+          toCache = IndividualTracerouteCacheService.getCacheObject();
+        }
+
+        return $http({
+          method: 'GET',
+          url: url + "packet-trace/base",
+          params: params,
+          cache: true
+        });
+
+
+
+
     }
 
   }
@@ -70,71 +123,99 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFa
  MAIN CACHE SERVICE:
  Date: August 6th 2016
  */
-// tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', '$log', 'HostService', 'indexedDB', function ($http, $q, $log, HostService, indexedDB) {
-//
-//
-//   return {
-//
-//     storeMainResult: function (result) {
-//
-//       $indexedDB.openStore('TracerouteMain', function (store) {
-//
-//         store.delete(results.metadata_key).then(function () {
-//
-//           store.insert({
-//               "metadata_key": result.metadata_key,
-//               "url": result.url,
-//               "uri": result.uri,
-//               "subject_type": result.subject_type,
-//               "source": result.source,
-//               "destination": result.source,
-//               "measurement_agent": result.measurement_agent,
-//               "tool_name": result.tool_name,
-//               "time_interval": result.time_interval,
-//               "ip_transport_protocol": result.ip_transport_protocol
-//             }
-//           ).then(function (e) {
-//
-//
-//           });
-//
-//
-//         })
-//
-//
-//       });
-//
-//
-//     },
-//
-//     storeCachedMainResult: function (url, params) {
-//
-//       //URL is the response[i]['url'] taken from the getMainTracerouteResult();
-//       return $http({
-//         method: 'GET',
-//         url: url + "packet-trace/base",
-//         params: params,
-//         // {
-//         //   'format': 'json',
-//         //   // 'limit': '2',
-//         //   // 'time-end': (Math.floor(Date.now() / 1000)),
-//         //   'time-range': 86400
-//         //   //48 Hours = 172800
-//         //   // 24 hours = 86400
-//         // },
-//         cache: true
-//       });
-//     }
-//
-//   }
-//
-//
-// }]);
+tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', '$log', 'HostService', '$indexedDB', function ($http, $q, $log, HostService, $indexedDB) {
 
 
-// This services draws the Traceroute graph with DUPLICATED paths. DIV ID = traceroute_graph_cytoscape
-// traceroute.html
-tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
+  return {
+
+    addResult: function (url,result) {
+
+      return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
+
+        store.delete(url).then(function () {
+
+          store.insert({
+              "url": url,
+              "data": result
+            }
+          ).then(function (e) {
+
+            return true;
+
+          });
+
+
+        })
+
+      });
+
+
+    },
+
+    getResult: function (url) {
+
+     return  $indexedDB.openStore('IndividualTracerouteResult', function(store){
+       store.find(url).then(function(e){
+          return e;
+        });
+      });
+
+    }
+
+  }
+
+
+}]);
+tracerouteServices.factory('IndividualTracerouteCacheService', ['$http', '$q', '$log', 'HostService', 'CacheFactory', function ($http, $q, $log, HostService, CacheFactory) {
+  var TracerouteIndividualResult;
+
+  //TODO: probably update on expire.
+  if (!CacheFactory.get("TracerouteIndividualResult")) {
+    TracerouteIndividualResult = CacheFactory('TracerouteIndividualResult', {
+      maxAge: 30 * 60 * 1000, // Items added to this cache expire after X period,
+      // 15 = 15 minutes
+      //10080 minutes = 1 week
+      // 20160  = 2 weeks
+      deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
+      storageMode: 'localStorage' // This cache will use `localStorage`.
+
+    });
+  } else {
+    TracerouteIndividualResult = CacheFactory.get("TracerouteIndividualResult");
+  }
+
+  return {
+
+    storeResult: function (key, result) {
+
+      TracerouteIndividualResult.put(key, res);
+    },
+
+    getResult: function (key) {
+
+      return TracerouteIndividualResult.get(key);
+    },
+
+    getCacheObject: function () {
+      return TracerouteIndividualResult;
+    },
+
+    checkAvailableStorage: function (toBeAdded) {
+
+    }
+
+  }
+
+
+}]);
+
+
+/*
+ This services draws the Traceroute graph with DUPLICATED paths.
+ div id = traceroute_graph_cytoscape on traceroute.html
+ Checked on August 12th 2016
+ */
+tracerouteServices.factory('TracerouteGraphService', ['$log', function ($log) {
 
   var cy = cytoscape({
     container: document.getElementById('traceroute_graph_cytoscape'),
@@ -189,40 +270,40 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
 
   return {
 
-    getMainTracerouteResult: function (params) {
-      return $http({
-        method: 'GET',
-        url: HostService.getHost(),
-        params: params,
-
-        // {
-        //   'format': 'json',
-        //   'event-type': 'packet-trace',
-        //   'limit': 10,
-        //   // 'time-end': (Math.floor(Date.now() / 1000)),
-        //   'time-range': 86400
-        // },
-        cache: true
-      })
-
-    },
-
-    getIndividualTracerouteResult: function (url, params) {
-      return $http({
-        method: 'GET',
-        url: url + "packet-trace/base",
-        params: params,
-        // {
-        //   'format': 'json',
-        //   // 'limit': '2',
-        //   // 'time-end': (Math.floor(Date.now() / 1000)),
-        //   'time-range': 86400
-        //   //48 Hours = 172800
-        //   // 24 hours = 86400
-        // },
-        cache: true
-      });
-    },
+    // getMainTracerouteResult: function (params) {
+    //   return $http({
+    //     method: 'GET',
+    //     url: HostService.getHost(),
+    //     params: params,
+    //
+    //     // {
+    //     //   'format': 'json',
+    //     //   'event-type': 'packet-trace',
+    //     //   'limit': 10,
+    //     //   // 'time-end': (Math.floor(Date.now() / 1000)),
+    //     //   'time-range': 86400
+    //     // },
+    //     cache: true
+    //   })
+    //
+    // },
+    //
+    // getIndividualTracerouteResult: function (url, params) {
+    //   return $http({
+    //     method: 'GET',
+    //     url: url + "packet-trace/base",
+    //     params: params,
+    //     // {
+    //     //   'format': 'json',
+    //     //   // 'limit': '2',
+    //     //   // 'time-end': (Math.floor(Date.now() / 1000)),
+    //     //   'time-range': 86400
+    //     //   //48 Hours = 172800
+    //     //   // 24 hours = 86400
+    //     // },
+    //     cache: true
+    //   });
+    // },
 
     add_node: function (ID, sourceNode) {
       var mainNode;
@@ -301,8 +382,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
           startNode: startNode,
           endNode: endNode,
           metadataKey: metadataKey
-        },
-        selectable: false
+        }
       };
       // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
       //return edge;
@@ -311,92 +391,92 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
       return cy;
     },
 
-
     getGraph: function () {
       return cy;
     },
 
-    loadGraph_TracerouteOverview: function (graphArray) {
 
-      var sourceAndDestinationList;
-      var nodeList;
-
-      $http({
-        method: 'GET',
-        url: HostService.getHost(),
-        params: {
-          'format': 'json',
-          'event-type': 'packet-trace',
-          'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          'time-range': 86400
-        },
-        cache: true
-      }).then(function (response) {
-        sourceAndDestinationList = [];
-        nodeList = [];
-        var promises = [];
-
-        for (var i = 0; i < response.data.length; i++) {
-
-          sourceAndDestinationList.push(
-            {
-              source: response.data[i]['source'],
-              destination: response.data[i]['destination'],
-              metadataKey: response.data[i]['metadata-key']
-            }
-          );
-
-
-          //Adding main nodes into graph
-          if (cy.elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
-
-            // True as this is a SOURCE node.
-            TracerouteGraphService.add_node(response.data[i]['source'], true);
-            nodeList.push(response.data[i]['source']);
-
-            // Event
-            TracerouteGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
-              var element = event.cyTarget;
-              // $log.debug("Clicked on Node ID: " + element.data().id)
-
-            });
-          }
-
-          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-              promises.push($http({
-                  method: 'GET',
-                  url: response.data[i]['url'] + "packet-trace/base",
-                  params: {
-                    'format': 'json',
-                    // 'limit': '2',
-                    // 'time-end': (Math.floor(Date.now() / 1000)),
-                    'time-range': 86400
-                    // 48 Hours = 172800
-                    // 24 hours = 86400
-                  },
-                  cache: true
-                })
-              );
-
-            }
-          }
-
-
-        }
-
-        // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
-        return $q.all(promises);
-
-      }).then(function (response) {
-
-
-      })
-
-
-    }
+    // loadGraph_TracerouteOverview: function () {
+    //
+    //   var sourceAndDestinationList;
+    //   var nodeList;
+    //
+    //   $http({
+    //     method: 'GET',
+    //     url: HostService.getHost(),
+    //     params: {
+    //       'format': 'json',
+    //       'event-type': 'packet-trace',
+    //       'limit': 10,
+    //       // 'time-end': (Math.floor(Date.now() / 1000)),
+    //       'time-range': 86400
+    //     },
+    //     cache: true
+    //   }).then(function (response) {
+    //     sourceAndDestinationList = [];
+    //     nodeList = [];
+    //     var promises = [];
+    //
+    //     for (var i = 0; i < response.data.length; i++) {
+    //
+    //       sourceAndDestinationList.push(
+    //         {
+    //           source: response.data[i]['source'],
+    //           destination: response.data[i]['destination'],
+    //           metadataKey: response.data[i]['metadata-key']
+    //         }
+    //       );
+    //
+    //
+    //       //Adding main nodes into graph
+    //       if (cy.elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
+    //
+    //         // True as this is a SOURCE node.
+    //         TracerouteGraphService.add_node(response.data[i]['source'], true);
+    //         nodeList.push(response.data[i]['source']);
+    //
+    //         // Event
+    //         TracerouteGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
+    //           var element = event.cyTarget;
+    //           // $log.debug("Clicked on Node ID: " + element.data().id)
+    //
+    //         });
+    //       }
+    //
+    //       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+    //         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+    //
+    //           promises.push($http({
+    //               method: 'GET',
+    //               url: response.data[i]['url'] + "packet-trace/base",
+    //               params: {
+    //                 'format': 'json',
+    //                 // 'limit': '2',
+    //                 // 'time-end': (Math.floor(Date.now() / 1000)),
+    //                 'time-range': 86400
+    //                 // 48 Hours = 172800
+    //                 // 24 hours = 86400
+    //               },
+    //               cache: true
+    //             })
+    //           );
+    //
+    //         }
+    //       }
+    //
+    //
+    //     }
+    //
+    //     // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+    //     return $q.all(promises);
+    //
+    //   }).then(function (response) {
+    //
+    //
+    //   })
+    //
+    //
+    // }
 
 
   }
@@ -408,6 +488,8 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
  Used to ADD/REMOVE/MANIPULATE the Cytoscape Graph for the Traceroute Path on traceroute_path.html
  Date: August 6th 2016
  */
+
+
 tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
 
   var cy = cytoscape({
@@ -539,7 +621,6 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
     getGraph: function () {
       return cy;
     },
-
 
   }
 

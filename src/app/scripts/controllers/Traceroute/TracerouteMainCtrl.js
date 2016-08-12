@@ -7,20 +7,28 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache']).config(['$logProvider', function ($logProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'indexedDB']).config(['$logProvider', '$indexedDBProvider', function ($logProvider, $indexedDBProvider) {
+  //
+  // $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {
+  //   var objStore = db.createObjectStore('IndividualTraceroute', {keyPath: 'metadata_key'});
+  //   objStore.createIndex('url', 'url', {unique: false});
+  //   objStore.createIndex('uri', 'uri', {unique: false});
+  //   objStore.createIndex('subject_type', 'subject_type', {unique: false});
+  //   objStore.createIndex('source', 'source', {unique: false});
+  //   objStore.createIndex('destination', 'destination', {unique: false});
+  //   objStore.createIndex('measurement_agent', 'measurement_agent', {unique: false});
+  //   objStore.createIndex('tool_name', 'tool_name', {unique: false});
+  //   objStore.createIndex('time_interval', 'time_interval', {unique: false});
+  //   objStore.createIndex('ip_transport_protocol', 'ip_transport_protocol', {unique: false});
+  // });
 
-  // $indexedDBProvider.connection('F546').upgradeDatabase(1, function(event, db, tx){
-  //     var objStore = db.createObjectStore('TracerouteMain', {keyPath: 'metadata_key'});
-  //     objStore.createIndex('url', 'url', {unique: false});
-  //     objStore.createIndex('uri', 'uri', {unique: false});
-  //     objStore.createIndex('subject_type', 'subject_type', {unique: false});
-  //     objStore.createIndex('source', 'source', {unique: false});
-  //     objStore.createIndex('destination', 'destination', {unique: false});
-  //     objStore.createIndex('measurement_agent', 'measurement_agent', {unique: false});
-  //     objStore.createIndex('tool_name', 'tool_name', {unique: false});
-  //     objStore.createIndex('time_interval', 'time_interval', {unique: false});
-  //     objStore.createIndex('ip_transport_protocol', 'ip_transport_protocol', {unique: false});
-  //   });
+
+
+  $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {
+    var objStore = db.createObjectStore('IndividualTracerouteResult', {keyPath: 'url'});
+    objStore.createIndex('data', 'data', {unique: false});
+    objStore.createIndex('time', 'time', {unique: false});
+  });
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -34,11 +42,16 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
   $logProvider.debugEnabled(true);
 
 }]).run(function ($http, CacheFactory) {
+
+  //TracerouteIndividualResult OR defaultCache
+  //FIXME: Need more testing on speed.
   $http.defaults.cache = CacheFactory('defaultCache', {
     maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
     cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
-    deleteOnExpire: 'aggressive' // Items will be deleted from this cache when they expire
-    // storageMode: 'localStorage'
+    deleteOnExpire: 'aggressive', // Items will be deleted from this cache when they expire
+    capacity: Number.MAX_VALUE
+    // storageMode: 'localStorage',
+    // storageImpl: localStoragePolyfill
   });
 });
 

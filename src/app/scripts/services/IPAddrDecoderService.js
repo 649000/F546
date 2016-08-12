@@ -156,7 +156,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 
       if (CacheFactory.get("IPAddr_Location").get(IPAddress)) {
 
-        $log.debug("Cache Found for " + IPAddress)
+        // $log.debug("Cache Found for " + IPAddress)
         return CacheFactory.get("IPAddr_Location").get(IPAddress);
 
       } else {
@@ -176,7 +176,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
             var geocodedIP = {
               ip: IPAddress,
               city: "Unknown",
-              country: "",//response.data.country.name,
+              // country: "",//response.data.country.name,
               countrycode: "Unknown"//response.data.country.code
             }
             // IPAddr_LocationCache.put(IPAddress, geocodedIP);
@@ -190,7 +190,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
             var geocodedIP = {
               ip: IPAddress,
               city: cityName,
-              country: response.data.country.name,
+              // country: response.data.country.name,
               countrycode: response.data.country.code
             }
             IPAddr_LocationCache.put(IPAddress, geocodedIP);

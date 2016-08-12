@@ -6,7 +6,7 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService','IndividualTracerouteCacheService' ,function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService,IndividualTracerouteCacheService) {
 
 
   var sourceAndDestinationList;
@@ -17,7 +17,10 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       'event-type': 'packet-trace',
       // 'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
-      'time-range': 86400
+      'time-range': 604800
+      // 48 Hours = 172800
+      // 24 hours = 86400
+      // 7 days = 604800
     }
   ).then(function (response) {
 
@@ -55,16 +58,18 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
+
+
           promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
             {
               //FIXME: The real issue is how to get ONLY the latest, this is not sustainable as it pulls a lot of data.
               'format': 'json',
               // 'limit': '1',
-              // 'time-range': 86400
+              'time-range': 604800
               // 48 Hours = 172800
               // 24 hours = 86400
               // 1 hour = 3600
-              'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
+              // 'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
             }
           ));
 
@@ -79,6 +84,11 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
   }).then(function (response) {
 
+
+
+    //
+
+
     for (var i = 0; i < response.length; i++) {
 
       var reversedResponse = response[i].data.reverse();
@@ -91,13 +101,11 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
       for (var j = 0; j < reversedResponse.length; j++) {
 
+
         // $log.debug("reversedResponse Length: " + reversedResponse.length)
         // $log.debug("ts : " + reversedResponse[j]['ts'])
 
-
         // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
-        // var temp_ip = [];
-        // var temp_rtt = [];
         var tempResultList = [];
 
         for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
@@ -111,8 +119,6 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
                 rtt: reversedResponse[j]['val'][k]['rtt']
               })
 
-              // temp_ip.push(reversedResponse[j]['val'][k]['ip']);
-              // temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
             }
           } else {
             errorInTraceroute = true;
@@ -205,45 +211,11 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           ////ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey
           TracerouteGraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], false, null, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
-          TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-            var element = event.cyTarget;
-            // $log.debug("Element METADATA: " + element.data().metadataKey)
-
-            // TracerouteGraphService.getGraph().style()
-            //   .selector('edge[tracerouteError = "true"]')
-            //   .style({
-            //     'line-color': 'IndianRed',
-            //     'width': 2
-            //   }).update();
-
-            // TracerouteGraphService.getGraph().style()
-            //   .selector('edge[tracerouteError = "false"]')
-            //   .style({
-            //     'line-color': '#a8ea00',
-            //     'width': 2
-            //   }).update();
-
-
-            // if (element.data().tracerouteError == "true") {
-            //   //Make this Dark Red
-            //   TracerouteGraphService.getGraph().style()
-            //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-            //     .style({
-            //       'line-color': 'DarkRed',
-            //       'width': 4
-            //     }).update();
-            // }
-
-            // if (element.data().tracerouteError == "false") {
-            //   TracerouteGraphService.getGraph().style()
-            //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-            //     .style({
-            //       'line-color': 'green',
-            //       'width': 4
-            //     }).update();
-            // }
-
-          });
+          // TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+          //   var element = event.cyTarget;
+          //   // $log.debug("Element METADATA: " + element.data().metadataKey)
+          //
+          // });
         }
 
         // Break so that we grab only the latest traceroute path
@@ -273,7 +245,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
     }
 
-    var layoutOptions = {
+    TracerouteGraphService.getGraph().layout({
       name: 'breadthfirst',
       fit: true, // whether to fit the viewport to the graph
       directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
@@ -289,15 +261,13 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       animationEasing: undefined, // easing of animation if enabled
       ready: undefined, // callback on layoutready
       stop: undefined // callback on layoutstop
-    };
-
-    TracerouteGraphService.getGraph().layout(layoutOptions);
+    });
 
 
     TracerouteGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
       var element = event.cyTarget;
-      // $log.debug("Element METADATA: " + element.data().metadataKey)
-
+      $log.debug("Element METADATA: " + element.data().metadataKey)
+      console.log("STATUS: " + element.data().tracerouteError)
       $scope.$apply(function (response) {
 
         var time = UnixTimeConverterService.getTime(element.data().time);
@@ -308,9 +278,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           destination: element.data().endNode,
           errorStatus: element.data().tracerouteError,
           time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[1] + " " + date[0] + " " + date[2]
-
         }
-
 
       });
 
@@ -329,8 +297,6 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           'width': 2
         }).update();
 
-
-      // console.log("STATUS: " + element.data().tracerouteError)
 
       if (element.data().tracerouteError == "true") {
         //Make this Dark Red
