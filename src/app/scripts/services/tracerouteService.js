@@ -280,7 +280,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
       return cy;
     },
 
-    add_edge: function (ID, source, target, tracerouteError, tracerouteRTT, bandwidth, startNode, endNode, metadataKey) {
+    add_edge: function (ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey) {
       var innerTracerouteError = "false";
 
       if (tracerouteError == true) {
@@ -297,7 +297,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
           target: target,  // the target node id (edge goes to this node)
           tracerouteError: innerTracerouteError,
           rtt: tracerouteRTT,
-          bandwidth: bandwidth,
+          time: timeUpdated,
           startNode: startNode,
           endNode: endNode,
           metadataKey: metadataKey

@@ -6,7 +6,7 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService','TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService,TracerouteResultsService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService) {
 
 
   var sourceAndDestinationList;
@@ -144,8 +144,8 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             var edgeID = Math.random();
 
             if (TracerouteGraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-
-              TracerouteGraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, tempResultList[m].rtt, null, null, startNode, destinationNode, metadataKey);
+//ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey
+              TracerouteGraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, false, tempResultList[m].rtt, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
               TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
                 var element = event.cyTarget;
@@ -202,7 +202,8 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         if (TracerouteGraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
 
-          TracerouteGraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], null, null, null, startNode, destinationNode, metadataKey);
+          ////ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey
+          TracerouteGraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], false, null, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
           TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
             var element = event.cyTarget;
@@ -295,14 +296,24 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
     TracerouteGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
       var element = event.cyTarget;
-
-
+      // $log.debug("Element METADATA: " + element.data().metadataKey)
 
       $scope.$apply(function (response) {
-        $scope.selectedPath = element.data().metadataKey
+
+        var time = UnixTimeConverterService.getTime(element.data().time);
+        var date = UnixTimeConverterService.getDate(element.data().time);
+        $scope.selectedPath = {
+          metadata: element.data().metadataKey,
+          source: element.data().startNode,
+          destination: element.data().endNode,
+          errorStatus: element.data().tracerouteError,
+          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[1] + " " + date[0] + " " + date[2]
+
+        }
+
+
       });
 
-      // $log.debug("Element METADATA: " + element.data().metadataKey)
 
       TracerouteGraphService.getGraph().style()
         .selector('edge[tracerouteError = "true"]')
@@ -338,16 +349,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           }).update();
       }
 
-      $scope.selectedTraceroutePathInfo = "X";
-
-      //measurement-agent
-      //Latest Time Taken
-      //Source
-      //Destination
-
     });
-
-
 
 
   }).catch(function (error) {
@@ -361,10 +363,10 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 }]);
 
 
-angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService','TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService,TracerouteResultsService) {
+angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService, TracerouteResultsService) {
 
 //FIXME: On mouse over, or wait for about 10 seconds and then do it.
-  TracerouteGraphService.getGraph().one('mouseover',function () {
+  TracerouteGraphService.getGraph().one('mouseover', function () {
     var sourceAndDestinationList;
     var nodeList;
     var tracerouteResults = [];
@@ -519,7 +521,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
           }).update();
 
           var edges = TracerouteGraphService.getGraph().edges('[metadataKey = "' + tracerouteResults[i].metadata + '"]');
-          console.log("edges SIZE: "+ edges.size())
+          console.log("edges SIZE: " + edges.size())
           for (var k = 0; k < edges.size(); k++) {
 
             // Need to check whether bw is double or string
@@ -750,14 +752,12 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 
   }
 
-  $scope.mainGraphSearchNodeKeypress = function (keyEvent,IPAddr) {
+  $scope.mainGraphSearchNodeKeypress = function (keyEvent, IPAddr) {
 
-    if (keyEvent.which === 13){
+    if (keyEvent.which === 13) {
       $log.debug("Node Search: " + IPAddr);
       TracerouteGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
     }
-
-
 
 
   }

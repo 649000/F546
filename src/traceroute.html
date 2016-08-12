@@ -412,11 +412,12 @@
             <div class="form-group input-group">
 
 
-              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch" ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch"
+                     ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
               <span class="input-group-btn">
                <button class="btn btn-default" type="button"
-                                                        ng-click="mainGraphSearchNodeClick(nodeSearch);"><i
-                                                  class="fa fa-search"></i></button>
+                       ng-click="mainGraphSearchNodeClick(nodeSearch);"><i
+                 class="fa fa-search"></i></button>
                </span>
 
 
@@ -454,15 +455,15 @@
 
           </div>
 
-
-                    <div class="list-group">
+          <div class="list-group">
             <h5>Traceroute Information
               <small></small>
             </h5>
 
 
 
-            <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> No. of Nodes
+            <span class="list-group-item">
+              <i class="fa fa-asterisk fa-fw"></i> No. of Nodes
               <span class="badge">{{noOfNodes}}</span>
             </span>
 
@@ -470,62 +471,38 @@
               <span class="badge ">TO DO</span>
             </span>
 
-          </div>
-
-          <div class="list-group">
-            <h5>Traceroute Information
-
-            </h5>
-
-            <div class="panel panel-red" ng-if="noOfAnomalies!=0">
-
-              <div class="panel-heading">
-                Erroneous RTTs:
-                <div class="pull-right">
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies!=0">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
+                        <div class="pull-right">
                   <span class="badge">{{noOfAnomalies}}</span>
                 </div>
-              </div>
-              <!--<div class="panel-body">-->
-              <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>-->
-              <!--</div>-->
-
-            </div>
-
-            <!--<a href="" class="list-group-item">-->
-            <!--<i class="fa fa-search fa-fw"></i>-->
-
-            <!--<span class="badge" ng-controller="TracerouteTableCtrl"></span> Search:-->
-            <!--</a>-->
-
-
-
-
-            <a href="#" class="list-group-item disabled">
-              <i class="fa fa-asterisk fa-fw"></i>
-               No. of Nodes:
-
-            </a>
+            </span>
 
           </div>
 
 
-          <div class="list-group">
-            <h5> {{selectedPath}}
-              <small>Sub-heading</small>
+
+          <div class="list-group" ng-if="selectedPath">
+            <h5>
+             Selected Traceroute Information
             </h5>
 
-            <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Source:
-            </a>
-                     <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Destination:
-            </a>
-                     <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Time Updated:
-            </a>
+            <span class="list-group-item">
+              <i class="fa fa-flag-checkered fa-fw"></i>
+              Source:
+
+                        <div class="pull-right">
+            {{selectedPath.source}}
+          </div>
+            </span>
+                     <span class="list-group-item">
+              <i class="fa fa-flag-o fa-fw"></i>
+               Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
+            </span>
+                     <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
+            </span>
 
           </div>
           <!-- /.list-group -->
