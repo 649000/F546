@@ -71,10 +71,7 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
 
         if (IndividualTracerouteCacheService.getCacheObject().keys()[i] == toCheck.slice(0, -1)) {
 
-
-
           // console.log("CACHE IS CALLED")
-
           return $http({
             method: 'GET',
             url: url + "packet-trace/base",
@@ -166,6 +163,7 @@ tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', 
 
 
 }]);
+
 tracerouteServices.factory('IndividualTracerouteCacheService', ['$http', '$q', '$log', 'HostService', 'CacheFactory', function ($http, $q, $log, HostService, CacheFactory) {
   var TracerouteIndividualResult;
 
@@ -255,7 +253,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$log', function ($log) {
       {
         selector: 'node[sourceNode = "true"]',
         style: {
-          'background-color': 'black'
+          'background-color': 'DimGray'
         }
       }
     ],

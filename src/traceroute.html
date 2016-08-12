@@ -471,7 +471,7 @@
               <span class="badge ">TO DO</span>
             </span>
 
-             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies!=0">
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
               <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
                         <div class="pull-right">
                   <span class="badge">{{noOfAnomalies}}</span>
@@ -591,7 +591,31 @@
             <!-- /.panel-body -->
           </div>
 
+           //Add Line Chart Here
+          {{}}
+
+          <canvas id="line" class="chart chart-line" chart-data="lineChartDataList[0].rtt"
+                  chart-labels="lineChartDataList[0].ip" chart-series="lineChartDataList[0].ts"
+                  chart-dataset-override="datasetOverride" chart-click="onClick">
+          </canvas>
+
+          <div ng-if="individualPath_PastResults!==undefined" class="text-center">
+    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length"
+        ng-model="individualPastResultscurrentPage"
+        class="pagination-sm"
+        ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"
+        previous-text="&lsaquo;"
+        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+
+    </ul>
+       <p>{{individualPath_time}}
+        {{individualPath_date}}
+       </p>
+      </div>
+
         </div>
+
+
       </div>
 
 

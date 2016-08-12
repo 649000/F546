@@ -6,7 +6,7 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService','IndividualTracerouteCacheService' ,function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService,IndividualTracerouteCacheService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', 'IndividualTracerouteCacheService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService, IndividualTracerouteCacheService) {
 
 
   var sourceAndDestinationList;
@@ -17,7 +17,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       'event-type': 'packet-trace',
       // 'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
-      'time-range': 604800
+      'time-range': 86400
       // 48 Hours = 172800
       // 24 hours = 86400
       // 7 days = 604800
@@ -59,17 +59,16 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
 
-
           promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
             {
               //FIXME: The real issue is how to get ONLY the latest, this is not sustainable as it pulls a lot of data.
               'format': 'json',
               // 'limit': '1',
-              'time-range': 604800
+              // 'time-range': 604800
               // 48 Hours = 172800
               // 24 hours = 86400
               // 1 hour = 3600
-              // 'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
+              'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
             }
           ));
 
@@ -83,11 +82,6 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     return $q.all(promises);
 
   }).then(function (response) {
-
-
-
-    //
-
 
     for (var i = 0; i < response.length; i++) {
 
@@ -268,6 +262,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
       var element = event.cyTarget;
       $log.debug("Element METADATA: " + element.data().metadataKey)
       console.log("STATUS: " + element.data().tracerouteError)
+
+      window.dispatchEvent(new Event('resize'));
+
       $scope.$apply(function (response) {
 
         var time = UnixTimeConverterService.getTime(element.data().time);
@@ -332,10 +329,12 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService, TracerouteResultsService) {
 
 //FIXME: On mouse over, or wait for about 10 seconds and then do it.
-  TracerouteGraphService.getGraph().one('mouseover', function () {
+  // Other possible options: layoutstart, layoutready, layoutstop, ready
+  TracerouteGraphService.getGraph().one('layoutstop', function () {
     var sourceAndDestinationList;
     var nodeList;
     var tracerouteResults = [];
+    var lineChartDataList = [];
 
     TracerouteResultsService.getMainResult(
       {
@@ -405,7 +404,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         var metadataKey = sourceAndDestinationList[i].metadataKey;
         var aggregatedResults;
         var errorInTraceroute = null;
-
+        var chartData;
         // SOURCE
         // Array of results of the same source/destination.
         // Checking for 'active' servers
@@ -425,6 +424,59 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
             metadata: metadataKey,
             anomaliesExist: false
           });
+
+          //Populate for Line Chart
+
+          var tsList = []
+          var ipList = [];
+          var rttList = [];
+          chartData = {
+            metadata:1,
+            data: [
+
+              {
+                ts:1,
+                ip:[1],
+                rtt:[1]
+              }
+            ]
+          }
+
+          for (var j = 0; j < reversedResponse.length; j++) {
+
+            var ipList = [];
+            var rttList = [];
+
+            for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+              ipList.push(reversedResponse[j]['val'][k]['ip'])
+              rttList.push(reversedResponse[j]['val'][k]['rtt'])
+
+            }
+
+
+
+
+          }
+
+
+
+
+          var lineChartData = {
+            ts: 1,
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            data: [65, 59, 80, 81, 56, 55, 40]
+          }
+
+          $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+          $scope.data = [
+            [65, 59, 80, 81, 56, 55, 40],
+            [28, 48, 40, 19, 86, 27, 90]
+
+
+          ];
+
+
+
         } else {
           // only 1 result available.
         }
@@ -432,6 +484,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
       }
 
+      $scope.lineChartDataList = lineChartDataList;
 
       var uniqueIP = UniqueArrayService.getUnique(nodeList);
       var nodeToIP_promises = [];
@@ -501,6 +554,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
       $scope.noOfAnomalies = noOfAnomalies;
       $scope.tracerouteResults = tracerouteResults;
+
 
 
     }).catch(function (error) {
