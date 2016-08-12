@@ -140,15 +140,14 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 //IPAddr_Location
   if (!CacheFactory.get("IPAddr_Location")) {
     IPAddr_LocationCache = CacheFactory('IPAddr_Location', {
-      maxAge: 10080 * 60 * 1000, // Items added to this cache expire after 1 week,
+      maxAge: 20160 * 60 * 1000, // Items added to this cache expire after 1 week,
       //10080 minutes = 1 week
+      // 20160  = 2 weeks
       deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
       storageMode: 'localStorage' // This cache will use `localStorage`.
     });
   }
 
-  //3.25 when set to 0 seconds
-  // 5 seconds initial
 
   return {
 
@@ -156,6 +155,8 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 
 
       if (CacheFactory.get("IPAddr_Location").get(IPAddress)) {
+
+        $log.debug("Cache Found for " + IPAddress)
         return CacheFactory.get("IPAddr_Location").get(IPAddress);
 
       } else {
@@ -163,24 +164,39 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
           method: 'GET',
           url: host + IPAddress,
           params: {
-            //SET PARAMS HERE
-            // 'format': 'json',
-            // 'event-type': 'packet-trace'
-            // 'limit': 10,
-            // 'time-end': (Math.floor(Date.now() / 1000)),
-            // 'time-range': timeRange
+            // 'format': 'json'
           },
           cache: true
         }).then(function (response) {
 
-          var geocodedIP = {
-            ip: IPAddress,
-            city: response.data.city,
-            country: response.data.country.name,
-            countrycode: response.data.country.code
+          // console.log(response)
+
+          if (response.data.hasOwnProperty("type") && response.data.hasOwnProperty("msg")) {
+
+            var geocodedIP = {
+              ip: IPAddress,
+              city: "Unknown",
+              country: "",//response.data.country.name,
+              countrycode: "Unknown"//response.data.country.code
+            }
+            // IPAddr_LocationCache.put(IPAddress, geocodedIP);
+
+          } else {
+            var cityName = response.data.city
+
+            if (cityName == false) {
+              cityName = "Unknown"
+            }
+            var geocodedIP = {
+              ip: IPAddress,
+              city: cityName,
+              country: response.data.country.name,
+              countrycode: response.data.country.code
+            }
+            IPAddr_LocationCache.put(IPAddress, geocodedIP);
+
           }
 
-          IPAddr_LocationCache.put(IPAddress, geocodedIP);
 
           return geocodedIP;
 

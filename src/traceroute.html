@@ -402,12 +402,26 @@
 
     <div class="col-lg-3">
       <div class="panel panel-default">
+
+
         <div class="panel-heading">
           <i class="fa fa-gear fa-fw"></i> Graph Panel
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
+            <div class="form-group input-group">
 
+
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch" ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
+              <span class="input-group-btn">
+               <button class="btn btn-default" type="button"
+                                                        ng-click="mainGraphSearchNodeClick(nodeSearch);"><i
+                                                  class="fa fa-search"></i></button>
+               </span>
+
+
+
+            </div>
           <div class="list-group">
             <h5>Graph Layout
             </h5>
@@ -441,12 +455,29 @@
           </div>
 
 
+                    <div class="list-group">
+            <h5>Traceroute Information
+              <small></small>
+            </h5>
+
+
+
+            <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> No. of Nodes
+              <span class="badge">{{noOfNodes}}</span>
+            </span>
+
+                  <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
+              <span class="badge ">TO DO</span>
+            </span>
+
+          </div>
+
           <div class="list-group">
             <h5>Traceroute Information
 
             </h5>
 
-            <div class="panel panel-red"  ng-if="noOfAnomalies!=0">
+            <div class="panel panel-red" ng-if="noOfAnomalies!=0">
 
               <div class="panel-heading">
                 Erroneous RTTs:
@@ -466,19 +497,12 @@
             <!--<span class="badge" ng-controller="TracerouteTableCtrl"></span> Search:-->
             <!--</a>-->
 
-            <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
-              <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button"
-                                                        ng-click="mainGraphSearchNode(nodeSearch);"><i
-                                                  class="fa fa-search"></i></button>
-                                            </span>
-            </div>
+
 
 
             <a href="#" class="list-group-item disabled">
               <i class="fa fa-asterisk fa-fw"></i>
-              <span class="badge" >{{noOfNodes}}</span> No. of Nodes:
+               No. of Nodes:
 
             </a>
 
@@ -486,15 +510,21 @@
 
 
           <div class="list-group">
-            <h5>// To Be Separated
+            <h5> {{selectedPath}}
               <small>Sub-heading</small>
             </h5>
 
-
-
             <a href="#" class="list-group-item">
               <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Example:
+              <span class="badge ">abc</span> Source:
+            </a>
+                     <a href="#" class="list-group-item">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>
+              <span class="badge ">abc</span> Destination:
+            </a>
+                     <a href="#" class="list-group-item">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>
+              <span class="badge ">abc</span> Time Updated:
             </a>
 
           </div>
@@ -514,7 +544,7 @@
     <div class="panel-body">
 
 
-      <div >
+      <div>
 
 
         <div class="" id="{{val.metadata}}" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">

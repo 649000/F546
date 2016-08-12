@@ -6,13 +6,8 @@ var tracerouteServices = angular.module('TracerouteServices', ['ngResource', 'Ge
 
 //var tracerouteListURL = 'http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/'
 //var tracerouteResultURL = tracerouteListURL + ':metadata_key/packet-trace/base'
-
-var tracerouteResultURL = 'http://ps2.jp.apan.net/esmond/perfsonar/archive/'
-var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-trace/base'
-
-
-// REST and Custom Services
-//https://docs.angularjs.org/tutorial/step_11
+// var tracerouteResultURL = 'http://ps2.jp.apan.net/esmond/perfsonar/archive/'
+// var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-trace/base'
 
 
 /*
@@ -20,326 +15,6 @@ var tracerouteResultIndividualURL = tracerouteResultURL + ':metadata_key/packet-
  1. Populating graph in Service does not allow to use $scope.emit/broadcast in clicked events of the graph, which means the graph is unable to fire off another controller such as in the Latency Graph.
 
  */
-
-
-tracerouteServices.factory('CytoscapeService', [function () {
-
-  var cy = cytoscape({
-    container: document.getElementById('traceroute_noduplicate'),
-
-    style: [
-      {
-        selector: 'node',
-        style: {
-          'height': 20,
-          'width': 20,
-          'background-color': '#30c9bc',
-          'label': 'data(id)'
-        }
-      },
-
-      {
-        selector: 'edge',
-        style: {
-          'width': 3,
-          'opacity': 0.8,
-          // 'label': 'data(id)',
-          'line-color': '#a8ea00',
-          'target-arrow-color': 'black',
-          'target-arrow-shape': 'triangle'
-        }
-      }
-    ]
-
-    // Layout can only be done in Controller.
-
-
-  });
-
-
-  return {
-    add_node: function (ID, main, startNode, endNode) {
-      var mainNode;
-
-
-      if (main == true) {
-        mainNode = "true";
-      } else {
-        mainNode = "false";
-      }
-
-      var node = {
-        group: 'nodes',
-        // 'nodes' for a node, 'edges' for an edge
-        // NB the group field can be automatically inferred for you but specifying it
-        // gives you nice debug messages if you mis-init elements
-
-        // NB: id fields must be strings or numbers
-        data: {
-          // element data (put dev data here)
-          // mandatory for each element, assigned automatically on undefined
-          id: ID,
-          mainNode: mainNode,
-          startNode: 0,
-          endNode: 0
-
-          // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
-        }
-
-
-        // scratchpad data (usually temp or nonserialisable data)
-        // scratch: {
-        //   foo: 'bar'
-        // },
-        //
-        // position: { // the model position of the node (optional on init, mandatory after)
-        //   x: 100,
-        //   y: 100
-        // },
-        //
-        // selected: false, // whether the element is selected (default false)
-        //
-        // selectable: true, // whether the selection state is mutable (default true)
-        //
-        // locked: false, // when locked a node's position is immutable (default false)
-        //
-        // grabbable: true // whether the node can be grabbed and moved by the user
-
-        // class: 'mainNode'// a space separated list of class names that the element has
-      };
-
-      // console.log("Node ID: " + ID + " created.");
-
-
-      cy.add(node);
-      return cy;
-    },
-
-    add_edge: function (ID, source, target, bandwidth, latency) {
-
-      var edge = {
-        group: 'edges',
-        data: {
-          id: ID,
-          // inferred as an edge because `source` and `target` are specified:
-          source: source, // the source node id (edge comes from this node)
-          target: target,  // the target node id (edge goes to this node)
-          bandwidth: bandwidth,
-          latency: latency
-        }
-      };
-      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
-      //return edge;
-
-      cy.add(edge);
-      return cy;
-    },
-
-    update_node: function (ID, data) {
-      // cy.elements('node[id = "' + ID + '"]')
-      var element = cy.getElementById(ID);
-      element.data(data);
-      return cy;
-    },
-
-    update_edge: function (ID, data) {
-
-      // cy.elements('edge[id = "' + ID + '"]')
-      var element = cy.getElementById(ID);
-      element.data(data);
-      return cy;
-    },
-
-    setLayout: function (selector) {
-
-      cy.style()
-      // .selector('#203.30.39.127')
-      // .selector(':selected')
-      // .selector('[id = "203.30.39.127"]')
-        .selector('node[mainNode = "true"]')
-        .style({
-          'background-color': 'black'
-        }).update();
-
-      return cy;
-    },
-
-    getGraph: function () {
-      return cy;
-    }
-  }
-
-
-}]);
-
-
-tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
-
-  // Key Differences
-  // 1. Edge ID is unique, Math.random()
-
-  var cy = cytoscape({
-    container: document.getElementById('cytoscape_bandwidth'),
-
-    style: [
-      {
-        selector: 'node',
-        style: {
-          'height': 20,
-          'width': 20,
-          'background-color': '#30c9bc',
-          'label': 'data(label)'
-        }
-      },
-
-      {
-        selector: 'edge',
-        style: {
-          'width': 2,
-          'opacity': 0.8,
-          'label': 'data(bandwidth)',
-          'line-color': 'GreenYellow',
-          'target-arrow-color': 'black',
-          // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
-          'target-arrow-shape': 'triangle'
-        }
-      },
-      {
-        selector: '.multiline-manual',
-        style: {
-          'text-wrap': 'wrap'
-        }
-      }
-    ]
-
-    // Layout can only be done in Controller.
-  });
-
-
-  return {
-    add_node: function (ID, main, startNode, endNode) {
-      var mainNode;
-
-
-      if (main == true) {
-        mainNode = "true";
-      } else {
-        mainNode = "false";
-      }
-
-      var node = {
-        group: 'nodes',
-        // 'nodes' for a node, 'edges' for an edge
-        // NB the group field can be automatically inferred for you but specifying it
-        // gives you nice debug messages if you mis-init elements
-
-        // NB: id fields must be strings or numbers
-        data: {
-          // element data (put dev data here)
-          // mandatory for each element, assigned automatically on undefined
-          id: ID,
-          mainNode: mainNode,
-          startNode: 0,
-          endNode: 0,
-          country: null,
-          city: null,
-          label: ID
-
-          // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
-        },
-        classes: 'multiline-manual'// a space separated list of class names that the element has
-
-
-        // scratchpad data (usually temp or nonserialisable data)
-        // scratch: {
-        //   foo: 'bar'
-        // },
-        //
-        // position: { // the model position of the node (optional on init, mandatory after)
-        //   x: 100,
-        //   y: 100
-        // },
-        //
-        // selected: false, // whether the element is selected (default false)
-        //
-        // selectable: true, // whether the selection state is mutable (default true)
-        //
-        // locked: false, // when locked a node's position is immutable (default false)
-        //
-        // grabbable: true // whether the node can be grabbed and moved by the user
-
-
-      };
-
-      // console.log("Node ID: " + ID + " created.");
-
-
-      cy.add(node);
-      return cy;
-    },
-
-    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey) {
-
-
-      var edge = {
-        group: 'edges',
-        data: {
-          id: ID,
-          // inferred as an edge because `source` and `target` are specified:
-          source: source, // the source node id (edge comes from this node)
-          target: target,  // the target node id (edge goes to this node)
-          rtt: tracerouteRTT,
-          bandwidth: bandwidth,
-          latency: latency,
-          startNode: startNode,
-          endNode: endNode,
-          metadataKey: metadataKey
-        }
-      };
-      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
-      //return edge;
-
-      cy.add(edge);
-      return cy;
-    },
-
-    update_node: function (ID, data) {
-      // cy.elements('node[id = "' + ID + '"]')
-      var element = cy.getElementById(ID);
-      element.data(data);
-      return cy;
-    },
-
-    update_edge: function (ID, data) {
-
-      // cy.elements('edge[id = "' + ID + '"]')
-      var element = cy.getElementById(ID);
-      element.data(data);
-      return cy;
-    },
-
-    setLayout: function (selector) {
-
-      cy.style()
-      // .selector('#203.30.39.127')
-      // .selector(':selected')
-      // .selector('[id = "203.30.39.127"]')
-        .selector(selector)
-        .style({
-          'line-color': 'blue',
-        }).update();
-
-      return cy;
-    },
-
-    getGraph: function () {
-      return cy;
-    }
-  }
-
-
-}]);
-
 
 /*
  MAIN SERVICE: Used to call Traceroute Results
@@ -391,6 +66,71 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$q', '$cacheFa
 
 }]);
 
+/*
+ MAIN CACHE SERVICE:
+ Date: August 6th 2016
+ */
+// tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', '$log', 'HostService', 'indexedDB', function ($http, $q, $log, HostService, indexedDB) {
+//
+//
+//   return {
+//
+//     storeMainResult: function (result) {
+//
+//       $indexedDB.openStore('TracerouteMain', function (store) {
+//
+//         store.delete(results.metadata_key).then(function () {
+//
+//           store.insert({
+//               "metadata_key": result.metadata_key,
+//               "url": result.url,
+//               "uri": result.uri,
+//               "subject_type": result.subject_type,
+//               "source": result.source,
+//               "destination": result.source,
+//               "measurement_agent": result.measurement_agent,
+//               "tool_name": result.tool_name,
+//               "time_interval": result.time_interval,
+//               "ip_transport_protocol": result.ip_transport_protocol
+//             }
+//           ).then(function (e) {
+//
+//
+//           });
+//
+//
+//         })
+//
+//
+//       });
+//
+//
+//     },
+//
+//     storeCachedMainResult: function (url, params) {
+//
+//       //URL is the response[i]['url'] taken from the getMainTracerouteResult();
+//       return $http({
+//         method: 'GET',
+//         url: url + "packet-trace/base",
+//         params: params,
+//         // {
+//         //   'format': 'json',
+//         //   // 'limit': '2',
+//         //   // 'time-end': (Math.floor(Date.now() / 1000)),
+//         //   'time-range': 86400
+//         //   //48 Hours = 172800
+//         //   // 24 hours = 86400
+//         // },
+//         cache: true
+//       });
+//     }
+//
+//   }
+//
+//
+// }]);
+
 
 // This services draws the Traceroute graph with DUPLICATED paths. DIV ID = traceroute_graph_cytoscape
 // traceroute.html
@@ -422,7 +162,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
           'curve-style': 'bezier',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
           'target-arrow-shape': 'triangle',
-          'min-zoomed-font-size':50
+          'min-zoomed-font-size': 50
         }
       },
       {
@@ -439,9 +179,9 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
       }
     ],
     pixelRatio: 1,
-    textureOnViewport: true,
     //Might want to consider to true if graph is taking a long time to load.
-    hideEdgesOnViewport:false
+    textureOnViewport: false,
+    hideEdgesOnViewport: false
 
     // Layout can only be done in Controller.
   });
@@ -545,7 +285,7 @@ tracerouteServices.factory('TracerouteGraphService', ['$http', '$q', '$cacheFact
 
       if (tracerouteError == true) {
         innerTracerouteError = "true";
-      } else if (tracerouteError == false){
+      } else if (tracerouteError == false) {
         innerTracerouteError = "false";
       }
 
@@ -2623,6 +2363,326 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
 //
 
 // NOT USING ANYTHING BELOW HERE
+
+
+tracerouteServices.factory('CytoscapeService', [function () {
+
+  var cy = cytoscape({
+    container: document.getElementById('traceroute_noduplicate'),
+
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
+          'label': 'data(id)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'width': 3,
+          'opacity': 0.8,
+          // 'label': 'data(id)',
+          'line-color': '#a8ea00',
+          'target-arrow-color': 'black',
+          'target-arrow-shape': 'triangle'
+        }
+      }
+    ]
+
+    // Layout can only be done in Controller.
+
+
+  });
+
+
+  return {
+    add_node: function (ID, main, startNode, endNode) {
+      var mainNode;
+
+
+      if (main == true) {
+        mainNode = "true";
+      } else {
+        mainNode = "false";
+      }
+
+      var node = {
+        group: 'nodes',
+        // 'nodes' for a node, 'edges' for an edge
+        // NB the group field can be automatically inferred for you but specifying it
+        // gives you nice debug messages if you mis-init elements
+
+        // NB: id fields must be strings or numbers
+        data: {
+          // element data (put dev data here)
+          // mandatory for each element, assigned automatically on undefined
+          id: ID,
+          mainNode: mainNode,
+          startNode: 0,
+          endNode: 0
+
+          // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+        }
+
+
+        // scratchpad data (usually temp or nonserialisable data)
+        // scratch: {
+        //   foo: 'bar'
+        // },
+        //
+        // position: { // the model position of the node (optional on init, mandatory after)
+        //   x: 100,
+        //   y: 100
+        // },
+        //
+        // selected: false, // whether the element is selected (default false)
+        //
+        // selectable: true, // whether the selection state is mutable (default true)
+        //
+        // locked: false, // when locked a node's position is immutable (default false)
+        //
+        // grabbable: true // whether the node can be grabbed and moved by the user
+
+        // class: 'mainNode'// a space separated list of class names that the element has
+      };
+
+      // console.log("Node ID: " + ID + " created.");
+
+
+      cy.add(node);
+      return cy;
+    },
+
+    add_edge: function (ID, source, target, bandwidth, latency) {
+
+      var edge = {
+        group: 'edges',
+        data: {
+          id: ID,
+          // inferred as an edge because `source` and `target` are specified:
+          source: source, // the source node id (edge comes from this node)
+          target: target,  // the target node id (edge goes to this node)
+          bandwidth: bandwidth,
+          latency: latency
+        }
+      };
+      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
+      //return edge;
+
+      cy.add(edge);
+      return cy;
+    },
+
+    update_node: function (ID, data) {
+      // cy.elements('node[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
+    },
+
+    update_edge: function (ID, data) {
+
+      // cy.elements('edge[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
+    },
+
+    setLayout: function (selector) {
+
+      cy.style()
+      // .selector('#203.30.39.127')
+      // .selector(':selected')
+      // .selector('[id = "203.30.39.127"]')
+        .selector('node[mainNode = "true"]')
+        .style({
+          'background-color': 'black'
+        }).update();
+
+      return cy;
+    },
+
+    getGraph: function () {
+      return cy;
+    }
+  }
+
+
+}]);
+
+
+tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
+
+  // Key Differences
+  // 1. Edge ID is unique, Math.random()
+
+  var cy = cytoscape({
+    container: document.getElementById('cytoscape_bandwidth'),
+
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'height': 20,
+          'width': 20,
+          'background-color': '#30c9bc',
+          'label': 'data(label)'
+        }
+      },
+
+      {
+        selector: 'edge',
+        style: {
+          'width': 2,
+          'opacity': 0.8,
+          'label': 'data(bandwidth)',
+          'line-color': 'GreenYellow',
+          'target-arrow-color': 'black',
+          // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
+          'target-arrow-shape': 'triangle'
+        }
+      },
+      {
+        selector: '.multiline-manual',
+        style: {
+          'text-wrap': 'wrap'
+        }
+      }
+    ]
+
+    // Layout can only be done in Controller.
+  });
+
+
+  return {
+    add_node: function (ID, main, startNode, endNode) {
+      var mainNode;
+
+
+      if (main == true) {
+        mainNode = "true";
+      } else {
+        mainNode = "false";
+      }
+
+      var node = {
+        group: 'nodes',
+        // 'nodes' for a node, 'edges' for an edge
+        // NB the group field can be automatically inferred for you but specifying it
+        // gives you nice debug messages if you mis-init elements
+
+        // NB: id fields must be strings or numbers
+        data: {
+          // element data (put dev data here)
+          // mandatory for each element, assigned automatically on undefined
+          id: ID,
+          mainNode: mainNode,
+          startNode: 0,
+          endNode: 0,
+          country: null,
+          city: null,
+          label: ID
+
+          // parent: 'nparent', // indicates the compound node parent id; not defined => no parent
+        },
+        classes: 'multiline-manual'// a space separated list of class names that the element has
+
+
+        // scratchpad data (usually temp or nonserialisable data)
+        // scratch: {
+        //   foo: 'bar'
+        // },
+        //
+        // position: { // the model position of the node (optional on init, mandatory after)
+        //   x: 100,
+        //   y: 100
+        // },
+        //
+        // selected: false, // whether the element is selected (default false)
+        //
+        // selectable: true, // whether the selection state is mutable (default true)
+        //
+        // locked: false, // when locked a node's position is immutable (default false)
+        //
+        // grabbable: true // whether the node can be grabbed and moved by the user
+
+
+      };
+
+      // console.log("Node ID: " + ID + " created.");
+
+
+      cy.add(node);
+      return cy;
+    },
+
+    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey) {
+
+
+      var edge = {
+        group: 'edges',
+        data: {
+          id: ID,
+          // inferred as an edge because `source` and `target` are specified:
+          source: source, // the source node id (edge comes from this node)
+          target: target,  // the target node id (edge goes to this node)
+          rtt: tracerouteRTT,
+          bandwidth: bandwidth,
+          latency: latency,
+          startNode: startNode,
+          endNode: endNode,
+          metadataKey: metadataKey
+        }
+      };
+      // console.log("Edge ID: " + ID + " Source: " + source + " Target: " + target + " created.");
+      //return edge;
+
+      cy.add(edge);
+      return cy;
+    },
+
+    update_node: function (ID, data) {
+      // cy.elements('node[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
+    },
+
+    update_edge: function (ID, data) {
+
+      // cy.elements('edge[id = "' + ID + '"]')
+      var element = cy.getElementById(ID);
+      element.data(data);
+      return cy;
+    },
+
+    setLayout: function (selector) {
+
+      cy.style()
+      // .selector('#203.30.39.127')
+      // .selector(':selected')
+      // .selector('[id = "203.30.39.127"]')
+        .selector(selector)
+        .style({
+          'line-color': 'blue',
+        }).update();
+
+      return cy;
+    },
+
+    getGraph: function () {
+      return cy;
+    }
+  }
+
+
+}]);
+
 
 tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function ($resource) {
 

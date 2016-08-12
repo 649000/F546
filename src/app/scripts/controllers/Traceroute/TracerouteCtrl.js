@@ -11,12 +11,11 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
   var sourceAndDestinationList;
   var nodeList;
-//FIXME: CHANGE THIS TO USE THE UNIVERSAL SERVICE
   TracerouteResultsService.getMainResult(
     {
       'format': 'json',
       'event-type': 'packet-trace',
-      'limit': 10,
+      // 'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
       'time-range': 86400
     }
@@ -51,6 +50,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
         //
         // });
       }
+
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
@@ -296,7 +296,13 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     TracerouteGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
       var element = event.cyTarget;
 
-      $log.debug("Element METADATA: " + element.data().metadataKey)
+
+
+      $scope.$apply(function (response) {
+        $scope.selectedPath = element.data().metadataKey
+      });
+
+      // $log.debug("Element METADATA: " + element.data().metadataKey)
 
       TracerouteGraphService.getGraph().style()
         .selector('edge[tracerouteError = "true"]')
@@ -313,7 +319,8 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
         }).update();
 
 
-      console.log("STATUS: " + element.data().tracerouteError)
+      // console.log("STATUS: " + element.data().tracerouteError)
+
       if (element.data().tracerouteError == "true") {
         //Make this Dark Red
         TracerouteGraphService.getGraph().style()
@@ -356,7 +363,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService','TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService,TracerouteResultsService) {
 
-
+//FIXME: On mouse over, or wait for about 10 seconds and then do it.
   TracerouteGraphService.getGraph().one('mouseover',function () {
     var sourceAndDestinationList;
     var nodeList;
@@ -367,7 +374,6 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         'format': 'json',
         'event-type': 'packet-trace',
         // 'limit': 15,
-        // 'time-end': (Math.floor(Date.now() / 1000)),
         'time-range': 604800
         // 48 Hours = 172800
         // 24 hours = 86400
@@ -737,10 +743,22 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
   }
 
 
-  $scope.mainGraphSearchNode = function (IPAddr) {
+  $scope.mainGraphSearchNodeClick = function (IPAddr) {
 
     $log.debug("Node Search: " + IPAddr);
     TracerouteGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+
+  }
+
+  $scope.mainGraphSearchNodeKeypress = function (keyEvent,IPAddr) {
+
+    if (keyEvent.which === 13){
+      $log.debug("Node Search: " + IPAddr);
+      TracerouteGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+    }
+
+
+
 
   }
 
