@@ -412,7 +412,8 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
             <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch" ng-keypress="mainGraph_searchNodeKeypress($event,nodeSearch)">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch"
+                     ng-keypress="mainGraph_searchNodeKeypress($event,nodeSearch)">
             <span class="input-group-btn">
             <button class="btn btn-default" type="button"
                     ng-click="mainGraph_searchNodeClick(nodeSearch);"><i
@@ -474,62 +475,41 @@
 
           </div>
 
-          <div class="list-group">
-            <h5>Graph Nodes
-              <small>Sub-heading</small>
+
+          <div class="list-group" ng-if="selectedPath">
+            <h5>
+             Selected Traceroute Information
             </h5>
 
+            <span class="list-group-item">
+              <i class="fa fa-flag-checkered fa-fw"></i>
+              Source:
 
-
-            //Tentative
-             <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="No. of Results to Load"
-                     ng-model="mainGraph_NoOfResults">
-            <span class="input-group-btn">
-            <button class="btn btn-default" type="button"
-                    ng-click="mainGraph_searchNode(nodeSearch);"><i
-              class="fa fa-repeat"></i></button>
-            </span>
-            </div>
-
+                        <div class="pull-right">
+            {{selectedPath.source}}
           </div>
-
-          <div class="list-group">
-            <h5>Traceroute Information
-              <small></small>
-            </h5>
-
-
-
-            <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> No. of Nodes
-              <span class="badge ">123</span>
+            </span>
+                     <span class="list-group-item">
+              <i class="fa fa-flag-o fa-fw"></i>
+               Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
             </span>
 
-                  <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
-              <span class="badge ">123</span>
+               <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
             </span>
-
-          </div>
-
-
-          <div class="list-group">
-            <h5>// To Be Separated
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <!--<a href="#" class="list-group-item" ng-click="clearCache();">-->
-            <!--<i class="fa fa-refresh fa-fw"></i> Clear Cache-->
-            <!--</a>-->
-
-
-            <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Example:
+                           <a ng-href="" class="list-group-item"
+                              ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Error Status:<div class="pull-right">{{selectedPath.errorStatus}} </div>
+            </a>
+                                       <a ng-href="" class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              <div class="pull-right">{{selectedPath.metadata}} </div>
             </a>
 
           </div>
-          <!-- /.list-group -->
+
 
         </div>
         <!-- /.panel-body -->
@@ -542,14 +522,20 @@
 
   <!--Path with Anomalies-->
 
-  <div class="row" >
+  <div class="row">
     <div class="col-lg-9">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> Erroneous Traceroute Path Visualisation
-          <div class="pull-right">
-            Layout maybe??
-          </div>
+        <div class="panel-heading clearfix">
+
+
+          <span class="pull-right">
+
+
+
+          </span>
+                    <i class="fa fa-bar-chart-o fa-fw pull-left"></i>Erroneous Traceroute Path Visualisation
+         {{individualPath_time}}
+        {{individualPath_date}}
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -558,23 +544,22 @@
 
 
 
-            <div ng-if="individualPath_PastResults!==undefined" class="text-center">
-    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length"
+                                      <span class="text-center" ng-if="individualPath_PastResults!==undefined">
+    <ul uib-pagination boundary-links="true" items-per-page="1" rotate="true" boundary-link-numbers="false" max-size="8"
+        total-items="individualPath_PastResults.length"
         ng-model="individualPastResultscurrentPage"
         class="pagination-sm"
         ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"
-        previous-text="&lsaquo;"
-        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
+        previous-text="Previous"
+        next-text="Next" first-text="First" last-text="Last">
 
-    </ul>
-       <p>{{individualPath_time}}
-        {{individualPath_date}}
-       </p>
-      </div>
+     </ul>
+      </span>
 
 
-
-
+{{anomalyIndex}}
+TODO: Load Latest and Anomaly
+            Using Pill Maybe.
           </div>
 
           <!--Visualisation goes here-->
@@ -596,14 +581,52 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <i class="fa fa-gear fa-fw"></i> Graph Panel
-
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
 
+             <div class="list-group">
+            <h5>Past Results
+              <small></small>
+            </h5>
+
+
+
+                  <div class="btn-group" uib-dropdown is-open="status.isopen">
+      <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+        Button dropdown <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+        <li role="menuitem"><a href="#">Action</a></li>
+        <li role="menuitem"><a href="#">Another action</a></li>
+        <li role="menuitem"><a href="#">Something else here</a></li>
+        <li class="divider"></li>
+        <li role="menuitem"><a href="#">Separated link</a></li>
+      </ul>
+    </div>
+
+
+            <a href="" class="list-group-item"
+               ng-click="individualGraph_layoutdisplayConcentric();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
+            </a>
+
+            <a href="" class="list-group-item"
+               ng-click="individualGraph_layoutBreathFirst();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
+            </a>
+
+
+            <a href="" class="list-group-item" ng-click="individualGraph_layoutGrid();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Grid
+            </a>
+
+
+          </div>
+
           <div class="list-group">
             <h5>Graph Layout
-              <small>Sub-heading</small>
+              <small></small>
             </h5>
             <a href="" class="list-group-item"
                ng-click="individualGraph_layoutdisplayConcentric();">
@@ -633,6 +656,7 @@
             </a>
 
           </div>
+
 
           <div class="list-group text-danger panel-red"
                ng-if="errorTracerouteResultsLength!=0">

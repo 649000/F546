@@ -169,7 +169,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     analyzeRtt: function (individual_traceroute_results) {
       // Takes an array of individual traceroute results, and process it.
-      $log.debug("AnalyzeTraceroute:analyzeRtt() START");
+      // $log.debug("AnalyzeTraceroute:analyzeRtt() START");
 
 
       var nodeAndRttList_CalculatedData = [];
@@ -325,18 +325,25 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // $log.debug("traceroutePath.length: "+ traceroutePaths.length);
       //pastPath[0] -> Latest traceroute path to compare with.
 
+      //TODO: GET UNIQUE TRACEROUTE FROM ALL RESULTS.
+      var indexOfError = 0;
 
       //Checking if the latest path, index 0 exist in anything.
-      // for (var i = 1; i < traceroutePaths.length; i++) {
-      //
-      //   // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
-      //
-      //   if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
-      //     pathExist = true;
-      //   }
-      //
-      // }
-      //
+      for (var i = 1; i < traceroutePaths.length; i++) {
+
+        // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
+
+        if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
+          pathExist = true;
+        } else {
+          pathExist==false
+          anomaliesExist = true;
+          indexOfError=i
+          break;
+        }
+
+      }
+
       // if(pathExist==false){
       //   anomaliesExist = true;
       // }
@@ -344,24 +351,33 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
       //FIXME: For Demonstration purposes, the above is commented out, and the below is added in.
 
-      for (var i = 1; i < traceroutePaths.length; i++) {
+      //
+      // for (var i = 1; i < traceroutePaths.length; i++) {
+      //
+      //   if (JSON.stringify(traceroutePaths[0]) !== JSON.stringify(traceroutePaths[i])) {
+      //     pathExist = true;
+      //     indexOfError = i;
+      //   }
+      //
+      // }
+      //
+      // if(pathExist==false){
+      //   anomaliesExist = true;
+      //
+      // }
 
-        if (JSON.stringify(traceroutePaths[0]) !== JSON.stringify(traceroutePaths[i])) {
-          pathExist = true;
-        }
-
-      }
-
-      if(pathExist==false){
-        anomaliesExist = true;
-      }
 
 
 
-      //TODO: Figure out what else to return other than TRUE/FALSE
        // $log.debug("analyzePath() Return Msg: " + pathExist);
-      // return anomaliesExist;
-      return pathExist;
+
+      // return pathExist;
+
+      if(anomaliesExist==true){
+        return [anomaliesExist,indexOfError];
+      }else{
+        return [anomaliesExist,null]
+      }
 
     }
   };

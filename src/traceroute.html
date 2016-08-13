@@ -502,10 +502,17 @@
               <i class="fa fa-clock-o fa-fw"></i>
               Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
             </span>
-                           <a ng-href="#{{selectedPath.metadata}}" class="list-group-item">
-              <i class="fa fa-clock-o fa-fw"></i>
-              Error Status:<div class="pull-right">{{selectedPath.errorStatus}} </div>
-            </a>
+
+              <a ng-href="#{{selectedPath.metadata}}" class="list-group-item" >
+
+
+                <i class="fa fa-exclamation-triangle fa-fw"></i>
+              Error Status: <div class="pull-right">{{selectedPath.errorStatus}} </div>
+
+              </a>
+
+
+
 
           </div>
           <!-- /.list-group -->
@@ -579,9 +586,11 @@
                     <td>{{val.rttAvg}}</td>
                     <td>{{val.rttStd}}</td>
 
-                    <td class="danger" ng-if="val.status"><span
-                      class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
-                    <td class="" ng-if="!val.status"><span class="glyphicon glyphicon-ok"> {{val.status}} </span>
+                    <td class="danger" ng-if="val.status">
+                      <span class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
+
+                    <td class="" ng-if="!val.status">
+                      <span class="glyphicon glyphicon-ok"> {{val.status}} </span>
                     </td>
 
                   </tr>

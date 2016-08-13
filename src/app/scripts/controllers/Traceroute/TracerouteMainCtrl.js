@@ -10,7 +10,7 @@
 var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'indexedDB','angular-loading-bar']).config(['$logProvider', '$indexedDBProvider','cfpLoadingBarProvider', function ($logProvider, $indexedDBProvider,cfpLoadingBarProvider) {
 
   // Spinner for $http loading
-  cfpLoadingBarProvider.includeSpinner = false;
+  cfpLoadingBarProvider.includeSpinner = true;
   cfpLoadingBarProvider.latencyThreshold = 200;
 
 
@@ -29,11 +29,11 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
 
 
 
-  $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {
-    var objStore = db.createObjectStore('IndividualTracerouteResult', {keyPath: 'url'});
-    objStore.createIndex('data', 'data', {unique: false});
-    objStore.createIndex('time', 'time', {unique: false});
-  });
+  // $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {
+  //   var objStore = db.createObjectStore('IndividualTracerouteResult', {keyPath: 'url'});
+  //   objStore.createIndex('data', 'data', {unique: false});
+  //   objStore.createIndex('time', 'time', {unique: false});
+  // });
 
   // GoogleMapApiProviders.configure({
   //   key: 'AIzaSyBgSYT0qquQTzCZrnHL_Tkos7m1pSsA92A',
@@ -48,8 +48,7 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
 
 }]).run(function ($http, CacheFactory) {
 
-  //TracerouteIndividualResult OR defaultCache
-  //FIXME: Need more testing on speed.
+
   $http.defaults.cache = CacheFactory('defaultCache', {
     maxAge: 15 * 60 * 1000, // Items added to this cache expire after 15 minutes
     cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
@@ -58,6 +57,7 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
     // storageMode: 'localStorage',
     // storageImpl: localStoragePolyfill
   });
+
 });
 
 traceroute.directive('agclick_edge', function () {
