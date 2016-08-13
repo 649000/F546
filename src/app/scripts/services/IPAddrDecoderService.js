@@ -140,11 +140,11 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 //IPAddr_Location
   if (!CacheFactory.get("IPAddr_Location")) {
     IPAddr_LocationCache = CacheFactory('IPAddr_Location', {
-      maxAge: 20160 * 60 * 1000, // Items added to this cache expire after 1 week,
+      maxAge: 10080 * 60 * 1000, // Items added to this cache expire after 1 week,
       //10080 minutes = 1 week
       // 20160  = 2 weeks
       deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
-      storageMode: 'localStorage' // This cache will use `localStorage`.
+      storageMode: 'sessionStorage' // This cache will use `localStorage`.
     });
   }
 
@@ -166,7 +166,8 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
           params: {
             // 'format': 'json'
           },
-          cache: true
+          cache: true,
+          ignoreLoadingBar: true
         }).then(function (response) {
 
           // console.log(response)

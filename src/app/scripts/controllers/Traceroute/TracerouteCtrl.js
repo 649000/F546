@@ -430,35 +430,28 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
           var tsList = []
           var ipList = [];
           var rttList = [];
+
           chartData = {
-            metadata:1,
+            metadata: 1,
             data: [
 
               {
-                ts:1,
-                ip:[1],
-                rtt:[1]
+                ts: 1,
+                ip: [1],
+                rtt: [1]
               }
             ]
           }
 
           for (var j = 0; j < reversedResponse.length; j++) {
 
-            var ipList = [];
-            var rttList = [];
-
             for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
-              ipList.push(reversedResponse[j]['val'][k]['ip'])
-              rttList.push(reversedResponse[j]['val'][k]['rtt'])
+
 
             }
 
 
-
-
           }
-
-
 
 
           var lineChartData = {
@@ -474,7 +467,6 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
 
           ];
-
 
 
         } else {
@@ -540,7 +532,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
           }).update();
 
           var edges = TracerouteGraphService.getGraph().edges('[metadataKey = "' + tracerouteResults[i].metadata + '"]');
-          console.log("edges SIZE: " + edges.size())
+          // console.log("edges SIZE: " + edges.size())
           for (var k = 0; k < edges.size(); k++) {
 
             // Need to check whether bw is double or string
@@ -554,7 +546,6 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
       $scope.noOfAnomalies = noOfAnomalies;
       $scope.tracerouteResults = tracerouteResults;
-
 
 
     }).catch(function (error) {
@@ -782,12 +773,6 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 
   }
 
-  $scope.clearCache = function () {
-    $cacheFactory.get('$http').removeAll();
-
-    //FIXME: Perhaps do a restart as well.
-  }
-
 
 }]);
 
@@ -795,10 +780,74 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 // Traceroute Path Related Controls
 angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TraceroutePath_GraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'TraceroutePath_PopulateGraphService', function ($scope, $http, $q, $log, HostService, TraceroutePath_GraphService, UnixTimeConverterService, GeoIPNekudoService, TraceroutePath_PopulateGraphService) {
 
-  $log.debug("TraceroutePathGraphCtrl: START");
+  // $log.debug("TraceroutePathGraphCtrl: START");
 
-  $scope.host = HostService.getHost();
+  // $scope.host = HostService.getHost();
+  //Load Main Traceroute Path Graph
+  //TODO: Benefits: Able to call and reload as needed without refreshing the page.
   TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
+
+
+  TraceroutePath_GraphService.getGraph().one('layoutstop', function () {
+
+    TraceroutePath_PopulateGraphService.loadErroneousTraceroutePath();
+
+    TraceroutePath_PopulateGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
+      var element = event.cyTarget;
+      $log.debug("Element METADATA: " + element.data().metadataKey)
+      console.log("STATUS: " + element.data().tracerouteError)
+
+      window.dispatchEvent(new Event('resize'));
+
+      $scope.$apply(function (response) {
+
+        var time = UnixTimeConverterService.getTime(element.data().time);
+        var date = UnixTimeConverterService.getDate(element.data().time);
+        $scope.selectedPath = {
+          metadata: element.data().metadataKey,
+          source: element.data().startNode,
+          destination: element.data().endNode,
+          errorStatus: element.data().tracerouteError,
+          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[1] + " " + date[0] + " " + date[2]
+        }
+
+      });
+
+
+      TraceroutePath_PopulateGraphService.getGraph().style()
+        .selector('edge[tracerouteError = "true"]')
+        .style({
+          'line-color': 'IndianRed',
+          'width': 2
+        }).update();
+
+      TraceroutePath_PopulateGraphService.getGraph().style()
+        .selector('edge[tracerouteError = "false"]')
+        .style({
+          'line-color': '#a8ea00',
+          'width': 2
+        }).update();
+
+
+      if (element.data().tracerouteError == "true") {
+        //Make this Dark Red
+        TraceroutePath_PopulateGraphService.getGraph().style()
+          .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          .style({
+            'line-color': 'DarkRed',
+            'width': 4
+          }).update();
+      } else if (element.data().tracerouteError == "false") {
+        TraceroutePath_PopulateGraphService.getGraph().style()
+          .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          .style({
+            'line-color': 'green',
+            'width': 4
+          }).update();
+      }
+
+    });
+  });
 
 
 }]);
@@ -1000,34 +1049,20 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
     // TracerouteGraphService.getGraph().zoomingEnabled(true);
   }
 
-  $scope.mainGraph_graphLoadAllResults = function () {
 
-    TraceroutePath_GraphService.getGraph().remove('node');
-    TraceroutePath_GraphService.getGraph().remove('edge');
-    //Calls a function to pull and load everything.
+  $scope.mainGraph_searchNodeClick = function (IPAddr) {
 
-
-  }
-
-  $scope.mainGraph_searchNode = function (IPAddr) {
-
-
-    $log.debug("Node Search: " + IPAddr);
-
-    // elements('node[id = "' + response.data[i]['source'] + '"]')
-
-    // TracerouteGraphService.getGraph().center('node[id = "' + IPAddr.trim() + '"]');
+    // $log.debug("Node Search: " + IPAddr);
     TraceroutePath_GraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
 
-
   }
 
-  $scope.mainGraph_clearCache = function () {
-    $cacheFactory.get('$http').removeAll();
-
-    //FIXME: Perhaps do a restart as well.
+  $scope.mainGraph_searchNodeKeypress = function (keyEvent, IPAddr) {
+    if (keyEvent.which === 13) {
+      // $log.debug("Node Search: " + IPAddr);
+      TraceroutePath_GraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+    }
   }
-
 
 }]);
 

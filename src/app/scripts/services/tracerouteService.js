@@ -21,7 +21,7 @@ var tracerouteServices = angular.module('TracerouteServices', ['ngResource', 'Ge
  MAIN SERVICE: Used to call Traceroute Results
  Checked on August 12th 2016
  */
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', 'CacheFactory', 'IndividualTracerouteCacheService','TracerouteResultsIndexedDBService', function ($http, $log, HostService, CacheFactory, IndividualTracerouteCacheService,TracerouteResultsIndexedDBService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', 'CacheFactory', 'IndividualTracerouteCacheService', 'TracerouteResultsIndexedDBService', function ($http, $log, HostService, CacheFactory, IndividualTracerouteCacheService, TracerouteResultsIndexedDBService) {
 
 
   return {
@@ -43,7 +43,7 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
     },
 
     getIndividualResult: function (url, params) {
-    //URL is the response[i]['url'] taken from the getMainResult();
+      //URL is the response[i]['url'] taken from the getMainResult();
 
 
       // var toAppend = "?"
@@ -91,22 +91,17 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
       }
 
 
+      var toCache = true
+      if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
+        toCache = IndividualTracerouteCacheService.getCacheObject();
+      }
 
-
-
-        var toCache = true
-        if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
-          toCache = IndividualTracerouteCacheService.getCacheObject();
-        }
-
-        return $http({
-          method: 'GET',
-          url: url + "packet-trace/base",
-          params: params,
-          cache: true
-        });
-
-
+      return $http({
+        method: 'GET',
+        url: url + "packet-trace/base",
+        params: params,
+        cache: true
+      });
 
 
     }
@@ -125,7 +120,7 @@ tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', 
 
   return {
 
-    addResult: function (url,result) {
+    addResult: function (url, result) {
 
       return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
 
@@ -151,8 +146,8 @@ tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', 
 
     getResult: function (url) {
 
-     return  $indexedDB.openStore('IndividualTracerouteResult', function(store){
-       store.find(url).then(function(e){
+      return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
+        store.find(url).then(function (e) {
           return e;
         });
       });
@@ -253,7 +248,15 @@ tracerouteServices.factory('TracerouteGraphService', ['$log', function ($log) {
       {
         selector: 'node[sourceNode = "true"]',
         style: {
+          'height': 30,
+          'width': 30,
           'background-color': 'DimGray'
+        }
+      },
+      {
+        selector: 'edge[tracerouteError = "true"]',
+        style: {
+          'line-color': 'IndianRed'
         }
       }
     ],
@@ -487,8 +490,12 @@ tracerouteServices.factory('TracerouteGraphService', ['$log', function ($log) {
  Date: August 6th 2016
  */
 
-
-tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', function ($http, $q, $cacheFactory, $log, HostService) {
+/*
+ This services draws the Traceroute !!PATH!! graph with DUPLICATED paths.
+ div id = traceroute_path_graph_cytoscape on traceroute_path.html
+ Checked on August 13th 2016
+ */
+tracerouteServices.factory('TraceroutePath_GraphService', ['$log', function ($log) {
 
   var cy = cytoscape({
     container: document.getElementById('traceroute_path_graph_cytoscape'),
@@ -508,7 +515,7 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
         selector: 'edge',
         style: {
           'width': 2,
-          'opacity': 0.8,
+          'opacity': 1,
           'label': 'data(bandwidth)',
           'line-color': 'GreenYellow',
           'target-arrow-color': 'black',
@@ -521,8 +528,26 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
         style: {
           'text-wrap': 'wrap'
         }
+      },
+      {
+        selector: 'node[sourceNode = "true"]',
+        style: {
+          'height': 30,
+          'width': 30,
+          'background-color': 'DimGray'
+        }
+      },
+      {
+        selector: 'edge[pathAnomaly = "true"]',
+        style: {
+          'line-color': 'IndianRed'
+        }
       }
-    ]
+    ],
+    pixelRatio: 1,
+    //Might want to consider to true if graph is taking a long time to load.
+    textureOnViewport: false,
+    hideEdgesOnViewport: false
 
     // Layout can only be done in Controller.
   });
@@ -532,7 +557,6 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
 
     add_node: function (ID, sourceNode) {
       var mainNode;
-
 
       if (sourceNode == true) {
         mainNode = "true";
@@ -599,7 +623,6 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
         group: 'edges',
         data: {
           id: ID,
-          // inferred as an edge because `source` and `target` are specified:
           source: source, // the source node id (edge comes from this node)
           target: target,  // the target node id (edge goes to this node)
           pathAnomaly: innerTracerouteError,
@@ -633,16 +656,16 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$http', '$q', '$cach
  */
 tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'TraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, TraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroute, UniqueArrayService) {
 
-  $log.debug("TraceroutePath_PopulateGraphService: START");
+  // $log.debug("TraceroutePath_PopulateGraphService: START");
 
   return {
 
+    //FIXME: Separate loading and analyzation
     loadGraph_TracerouteOverview: function () {
-
-      $log.debug("TraceroutePath_PopulateGraphService:loadTracerouteGraph() START");
 
       var sourceAndDestinationList;
       var nodeList;
+      var toReturnList = [];
 
       TraceroutePath_GraphService.getGraph().remove('node');
       TraceroutePath_GraphService.getGraph().remove('edge');
@@ -652,7 +675,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
         {
           'format': 'json',
           'event-type': 'packet-trace',
-          'limit': 10,
+          // 'limit': 10,
           // 'time-end': (Math.floor(Date.now() / 1000)),
           'time-range': 86400
           // 48 Hours = 172800
@@ -678,17 +701,10 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
           //Adding main nodes into graph
           if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
-
             // True as this is a SOURCE node.
             TraceroutePath_GraphService.add_node(response.data[i]['source'], true);
             nodeList.push(response.data[i]['source']);
 
-            // Event
-            TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
-              var element = event.cyTarget;
-              // $log.debug("Clicked on Node ID: " + element.data().id)
-
-            });
           }
 
           for (var j = 0; j < response.data[i]['event-types'].length; j++) {
@@ -699,10 +715,11 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
                   'format': 'json',
                   // 'limit': '2',
                   // 'time-end': (Math.floor(Date.now() / 1000)),
-                  'time-range': 86400
+                  // 'time-range': 604800
                   // 48 Hours = 172800
                   // 24 hours = 86400
                   // 7 days = 604800
+                  'time-start': response.data[i]['event-types'][j]['time-updated'] - 900
                 }
               ));
 
@@ -713,36 +730,36 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
         }
 
         // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+
+        //Index = 0, Number of Source Nodes
+        toReturnList.push(UniqueArrayService.getUnique(nodeList).length);
+
         return $q.all(promises);
 
       }).then(function (response) {
 
-        $log.debug("TracerouteGraphCtrl:getIndividualTracerouteResult().response.length: " + response.length);
 
         for (var i = 0; i < response.length; i++) {
 
-          var pathAnomaly = false;
-
-          //Analyzation of Path begins:
-          if (response[i].data.length > 1) {
-
-            pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
-
-          } else {
-            // only 1 result available.
-            //This also means that traceroute path with only 1 results will never have an anomaly.
-
-          }
+          // var pathAnomaly = false;
+          //
+          // //Analyzation of Path begins:
+          // if (response[i].data.length > 1) {
+          //
+          //   pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
+          //
+          // } else {
+          //   // only 1 result available.
+          //   //This also means that traceroute path with only 1 results will never have an anomaly.
+          //
+          // }
+          // Path is reversed to get the latest Traceroute data.
+          var reversedResponse = response[i].data.reverse();
 
           var startNode = sourceAndDestinationList[i].source;
           var destinationNode = sourceAndDestinationList[i].destination;
           var metadataKey = sourceAndDestinationList[i].metadataKey;
           var errorInTraceroute = null;
-
-
-          // Path is reversed to get the latest Traceroute data.
-          var reversedResponse = response[i].data.reverse();
-
 
           for (var j = 0; j < reversedResponse.length; j++) {
             // $log.debug("reversedResponse Length: " + reversedResponse.length)
@@ -767,8 +784,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
             }
 
-
-            // Adding Nodes/ CHECK FOR ERROR too.
+            // Adding Nodes
             for (var m = 0; m < tempResultList.length; m++) {
 
               if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + tempResultList[m].ip + '"]').size() == 0) {
@@ -776,17 +792,12 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
                 TraceroutePath_GraphService.add_node(tempResultList[m].ip, false);
                 nodeList.push(tempResultList[m].ip);
 
-                TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
-                  var element = event.cyTarget;
-
-
-                })
               }
 
             }
 
 
-            // Adding edges, highlight error in traceroute if needed
+            // Adding edges
             for (var m = 0; m < tempResultList.length; m++) {
 
               if (m != (tempResultList.length - 1 )) {
@@ -796,105 +807,103 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
                 if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
 
 
-                  TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, pathAnomaly, null, startNode, destinationNode, metadataKey);
+                  TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, false, null, startNode, destinationNode, metadataKey);
 
-                  TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                    var element = event.cyTarget;
-                    //ID: element.id()
-                    //metadataKey: element.data().metadataKey
-
-                    // search for ALL edges with same metadata, make it red, make everything else the same.
-                    TraceroutePath_GraphService.getGraph().style()
-                      .selector('edge[pathAnomaly = "true"]')
-                      .style({
-                        'line-color': 'IndianRed',
-                        'width': 2
-                      }).update();
-
-                    TraceroutePath_GraphService.getGraph().style()
-                      .selector('edge[pathAnomaly = "false"]')
-                      .style({
-                        'line-color': '#a8ea00',
-                        'width': 2
-                      }).update();
-
-
-                    if (element.data().pathAnomaly == "true") {
-                      //Make this Dark Red
-                      TraceroutePath_GraphService.getGraph().style()
-                        .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                        .style({
-                          'line-color': 'DarkRed',
-                          'width': 4
-                        }).update();
-                    }
-
-                    if (element.data().pathAnomaly == "false") {
-                      TraceroutePath_GraphService.getGraph().style()
-                        .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                        .style({
-                          'line-color': 'green',
-                          'width': 4
-                        }).update();
-                    }
-
-
-                  });
+                  // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+                  //   var element = event.cyTarget;
+                  //   //ID: element.id()
+                  //   //metadataKey: element.data().metadataKey
+                  //
+                  //   // search for ALL edges with same metadata, make it red, make everything else the same.
+                  //   TraceroutePath_GraphService.getGraph().style()
+                  //     .selector('edge[pathAnomaly = "true"]')
+                  //     .style({
+                  //       'line-color': 'IndianRed',
+                  //       'width': 2
+                  //     }).update();
+                  //
+                  //   TraceroutePath_GraphService.getGraph().style()
+                  //     .selector('edge[pathAnomaly = "false"]')
+                  //     .style({
+                  //       'line-color': '#a8ea00',
+                  //       'width': 2
+                  //     }).update();
+                  //
+                  //
+                  //   if (element.data().pathAnomaly == "true") {
+                  //     //Make this Dark Red
+                  //     TraceroutePath_GraphService.getGraph().style()
+                  //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                  //       .style({
+                  //         'line-color': 'DarkRed',
+                  //         'width': 4
+                  //       }).update();
+                  //   }
+                  //
+                  //   if (element.data().pathAnomaly == "false") {
+                  //     TraceroutePath_GraphService.getGraph().style()
+                  //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+                  //       .style({
+                  //         'line-color': 'green',
+                  //         'width': 4
+                  //       }).update();
+                  //   }
+                  //
+                  //
+                  // });
 
                 }
               }
             }
 
-
             // Add Edge for main node
             // var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
-
             var edgeID = Math.random();
 
             if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
 
-              TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], pathAnomaly, null, startNode, destinationNode, metadataKey);
+              TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], false, null, startNode, destinationNode, metadataKey);
 
-              TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                var element = event.cyTarget;
-                $log.debug("Element METADATA: " + element.data().metadataKey)
-
-                TraceroutePath_GraphService.getGraph().style()
-                  .selector('edge[pathAnomaly = "true"]')
-                  .style({
-                    'line-color': 'IndianRed',
-                    'width': 2
-                  }).update();
-
-                TraceroutePath_GraphService.getGraph().style()
-                  .selector('edge[pathAnomaly = "false"]')
-                  .style({
-                    'line-color': '#a8ea00',
-                    'width': 2
-                  }).update();
-
-
-                if (element.data().pathAnomaly == "true") {
-                  //Make this Dark Red
-                  TraceroutePath_GraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'DarkRed',
-                      'width': 4
-                    }).update();
-                }
-
-                if (element.data().pathAnomaly == "false") {
-                  TraceroutePath_GraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'green',
-                      'width': 4
-                    }).update();
-                }
-
-
-              });
+              // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+              //   var element = event.cyTarget;
+              //   $log.debug("Element METADATA: " + element.data().metadataKey)
+              //
+              //   TraceroutePath_GraphService.getGraph().style()
+              //     .selector('edge[pathAnomaly = "true"]')
+              //     .style({
+              //       'line-color': 'IndianRed',
+              //       'width': 2
+              //     }).update();
+              //
+              //   TraceroutePath_GraphService.getGraph().style()
+              //     .selector('edge[pathAnomaly = "false"]')
+              //     .style({
+              //       'line-color': '#a8ea00',
+              //       'width': 2
+              //     }).update();
+              //
+              //
+              //   if (element.data().pathAnomaly == "true") {
+              //     //Make this Dark Red
+              //     TraceroutePath_GraphService.getGraph().style()
+              //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+              //       .style({
+              //         'line-color': 'DarkRed',
+              //         'width': 4
+              //       }).update();
+              //   }
+              //
+              //   if (element.data().pathAnomaly == "false") {
+              //     TraceroutePath_GraphService.getGraph().style()
+              //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+              //       .style({
+              //         'line-color': 'green',
+              //         'width': 4
+              //       }).update();
+              //   }
+              //
+              //
+              // });
             }
 
             // Break so that we grab only the latest traceroute path
@@ -923,12 +932,310 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
         }
 
-        //Style Options
-        TraceroutePath_GraphService.getGraph().style()
-          .selector('node[sourceNode = "true"]')
-          .style({
-            'background-color': 'black'
-          }).update();
+
+        TraceroutePath_GraphService.getGraph().layout({
+          name: 'breadthfirst',
+          fit: true, // whether to fit the viewport to the graph
+          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+          padding: 30, // padding on fit
+          circle: false, // put depths in concentric circles if true, put depths top down if false
+          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+          roots: undefined, // the roots of the trees
+          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+          animate: false, // whether to transition the node positions
+          animationDuration: 500, // duration of animation in ms if enabled
+          animationEasing: undefined, // easing of animation if enabled
+          ready: undefined, // callback on layoutready
+          stop: undefined // callback on layoutstop
+        });
+
+        //return if needed to path information to controller.
+
+
+      }).catch(function (error) {
+        $log.error(error)
+        $log.debug("Server Response: " + error.status);
+
+      });
+
+
+    },
+
+    loadErroneousTraceroutePath: function () {
+
+      var sourceAndDestinationList;
+      var nodeList;
+
+      TracerouteResultsService.getMainResult(
+        {
+          'format': 'json',
+          'event-type': 'packet-trace',
+          // 'limit': 10,
+          'time-range': 604800
+          // 48 Hours = 172800
+          // 24 hours = 86400
+          // 7 days = 604800
+        }
+      ).then(function (response) {
+
+        sourceAndDestinationList = [];
+        nodeList = [];
+        var promises = [];
+
+        for (var i = 0; i < response.data.length; i++) {
+
+          sourceAndDestinationList.push(
+            {
+              source: response.data[i]['source'],
+              destination: response.data[i]['destination'],
+              metadataKey: response.data[i]['metadata-key']
+            }
+          );
+
+
+          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+
+              promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+                {
+                  'format': 'json',
+                  // 'limit': '2',
+                  'time-range': 604800
+                  // 48 Hours = 172800
+                  // 24 hours = 86400
+                  // 7 days = 604800
+                }
+              ));
+
+            }
+          }
+
+
+        }
+
+
+        return $q.all(promises);
+
+      }).then(function (response) {
+
+        for (var i = 0; i < response.length; i++) {
+
+          var pathAnomaly = false;
+          // Path is reversed to get the latest Traceroute data.
+          var reversedResponse = response[i].data.reverse();
+
+          //Analyzation of Path begins:
+          if (response[i].data.length > 1) {
+
+            pathAnomaly = AnalyzeTraceroute.analyzePath(reversedResponse);
+
+          } else {
+            // only 1 result available.
+            //This also means that traceroute path with only 1 results will never have an anomaly.
+            //TODO: Inform Path with only one result.
+
+          }
+
+          var startNode = sourceAndDestinationList[i].source;
+          var destinationNode = sourceAndDestinationList[i].destination;
+          var metadataKey = sourceAndDestinationList[i].metadataKey;
+          var errorInTraceroute = null;
+
+
+          if (pathAnomaly == true) {
+
+            var edges = TraceroutePath_GraphService.getGraph().edges('[metadataKey = "' + metadataKey + '"]');
+            // console.log("edges SIZE: " + edges.size())
+            for (var k = 0; k < edges.size(); k++) {
+
+              edges[k].data({
+                pathAnomaly: "true"
+              });
+            }
+
+          }
+
+
+          // for (var j = 0; j < reversedResponse.length; j++) {
+          //   // $log.debug("reversedResponse Length: " + reversedResponse.length)
+          //   // $log.debug("ts : " + reversedResponse[j]['ts'])
+          //
+          //   // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
+          //   var tempResultList = [];
+          //
+          //   for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+          //
+          //     if (reversedResponse[j]['val'][k]['success'] == 1) {
+          //       if (reversedResponse[j]['val'][k]['query'] == 1) {
+          //
+          //         tempResultList.push({
+          //           ip: reversedResponse[j]['val'][k]['ip'],
+          //           rtt: reversedResponse[j]['val'][k]['rtt']
+          //         });
+          //       }
+          //     } else {
+          //       errorInTraceroute = true;
+          //     }
+          //   }
+          //
+          //
+          //   // // Adding Nodes/ CHECK FOR ERROR too.
+          //   // for (var m = 0; m < tempResultList.length; m++) {
+          //   //
+          //   //   if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + tempResultList[m].ip + '"]').size() == 0) {
+          //   //
+          //   //     TraceroutePath_GraphService.add_node(tempResultList[m].ip, false);
+          //   //     nodeList.push(tempResultList[m].ip);
+          //   //
+          //   //     TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
+          //   //       var element = event.cyTarget;
+          //   //
+          //   //
+          //   //     })
+          //   //   }
+          //   //
+          //   // }
+          //
+          //
+          //   // Adding edges, highlight error in traceroute if needed
+          //   for (var m = 0; m < tempResultList.length; m++) {
+          //
+          //     if (m != (tempResultList.length - 1 )) {
+          //       // var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+          //       var edgeID = Math.random();
+          //
+          //       if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+          //
+          //
+          //         TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, pathAnomaly, null, startNode, destinationNode, metadataKey);
+          //
+          //         TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+          //           var element = event.cyTarget;
+          //           //ID: element.id()
+          //           //metadataKey: element.data().metadataKey
+          //
+          //           // search for ALL edges with same metadata, make it red, make everything else the same.
+          //           TraceroutePath_GraphService.getGraph().style()
+          //             .selector('edge[pathAnomaly = "true"]')
+          //             .style({
+          //               'line-color': 'IndianRed',
+          //               'width': 2
+          //             }).update();
+          //
+          //           TraceroutePath_GraphService.getGraph().style()
+          //             .selector('edge[pathAnomaly = "false"]')
+          //             .style({
+          //               'line-color': '#a8ea00',
+          //               'width': 2
+          //             }).update();
+          //
+          //
+          //           if (element.data().pathAnomaly == "true") {
+          //             //Make this Dark Red
+          //             TraceroutePath_GraphService.getGraph().style()
+          //               .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //               .style({
+          //                 'line-color': 'DarkRed',
+          //                 'width': 4
+          //               }).update();
+          //           }
+          //
+          //           if (element.data().pathAnomaly == "false") {
+          //             TraceroutePath_GraphService.getGraph().style()
+          //               .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //               .style({
+          //                 'line-color': 'green',
+          //                 'width': 4
+          //               }).update();
+          //           }
+          //
+          //
+          //         });
+          //
+          //       }
+          //     }
+          //   }
+          //
+          //
+          //   // Add Edge for main node
+          //   // var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
+          //
+          //   var edgeID = Math.random();
+          //
+          //   if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+          //
+          //     TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], pathAnomaly, null, startNode, destinationNode, metadataKey);
+          //
+          //     TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+          //       var element = event.cyTarget;
+          //       $log.debug("Element METADATA: " + element.data().metadataKey)
+          //
+          //       TraceroutePath_GraphService.getGraph().style()
+          //         .selector('edge[pathAnomaly = "true"]')
+          //         .style({
+          //           'line-color': 'IndianRed',
+          //           'width': 2
+          //         }).update();
+          //
+          //       TraceroutePath_GraphService.getGraph().style()
+          //         .selector('edge[pathAnomaly = "false"]')
+          //         .style({
+          //           'line-color': '#a8ea00',
+          //           'width': 2
+          //         }).update();
+          //
+          //
+          //       if (element.data().pathAnomaly == "true") {
+          //         //Make this Dark Red
+          //         TraceroutePath_GraphService.getGraph().style()
+          //           .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //           .style({
+          //             'line-color': 'DarkRed',
+          //             'width': 4
+          //           }).update();
+          //       }
+          //
+          //       if (element.data().pathAnomaly == "false") {
+          //         TraceroutePath_GraphService.getGraph().style()
+          //           .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+          //           .style({
+          //             'line-color': 'green',
+          //             'width': 4
+          //           }).update();
+          //       }
+          //
+          //
+          //     });
+          //   }
+          //
+          //   // Break so that we grab only the latest traceroute path
+          //   break;
+          // }
+
+        }
+
+
+        var nodeToIP_promises = [];
+        var uniqueNodes = UniqueArrayService.getUnique(nodeList);
+        for (var i = 0; i < uniqueNodes.length; i++) {
+          nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueNodes[i]));
+        }
+
+        return $q.all(nodeToIP_promises);
+
+      }).then(function (response) {
+
+        for (var i = 0; i < response.length; i++) {
+
+          var node = TraceroutePath_GraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
+          node.data({
+            label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+          });
+
+        }
+
 
         TraceroutePath_GraphService.getGraph().style()
           .selector('edge[pathAnomaly = "true"]')
@@ -936,32 +1243,29 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
             'line-color': 'IndianRed'
           }).update();
 
-
-        var layoutOptions = {
-          name: 'breadthfirst',
-          fit: true, // whether to fit the viewport to the graph
-          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-          padding: 30, // padding on fit
-          circle: false, // put depths in concentric circles if true, put depths top down if false
-          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-          roots: undefined, // the roots of the trees
-          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-          animate: false, // whether to transition the node positions
-          animationDuration: 500, // duration of animation in ms if enabled
-          animationEasing: undefined, // easing of animation if enabled
-          ready: undefined, // callback on layoutready
-          stop: undefined // callback on layoutstop
-        };
-
-        TraceroutePath_GraphService.getGraph().layout(layoutOptions);
+        // TraceroutePath_GraphService.getGraph().layout({
+        //   name: 'breadthfirst',
+        //   fit: true, // whether to fit the viewport to the graph
+        //   directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+        //   padding: 30, // padding on fit
+        //   circle: false, // put depths in concentric circles if true, put depths top down if false
+        //   spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+        //   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        //   avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+        //   roots: undefined, // the roots of the trees
+        //   maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+        //   animate: false, // whether to transition the node positions
+        //   animationDuration: 500, // duration of animation in ms if enabled
+        //   animationEasing: undefined, // easing of animation if enabled
+        //   ready: undefined, // callback on layoutready
+        //   stop: undefined // callback on layoutstop
+        // });
 
         //return if needed to path information to controller.
 
 
       }).catch(function (error) {
-        $log.debug("TracerouteController:bw_cytoscape")
+        $log.error(error)
         $log.debug("Server Response: " + error.status);
 
       });
@@ -969,328 +1273,325 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
     },
 
-    loadGraph_ErroneousTraceroutePath: function () {
-
-      $log.debug("TraceroutePath_PopulateGraphService:loadGraph_ErroneousTraceroutePath() START");
-
-      var sourceAndDestinationList;
-      var nodeList;
-
-      TraceroutePath_GraphService.getGraph().remove('node');
-      TraceroutePath_GraphService.getGraph().remove('edge');
-
-
-      TracerouteResultsService.getMainResult(
-        {
-          'format': 'json',
-          'event-type': 'packet-trace',
-          'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          'time-range': 86400
-          // 48 Hours = 172800
-          // 24 hours = 86400
-          // 7 days = 604800
-        }
-      ).then(function (response) {
-
-        sourceAndDestinationList = [];
-        nodeList = [];
-        var promises = [];
-
-        for (var i = 0; i < response.data.length; i++) {
-
-          sourceAndDestinationList.push(
-            {
-              source: response.data[i]['source'],
-              destination: response.data[i]['destination'],
-              metadataKey: response.data[i]['metadata-key']
-            }
-          );
-
-
-          //Adding main nodes into graph
-          if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
-
-            // True as this is a SOURCE node.
-            TraceroutePath_GraphService.add_node(response.data[i]['source'], true);
-            nodeList.push(response.data[i]['source']);
-
-            // Event
-            TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
-              var element = event.cyTarget;
-              // $log.debug("Clicked on Node ID: " + element.data().id)
-
-            });
-          }
-
-          for (var j = 0; j < response.data[i]['event-types'].length; j++) {
-            if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
-              promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
-                {
-                  'format': 'json',
-                  // 'limit': '2',
-                  // 'time-end': (Math.floor(Date.now() / 1000)),
-                  'time-range': 86400
-                  // 48 Hours = 172800
-                  // 24 hours = 86400
-                  // 7 days = 604800
-                }
-              ));
-
-            }
-          }
-
-
-        }
-
-        // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
-        return $q.all(promises);
-
-      }).then(function (response) {
-
-        $log.debug("loadGraph_ErroneousTraceroutePath().response.length: " + response.length);
-
-        for (var i = 0; i < response.length; i++) {
-
-          var pathAnomaly = false;
-
-          //Analyzation of Path begins:
-          if (response[i].data.length > 1) {
-
-            pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
-
-          } else {
-            // only 1 result available.
-            //This also means that traceroute path with only 1 results will never have an anomaly.
-
-          }
-
-          var startNode = sourceAndDestinationList[i].source;
-          var destinationNode = sourceAndDestinationList[i].destination;
-          var metadataKey = sourceAndDestinationList[i].metadataKey;
-          var errorInTraceroute = null;
-
-
-          // Path is reversed to get the latest Traceroute data.
-          var reversedResponse = response[i].data.reverse();
-
-
-          for (var j = 0; j < reversedResponse.length; j++) {
-            // $log.debug("reversedResponse Length: " + reversedResponse.length)
-            // $log.debug("ts : " + reversedResponse[j]['ts'])
-
-            // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
-            var tempResultList = [];
-
-            for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
-
-              if (reversedResponse[j]['val'][k]['success'] == 1) {
-                if (reversedResponse[j]['val'][k]['query'] == 1) {
-
-                  tempResultList.push({
-                    ip: reversedResponse[j]['val'][k]['ip'],
-                    rtt: reversedResponse[j]['val'][k]['rtt']
-                  });
-                }
-              } else {
-                errorInTraceroute = true;
-              }
-
-            }
-
-
-            // Adding Nodes/ CHECK FOR ERROR too.
-            for (var m = 0; m < tempResultList.length; m++) {
-
-              if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + tempResultList[m].ip + '"]').size() == 0) {
-
-                TraceroutePath_GraphService.add_node(tempResultList[m].ip, false);
-                nodeList.push(tempResultList[m].ip);
-
-                TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
-                  var element = event.cyTarget;
-
-                })
-              }
-
-            }
-
-
-            // Adding edges, highlight error in traceroute if needed
-            for (var m = 0; m < tempResultList.length; m++) {
-
-              if (m != (tempResultList.length - 1 )) {
-                // var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
-                var edgeID = Math.random();
-
-                if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-
-
-                  TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, pathAnomaly, null, startNode, destinationNode, metadataKey);
-
-                  TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                    var element = event.cyTarget;
-                    //ID: element.id()
-                    //metadataKey: element.data().metadataKey
-
-                    // search for ALL edges with same metadata, make it red, make everything else the same.
-                    TraceroutePath_GraphService.getGraph().style()
-                      .selector('edge[pathAnomaly = "true"]')
-                      .style({
-                        'line-color': 'IndianRed',
-                        'width': 2
-                      }).update();
-
-                    TraceroutePath_GraphService.getGraph().style()
-                      .selector('edge[pathAnomaly = "false"]')
-                      .style({
-                        'line-color': '#a8ea00',
-                        'width': 2
-                      }).update();
-
-
-                    if (element.data().pathAnomaly == "true") {
-                      //Make this Dark Red
-                      TraceroutePath_GraphService.getGraph().style()
-                        .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                        .style({
-                          'line-color': 'DarkRed',
-                          'width': 4
-                        }).update();
-                    }
-
-                    if (element.data().pathAnomaly == "false") {
-                      TraceroutePath_GraphService.getGraph().style()
-                        .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                        .style({
-                          'line-color': 'green',
-                          'width': 4
-                        }).update();
-                    }
-
-
-                  });
-
-                }
-              }
-            }
-
-
-            // Add Edge for main node
-            // var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
-            var edgeID = Math.random();
-
-            if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-
-              TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], pathAnomaly, null, startNode, destinationNode, metadataKey);
-
-              TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                var element = event.cyTarget;
-                $log.debug("Element METADATA: " + element.data().metadataKey)
-
-                TraceroutePath_GraphService.getGraph().style()
-                  .selector('edge[pathAnomaly = "true"]')
-                  .style({
-                    'line-color': 'IndianRed',
-                    'width': 2
-                  }).update();
-
-                TraceroutePath_GraphService.getGraph().style()
-                  .selector('edge[pathAnomaly = "false"]')
-                  .style({
-                    'line-color': '#a8ea00',
-                    'width': 2
-                  }).update();
-
-
-                if (element.data().pathAnomaly == "true") {
-                  //Make this Dark Red
-                  TraceroutePath_GraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'DarkRed',
-                      'width': 4
-                    }).update();
-                }
-
-                if (element.data().pathAnomaly == "false") {
-                  TraceroutePath_GraphService.getGraph().style()
-                    .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                    .style({
-                      'line-color': 'green',
-                      'width': 4
-                    }).update();
-                }
-
-
-              });
-            }
-
-            // Break so that we grab only the latest traceroute path
-            break;
-          }
-
-        }
-
-
-        var nodeToIP_promises = [];
-        var uniqueNodes = UniqueArrayService.getUnique(nodeList);
-        for (var i = 0; i < uniqueNodes.length; i++) {
-          nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueNodes[i]));
-        }
-
-        return $q.all(nodeToIP_promises);
-
-      }).then(function (response) {
-
-        for (var i = 0; i < response.length; i++) {
-
-          var node = TraceroutePath_GraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
-          node.data({
-            label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
-          });
-
-        }
-
-        //Style Options
-        TraceroutePath_GraphService.getGraph().style()
-          .selector('node[sourceNode = "true"]')
-          .style({
-            'background-color': 'black'
-          }).update();
-
-        var layoutOptions = {
-          name: 'breadthfirst',
-          fit: true, // whether to fit the viewport to the graph
-          directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
-          padding: 30, // padding on fit
-          circle: false, // put depths in concentric circles if true, put depths top down if false
-          spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-          boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-          avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-          roots: undefined, // the roots of the trees
-          maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
-          animate: false, // whether to transition the node positions
-          animationDuration: 500, // duration of animation in ms if enabled
-          animationEasing: undefined, // easing of animation if enabled
-          ready: undefined, // callback on layoutready
-          stop: undefined // callback on layoutstop
-        };
-
-        TraceroutePath_GraphService.getGraph().layout(layoutOptions);
-
-        //return if needed to path information to controller.
-
-
-      }).catch(function (error) {
-        $log.debug("TracerouteController:bw_cytoscape")
-        $log.debug("Server Response: " + error.status);
-
-      });
-
-
-    },
+    // loadErroneousTraceroutePath: function () {
+    //
+    //   // $log.debug("TraceroutePath_PopulateGraphService:loadGraph_ErroneousTraceroutePath() START");
+    //
+    //   var sourceAndDestinationList;
+    //   var nodeList;
+    //
+    //
+    //   TracerouteResultsService.getMainResult(
+    //     {
+    //       'format': 'json',
+    //       'event-type': 'packet-trace',
+    //       'limit': 10,
+    //       // 'time-end': (Math.floor(Date.now() / 1000)),
+    //       'time-range': 86400
+    //       // 48 Hours = 172800
+    //       // 24 hours = 86400
+    //       // 7 days = 604800
+    //     }
+    //   ).then(function (response) {
+    //
+    //     sourceAndDestinationList = [];
+    //     nodeList = [];
+    //     var promises = [];
+    //
+    //     for (var i = 0; i < response.data.length; i++) {
+    //
+    //       sourceAndDestinationList.push(
+    //         {
+    //           source: response.data[i]['source'],
+    //           destination: response.data[i]['destination'],
+    //           metadataKey: response.data[i]['metadata-key']
+    //         }
+    //       );
+    //
+    //
+    //       //Adding main nodes into graph
+    //       if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
+    //
+    //         // True as this is a SOURCE node.
+    //         TraceroutePath_GraphService.add_node(response.data[i]['source'], true);
+    //         nodeList.push(response.data[i]['source']);
+    //
+    //         // Event
+    //         TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
+    //           var element = event.cyTarget;
+    //           // $log.debug("Clicked on Node ID: " + element.data().id)
+    //
+    //         });
+    //       }
+    //
+    //       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
+    //         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
+    //
+    //           promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+    //             {
+    //               'format': 'json',
+    //               // 'limit': '2',
+    //               // 'time-end': (Math.floor(Date.now() / 1000)),
+    //               'time-range': 86400
+    //               // 48 Hours = 172800
+    //               // 24 hours = 86400
+    //               // 7 days = 604800
+    //             }
+    //           ));
+    //
+    //         }
+    //       }
+    //
+    //
+    //     }
+    //
+    //     // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
+    //     return $q.all(promises);
+    //
+    //   }).then(function (response) {
+    //
+    //     $log.debug("loadGraph_ErroneousTraceroutePath().response.length: " + response.length);
+    //
+    //     for (var i = 0; i < response.length; i++) {
+    //
+    //       var pathAnomaly = false;
+    //
+    //       //Analyzation of Path begins:
+    //       if (response[i].data.length > 1) {
+    //
+    //         pathAnomaly = AnalyzeTraceroute.analyzePath(response[i].data);
+    //
+    //       } else {
+    //         // only 1 result available.
+    //         //This also means that traceroute path with only 1 results will never have an anomaly.
+    //
+    //       }
+    //
+    //       var startNode = sourceAndDestinationList[i].source;
+    //       var destinationNode = sourceAndDestinationList[i].destination;
+    //       var metadataKey = sourceAndDestinationList[i].metadataKey;
+    //       var errorInTraceroute = null;
+    //
+    //
+    //       // Path is reversed to get the latest Traceroute data.
+    //       var reversedResponse = response[i].data.reverse();
+    //
+    //
+    //       for (var j = 0; j < reversedResponse.length; j++) {
+    //         // $log.debug("reversedResponse Length: " + reversedResponse.length)
+    //         // $log.debug("ts : " + reversedResponse[j]['ts'])
+    //
+    //         // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
+    //         var tempResultList = [];
+    //
+    //         for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+    //
+    //           if (reversedResponse[j]['val'][k]['success'] == 1) {
+    //             if (reversedResponse[j]['val'][k]['query'] == 1) {
+    //
+    //               tempResultList.push({
+    //                 ip: reversedResponse[j]['val'][k]['ip'],
+    //                 rtt: reversedResponse[j]['val'][k]['rtt']
+    //               });
+    //             }
+    //           } else {
+    //             errorInTraceroute = true;
+    //           }
+    //
+    //         }
+    //
+    //
+    //         // Adding Nodes/ CHECK FOR ERROR too.
+    //         for (var m = 0; m < tempResultList.length; m++) {
+    //
+    //           if (TraceroutePath_GraphService.getGraph().elements('node[id = "' + tempResultList[m].ip + '"]').size() == 0) {
+    //
+    //             TraceroutePath_GraphService.add_node(tempResultList[m].ip, false);
+    //             nodeList.push(tempResultList[m].ip);
+    //
+    //             TraceroutePath_GraphService.getGraph().on('tap', 'node[id = "' + tempResultList[m].ip + '"]', function (event) {
+    //               var element = event.cyTarget;
+    //
+    //             })
+    //           }
+    //
+    //         }
+    //
+    //
+    //         // Adding edges, highlight error in traceroute if needed
+    //         for (var m = 0; m < tempResultList.length; m++) {
+    //
+    //           if (m != (tempResultList.length - 1 )) {
+    //             // var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
+    //             var edgeID = Math.random();
+    //
+    //             if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+    //
+    //
+    //               TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, pathAnomaly, null, startNode, destinationNode, metadataKey);
+    //
+    //               TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+    //                 var element = event.cyTarget;
+    //                 //ID: element.id()
+    //                 //metadataKey: element.data().metadataKey
+    //
+    //                 // search for ALL edges with same metadata, make it red, make everything else the same.
+    //                 TraceroutePath_GraphService.getGraph().style()
+    //                   .selector('edge[pathAnomaly = "true"]')
+    //                   .style({
+    //                     'line-color': 'IndianRed',
+    //                     'width': 2
+    //                   }).update();
+    //
+    //                 TraceroutePath_GraphService.getGraph().style()
+    //                   .selector('edge[pathAnomaly = "false"]')
+    //                   .style({
+    //                     'line-color': '#a8ea00',
+    //                     'width': 2
+    //                   }).update();
+    //
+    //
+    //                 if (element.data().pathAnomaly == "true") {
+    //                   //Make this Dark Red
+    //                   TraceroutePath_GraphService.getGraph().style()
+    //                     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+    //                     .style({
+    //                       'line-color': 'DarkRed',
+    //                       'width': 4
+    //                     }).update();
+    //                 }
+    //
+    //                 if (element.data().pathAnomaly == "false") {
+    //                   TraceroutePath_GraphService.getGraph().style()
+    //                     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+    //                     .style({
+    //                       'line-color': 'green',
+    //                       'width': 4
+    //                     }).update();
+    //                 }
+    //
+    //
+    //               });
+    //
+    //             }
+    //           }
+    //         }
+    //
+    //
+    //         // Add Edge for main node
+    //         // var edgeID = startNode + "to" + reversedResponse[j]['val'][0]['ip'];
+    //         var edgeID = Math.random();
+    //
+    //         if (TraceroutePath_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
+    //
+    //           TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], pathAnomaly, null, startNode, destinationNode, metadataKey);
+    //
+    //           TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+    //             var element = event.cyTarget;
+    //             $log.debug("Element METADATA: " + element.data().metadataKey)
+    //
+    //             TraceroutePath_GraphService.getGraph().style()
+    //               .selector('edge[pathAnomaly = "true"]')
+    //               .style({
+    //                 'line-color': 'IndianRed',
+    //                 'width': 2
+    //               }).update();
+    //
+    //             TraceroutePath_GraphService.getGraph().style()
+    //               .selector('edge[pathAnomaly = "false"]')
+    //               .style({
+    //                 'line-color': '#a8ea00',
+    //                 'width': 2
+    //               }).update();
+    //
+    //
+    //             if (element.data().pathAnomaly == "true") {
+    //               //Make this Dark Red
+    //               TraceroutePath_GraphService.getGraph().style()
+    //                 .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+    //                 .style({
+    //                   'line-color': 'DarkRed',
+    //                   'width': 4
+    //                 }).update();
+    //             }
+    //
+    //             if (element.data().pathAnomaly == "false") {
+    //               TraceroutePath_GraphService.getGraph().style()
+    //                 .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+    //                 .style({
+    //                   'line-color': 'green',
+    //                   'width': 4
+    //                 }).update();
+    //             }
+    //
+    //
+    //           });
+    //         }
+    //
+    //         // Break so that we grab only the latest traceroute path
+    //         break;
+    //       }
+    //
+    //     }
+    //
+    //
+    //     var nodeToIP_promises = [];
+    //     var uniqueNodes = UniqueArrayService.getUnique(nodeList);
+    //     for (var i = 0; i < uniqueNodes.length; i++) {
+    //       nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueNodes[i]));
+    //     }
+    //
+    //     return $q.all(nodeToIP_promises);
+    //
+    //   }).then(function (response) {
+    //
+    //     for (var i = 0; i < response.length; i++) {
+    //
+    //       var node = TraceroutePath_GraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
+    //       node.data({
+    //         label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
+    //       });
+    //
+    //     }
+    //
+    //     //Style Options
+    //     TraceroutePath_GraphService.getGraph().style()
+    //       .selector('node[sourceNode = "true"]')
+    //       .style({
+    //         'background-color': 'black'
+    //       }).update();
+    //
+    //     var layoutOptions = {
+    //       name: 'breadthfirst',
+    //       fit: true, // whether to fit the viewport to the graph
+    //       directed: false, // whether the tree is directed downwards (or edges can point in any direction if false)
+    //       padding: 30, // padding on fit
+    //       circle: false, // put depths in concentric circles if true, put depths top down if false
+    //       spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
+    //       boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    //       avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+    //       roots: undefined, // the roots of the trees
+    //       maximalAdjustments: 0, // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+    //       animate: false, // whether to transition the node positions
+    //       animationDuration: 500, // duration of animation in ms if enabled
+    //       animationEasing: undefined, // easing of animation if enabled
+    //       ready: undefined, // callback on layoutready
+    //       stop: undefined // callback on layoutstop
+    //     };
+    //
+    //     TraceroutePath_GraphService.getGraph().layout(layoutOptions);
+    //
+    //     //return if needed to path information to controller.
+    //
+    //
+    //   }).catch(function (error) {
+    //     $log.debug("TracerouteController:bw_cytoscape")
+    //     $log.debug("Server Response: " + error.status);
+    //
+    //   });
+    //
+    //
+    // },
 
     loadGraph_NonErroneousTraceroutePath: function () {
 

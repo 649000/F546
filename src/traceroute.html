@@ -460,8 +460,6 @@
               <small></small>
             </h5>
 
-
-
             <span class="list-group-item">
               <i class="fa fa-asterisk fa-fw"></i> No. of Nodes
               <span class="badge">{{noOfNodes}}</span>
@@ -499,10 +497,15 @@
               <i class="fa fa-flag-o fa-fw"></i>
                Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
             </span>
-                     <span class="list-group-item">
+
+               <span class="list-group-item">
               <i class="fa fa-clock-o fa-fw"></i>
               Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
             </span>
+                           <a ng-href="#{{selectedPath.metadata}}" class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Error Status:<div class="pull-right">{{selectedPath.errorStatus}} </div>
+            </a>
 
           </div>
           <!-- /.list-group -->
@@ -591,27 +594,6 @@
             <!-- /.panel-body -->
           </div>
 
-           //Add Line Chart Here
-          {{}}
-
-          <canvas id="line" class="chart chart-line" chart-data="lineChartDataList[0].rtt"
-                  chart-labels="lineChartDataList[0].ip" chart-series="lineChartDataList[0].ts"
-                  chart-dataset-override="datasetOverride" chart-click="onClick">
-          </canvas>
-
-          <div ng-if="individualPath_PastResults!==undefined" class="text-center">
-    <ul uib-pagination boundary-links="true" items-per-page="1" total-items="individualPath_PastResults.length"
-        ng-model="individualPastResultscurrentPage"
-        class="pagination-sm"
-        ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"
-        previous-text="&lsaquo;"
-        next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">
-
-    </ul>
-       <p>{{individualPath_time}}
-        {{individualPath_date}}
-       </p>
-      </div>
 
         </div>
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Traceroute Visualization</title>
+  <title>Traceroute Path Visualization</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <!--<script-->
@@ -381,7 +381,7 @@
     <div class="col-lg-9">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Path Overview
+          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Path Visualisation
           <div class="pull-right">
             Text here if needed
           </div>
@@ -411,10 +411,16 @@
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-
+            <div class="form-group input-group">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch" ng-keypress="mainGraph_searchNodeKeypress($event,nodeSearch)">
+            <span class="input-group-btn">
+            <button class="btn btn-default" type="button"
+                    ng-click="mainGraph_searchNodeClick(nodeSearch);"><i
+              class="fa fa-search"></i></button>
+            </span>
+            </div>
           <div class="list-group">
             <h5>Graph Layout
-              <small>Sub-heading</small>
             </h5>
             <a href="#" class="list-group-item"
                ng-click="mainGraph_layoutdisplayConcentric();">
@@ -445,19 +451,35 @@
 
           </div>
 
+                    <div class="list-group">
+            <h5>Traceroute Information
+              <small></small>
+            </h5>
+
+            <span class="list-group-item">
+              <i class="fa fa-asterisk fa-fw"></i> No. of Nodes
+              <span class="badge">{{noOfNodes}}</span>
+            </span>
+
+                  <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
+              <span class="badge ">TO DO</span>
+            </span>
+
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
+                        <div class="pull-right">
+                  <span class="badge">{{noOfAnomalies}}</span>
+                </div>
+            </span>
+
+          </div>
+
           <div class="list-group">
             <h5>Graph Nodes
               <small>Sub-heading</small>
             </h5>
 
-            <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
-            <span class="input-group-btn">
-            <button class="btn btn-default" type="button"
-                    ng-click="mainGraph_searchNode(nodeSearch);"><i
-              class="fa fa-search"></i></button>
-            </span>
-            </div>
+
 
             //Tentative
              <div class="form-group input-group">

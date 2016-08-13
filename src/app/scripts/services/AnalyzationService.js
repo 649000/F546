@@ -286,7 +286,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // Take last X days result, find unique paths, compare it.
       // FIXME:What if the existing path also has an error?
 
-      $log.debug("AnalyzeTraceroute:analyzePath() START");
+      // $log.debug("AnalyzeTraceroute:analyzePath() START");
 
 
       var anomaliesExist = false;
