@@ -176,7 +176,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       var nodeAndRttList_RawData = [];
 
 
-
       for (var k = 0; k < individual_traceroute_results.length; k++) {
 
         var ts = individual_traceroute_results[k]['ts'];
@@ -228,7 +227,7 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
         var rrtStatus = false;
 
 
-        if (rrtResult >= (rttMean+rttStdDev) || rrtResult <= (rttMean-rttStdDev)) {
+        if (rrtResult >= (rttMean + rttStdDev) || rrtResult <= (rttMean - rttStdDev)) {
           rrtStatus = true;
         }
 
@@ -326,21 +325,33 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       //pastPath[0] -> Latest traceroute path to compare with.
 
       //TODO: GET UNIQUE TRACEROUTE FROM ALL RESULTS.
-      var indexOfError = 0;
 
-      //Checking if the latest path, index 0 exist in anything.
-      for (var i = 1; i < traceroutePaths.length; i++) {
+      var indexesOfError = [];
+      var uniquePaths = [];
 
+      for (var i = 0; i < traceroutePaths.length; i++) {
         // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
 
-        if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
-          pathExist = true;
-        } else {
-          pathExist==false
-          anomaliesExist = true;
-          indexOfError=i
-          break;
+        for (var j = 0; j < uniquePaths.length; j++) {
+          if (JSON.stringify(uniquePaths[j]) !== JSON.stringify(traceroutePaths[i])) {
+            uniquePaths.push(JSON.stringify(traceroutePaths[i]));
+            indexesOfError.push(i);
+          }
         }
+
+        if (uniquePaths.length == 0) {
+          uniquePaths.push(JSON.stringify(traceroutePaths[i]))
+        }
+
+
+        // if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
+        //   pathExist = true;
+        // } else {
+        //   pathExist == false
+        //   anomaliesExist = true;
+        //   indexOfError = i
+        //   break;
+        // }
 
       }
 
@@ -367,16 +378,20 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // }
 
 
-
-
-       // $log.debug("analyzePath() Return Msg: " + pathExist);
+      // $log.debug("analyzePath() Return Msg: " + pathExist);
 
       // return pathExist;
 
-      if(anomaliesExist==true){
-        return [anomaliesExist,indexOfError];
-      }else{
-        return [anomaliesExist,null]
+      // if (anomaliesExist == true) {
+      //   return [anomaliesExist, indexOfError];
+      // } else {
+      //   return [anomaliesExist, null]
+      // }
+      if (uniquePaths.length == 1) {
+        //NO Anomalies as only one path was found.
+        return [false, null];
+      }else {
+        return [true, indexesOfError]
       }
 
     }
