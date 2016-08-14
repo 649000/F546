@@ -10,12 +10,78 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', function ($http, $q, $log, HostService, UnixTimeConverterService) {
+analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'Webworker', function ($http, $q, $log, HostService, UnixTimeConverterService, Webworker) {
 
   $log.debug("AnalyzationServices:AnalyzeTraceroute");
 
   var host = HostService.getHost();
   var sourceAndDestinationList;
+
+  // function uniquePathWebWorker(uniquePaths, trToCompare) {
+  //   // returns true if additional paths found/
+  //   // False if no additional path.
+  //
+  //   var toReturn = false;
+  //   for (var j = 0; j < uniquePaths.length; j++) {
+  //
+  //     if ((uniquePaths[j]) !== (trToCompare).toString()) {
+  //       toReturn = true;
+  //       break;
+  //     }
+  //
+  //   }
+  //
+  //   return toReturn;
+  // }
+
+  function uniquePathWebWorker(traceroutePaths) {
+    console.log("WEB WORKER STARTS");
+    var indexesOfError = [];
+    var uniquePaths = [];
+
+    for (var i = 0; i < traceroutePaths.length; i++) {
+
+
+
+      if (uniquePaths.length == 0) {
+        // uniquePaths.push(JSON.stringify(traceroutePaths[i]));
+
+        uniquePaths.push(traceroutePaths[i]);
+      }
+
+      if (uniquePaths.length > 0) {
+        for (var j = 0; j < uniquePaths.length; j++) {
+
+
+          for (var k = 0; k < uniquePaths[j].length; k++) {
+
+            if(uniquePaths[j][k]!=traceroutePaths[i][k]){
+              uniquePaths.push(traceroutePaths[i]);
+              indexesOfError.push(i);
+            }
+
+          }
+
+          // var trString = JSON.stringify(traceroutePaths[i]);
+          // if (uniquePaths !== trString) {
+          //   uniquePaths.push(trString);
+          //   indexesOfError.push(i);
+          // }
+
+
+        }
+
+      }
+
+
+
+
+    }
+
+    return[uniquePaths,indexesOfError];
+  }
+
+  var myWorker = Webworker.create(uniquePathWebWorker);
 
   return {
 
@@ -145,28 +211,6 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     },
 
-    //
-    // getRtt: function () {
-    //
-    //   $log.debug("AnalyzationServices:AnalyzeTraceroute:getRtt()");
-    //   var host = HostService.getHost();
-    //
-    //   return $http({
-    //     method: 'GET',
-    //     url: host,
-    //     params: {
-    //       'format': 'json',
-    //       'event-type': 'packet-trace'
-    //       // 'limit': 10,
-    //       // 'time-end': (Math.floor(Date.now() / 1000)),
-    //       // 'time-range': timeRange
-    //     },
-    //     cache: true
-    //   })
-    //
-    //
-    // },
-
     analyzeRtt: function (individual_traceroute_results) {
       // Takes an array of individual traceroute results, and process it.
       // $log.debug("AnalyzeTraceroute:analyzeRtt() START");
@@ -257,28 +301,9 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
     },
 
-    // getPath: function (traceroute_metadata) {
-    //   var host = HostService.getHost();
-    //
-    //   // This returns ALL apths of the time range for that traceroute metadata
-    //   // JavaScript Promise
-    //   return $http({
-    //     method: 'GET',
-    //     url: host + traceroute_metadata + "/packet-trace/base",
-    //     params: {
-    //       'format': 'json',
-    //       'event-type': 'packet-trace',
-    //       // 'limit': 10,
-    //       // 'time-end': (Math.floor(Date.now() / 1000)),
-    //       'time-range': 604800
-    //       // 24 hours = 86400
-    //       // 7 days = 604800
-    //     },
-    //     cache: true
-    //   })
-    // },
-
     analyzePath: function (individual_traceroute_results) {
+
+      //TODO: Due to the sheer amount of data, double for loops increases the processing time exponentially.
 
       // Takes an array of individual traceroute results, and process it.
       // Array newest to oldest.
@@ -324,40 +349,76 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // $log.debug("traceroutePath.length: "+ traceroutePaths.length);
       //pastPath[0] -> Latest traceroute path to compare with.
 
-      //TODO: GET UNIQUE TRACEROUTE FROM ALL RESULTS.
+      // myWorker.run(traceroutePaths).then(function (result) {
+      //
+      //   console.log("RETURNED UNIQUE PATH LENGTH: " + result[0].length);
+      //   console.log("RETURNED INDEX LENGTH: " + result[1].length);
+      // });
 
-      var indexesOfError = [];
+      var indexesOfError = [0];
       var uniquePaths = [];
+      //
+      // for (var i = 0; i < traceroutePaths.length; i++) {
+      //   // console.log("FIRST: "+traceroutePaths[i]);
+      //
+      //
+      //   if (uniquePaths.length == 0) {
+      //     // uniquePaths.push(JSON.stringify(traceroutePaths[i]));
+      //     console.log("Initial Results Added");
+      //     uniquePaths.push(traceroutePaths[i]);
+      //   } else if (uniquePaths.length > 0) {
+      //     for (var j = 0; j < uniquePaths.length; j++) {
+      //
+      //       console.log("Unique:"+uniquePaths[j]);
+      //       console.log("!nique:"+traceroutePaths[i]);
+      //       for (var k = 0; k < uniquePaths[j].length; k++) {
+      //
+      //         if(uniquePaths[j][k]!=traceroutePaths[i][k]){
+      //           console.log("Unique Results Added");
+      //           uniquePaths.push(traceroutePaths[i]);
+      //           indexesOfError.push(i);
+      //           break;
+      //         }
+      //
+      //       }
+      //
+      //       // var trString = JSON.stringify(traceroutePaths[i]);
+      //       // if (uniquePaths !== trString) {
+      //       //   uniquePaths.push(trString);
+      //       //   indexesOfError.push(i);
+      //       // }
+      //
+      //
+      //     }
+      //   }
+      //
+      //
+      //
+      //
+      // }
 
-      for (var i = 0; i < traceroutePaths.length; i++) {
-        // $log.debug(JSON.stringify(traceroutePaths[0]) + "< Comparing >" + JSON.stringify(traceroutePaths[i]));
+      //FIXME: Still requires fixing as subsequent traceroute inside index are still in it.
+      //Temporary fixed done.
+      firstTRResultString = JSON.stringify(traceroutePaths[0]);
 
-        for (var j = 0; j < uniquePaths.length; j++) {
-          if (JSON.stringify(uniquePaths[j]) !== JSON.stringify(traceroutePaths[i])) {
-            uniquePaths.push(JSON.stringify(traceroutePaths[i]));
-            indexesOfError.push(i);
+      for (var i = 1; i < traceroutePaths.length; i++) {
+
+        observedTR = JSON.stringify(traceroutePaths[i]);
+        if (firstTRResultString!== observedTR) {
+          anomaliesExist =true;
+          indexesOfError.push(i);
+
+          if(JSON.stringify(traceroutePaths[indexesOfError[indexesOfError.length-2]]) ===observedTR){
+            indexesOfError.pop();
           }
+
+
+          // break;
         }
-
-        if (uniquePaths.length == 0) {
-          uniquePaths.push(JSON.stringify(traceroutePaths[i]))
-        }
-
-
-        // if (JSON.stringify(traceroutePaths[0]) === JSON.stringify(traceroutePaths[i])) {
-        //   pathExist = true;
-        // } else {
-        //   pathExist == false
-        //   anomaliesExist = true;
-        //   indexOfError = i
-        //   break;
-        // }
 
       }
 
-      // if(pathExist==false){
-      //   anomaliesExist = true;
-      // }
+
 
 
       //FIXME: For Demonstration purposes, the above is commented out, and the below is added in.
@@ -387,13 +448,18 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
       // } else {
       //   return [anomaliesExist, null]
       // }
-      if (uniquePaths.length == 1) {
-        //NO Anomalies as only one path was found.
-        return [false, null];
-      }else {
-        return [true, indexesOfError]
-      }
 
+      // console.log("Unique Paths: " + uniquePaths.length);
+
+      // if (uniquePaths.length == 1) {
+      //   //NO Anomalies as only one path was found.
+      //   return [false, null];
+      // } else if (uniquePaths.length > 1) {
+      //   return [true, indexesOfError]
+      // }
+      // return [false, null]
+
+      return [anomaliesExist,indexesOfError]
     }
   };
 

@@ -1075,6 +1075,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
   $scope.loadHistorialTraceroutePath = function (metadataKey) {
 
+
     IndividualTraceroutePath_PopulateGraphService.getHistorialPath().then(function (response) {
 
       IndividualTraceroutePath_GraphService.getGraph().remove('node');
@@ -1126,7 +1127,6 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
           var date = UnixTimeConverterService.getDate(response[i].result[0].ts);
           $scope.individualPath_time = time[0] + ":" + time[1] + ":" + time[2] + " " + time[3]
           $scope.individualPath_date = date[0] + " " + date[1] + " " + date[2]
-
           $scope.anomalyIndex = response[i].anomalyIndex;
 
 
@@ -1169,28 +1169,66 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
           }
 
 
+          // for (var l = 0; l < response[i].anomalyIndex.length; l++) {
+          //
+          //   var newNodeList = [];
+          //
+          //   newNodeList.push({
+          //     ip: response[response[i].anomalyIndex[l]].source.ip,
+          //     city: response[response[i].anomalyIndex[l]].source.city,
+          //     country: response[response[i].anomalyIndex[l]].source.country
+          //   })
+          //
+          //
+          //   pastResultsList.push({
+          //
+          //     time: UnixTimeConverterService.getTime(response[response[i].anomalyIndex[l]].result[k].ts),
+          //     date: UnixTimeConverterService.getDate(response[response[i].anomalyIndex[l]].result[k].ts),
+          //     nodes: newNodeList.concat(response[i].result[response[i].anomalyIndex[l]].nodes)
+          //   });
+          //
+          // }
+
+
           for (var k = 0; k < response[i].result.length; k++) {
-            //Adding SOURCE IP into a singular ARRAY to be pushed for visualisation, for simplification purposes.
-            var newNodeList = [];
+            for (var l = 0; l < response[i].anomalyIndex.length; l++) {
 
-            newNodeList.push({
-              ip: response[i].source.ip,
-              city: response[i].source.city,
-              country: response[i].source.country
-            })
+              if (k == response[i].anomalyIndex[l]) {
+
+                //Adding SOURCE IP into a singular ARRAY to be pushed for visualisation, for simplification purposes.
+                var newNodeList = [];
+
+                newNodeList.push({
+                  ip: response[i].source.ip,
+                  city: response[i].source.city,
+                  country: response[i].source.country
+                })
 
 
-            pastResultsList.push({
+                pastResultsList.push({
 
-              time: UnixTimeConverterService.getTime(response[i].result[k].ts),
-              date: UnixTimeConverterService.getDate(response[i].result[k].ts),
-              nodes: newNodeList.concat(response[i].result[k].nodes)
-            });
+                  time: UnixTimeConverterService.getTime(response[i].result[k].ts),
+                  date: UnixTimeConverterService.getDate(response[i].result[k].ts),
+                  nodes: newNodeList.concat(response[i].result[k].nodes)
+                });
+
+              }
+
+            }
+
 
           }
 
           // This scope is used to populate the Individual Path Graph Panel.
           $scope.individualPath_PastResults = pastResultsList;
+          // alert($scope.individualPastResultscurrentPage)
+
+          // $scope.individualPastResultscurrentPage = 1;
+
+          // $scope.$apply(function (response) {
+          //   $scope.individualPastResultscurrentPage = 1;
+          // })
+
           // $scope.individualPath_PastResultsCount = pastResultsList.length;
 
 
@@ -1625,6 +1663,8 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
   $scope.individualGraph_loadNextTraceroutePath = function (index, resultsArray) {
 
 
+
+
     $scope.individualPath_time = resultsArray[index].time[0] + ":" + resultsArray[index].time[1] + ":" + resultsArray[index].time[2] + " " + resultsArray[index].time[3]
     $scope.individualPath_date = resultsArray[index].date[0] + " " + resultsArray[index].date[1] + " " + resultsArray[index].date[2]
 
@@ -1735,8 +1775,6 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
       }
 
     }
-
-
 
 
     IndividualTraceroutePath_GraphService.getGraph().layout({
