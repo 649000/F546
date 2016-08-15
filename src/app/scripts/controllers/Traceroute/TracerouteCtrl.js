@@ -326,7 +326,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 }]);
 
 
-angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, UniqueArrayService, TracerouteResultsService) {
+angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTracerouteRtt', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTracerouteRtt, UniqueArrayService, TracerouteResultsService) {
 
 //FIXME: On mouse over, or wait for about 10 seconds and then do it.
   // Other possible options: layoutstart, layoutready, layoutstop, ready
@@ -334,7 +334,8 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
     var sourceAndDestinationList;
     var nodeList;
     var tracerouteResults = [];
-    var lineChartDataList = [];
+    var minDate = 0;
+    var maxDate = 0;
 
     TracerouteResultsService.getMainResult(
       {
@@ -393,6 +394,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
     }).then(function (response) {
 
+      var minMaxDateTime = [];
 
       for (var i = 0; i < response.length; i++) {
 
@@ -403,6 +405,7 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         var destinationNode = sourceAndDestinationList[i].destination;
         var metadataKey = sourceAndDestinationList[i].metadataKey;
         var aggregatedResults;
+
         var errorInTraceroute = null;
         var chartData;
         // SOURCE
@@ -410,7 +413,12 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
         // Checking for 'active' servers
 
         if (reversedResponse.length > 1) {
-          aggregatedResults = AnalyzeTraceroute.analyzeRtt(reversedResponse);
+          var tempResults = AnalyzeTracerouteRtt.getAnalysis(reversedResponse);
+          aggregatedResults = tempResults[0];
+          minDate = tempResults[1];
+          maxDate = tempResults[2];
+
+
           // AnalyzeTraceroute.analyzeRtt();
 
           tracerouteResults.push({
@@ -427,46 +435,46 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
           //Populate for Line Chart
 
-          var tsList = []
-          var ipList = [];
-          var rttList = [];
-
-          chartData = {
-            metadata: 1,
-            data: [
-
-              {
-                ts: 1,
-                ip: [1],
-                rtt: [1]
-              }
-            ]
-          }
-
-          for (var j = 0; j < reversedResponse.length; j++) {
-
-            for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
-
-
-            }
-
-
-          }
-
-
-          var lineChartData = {
-            ts: 1,
-            labels: ["January", "February", "March", "April", "May", "June", "July"],
-            data: [65, 59, 80, 81, 56, 55, 40]
-          }
-
-          $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-          $scope.data = [
-            [65, 59, 80, 81, 56, 55, 40],
-            [28, 48, 40, 19, 86, 27, 90]
+          // var tsList = []
+          // var ipList = [];
+          // var rttList = [];
+          //
+          // chartData = {
+          //   metadata: 1,
+          //   data: [
+          //
+          //     {
+          //       ts: 1,
+          //       ip: [1],
+          //       rtt: [1]
+          //     }
+          //   ]
+          // }
+          //
+          // for (var j = 0; j < reversedResponse.length; j++) {
+          //
+          //   for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
+          //
+          //
+          //   }
+          //
+          //
+          // }
 
 
-          ];
+          // var lineChartData = {
+          //   ts: 1,
+          //   labels: ["January", "February", "March", "April", "May", "June", "July"],
+          //   data: [65, 59, 80, 81, 56, 55, 40]
+          // }
+          //
+          // $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
+          // $scope.data = [
+          //   [65, 59, 80, 81, 56, 55, 40],
+          //   [28, 48, 40, 19, 86, 27, 90]
+          //
+          //
+          // ];
 
 
         } else {
@@ -476,7 +484,11 @@ angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http
 
       }
 
-      $scope.lineChartDataList = lineChartDataList;
+      var minDateToDisplay = UnixTimeConverterService.getDate(minDate)
+      var maxDateToDisplay = UnixTimeConverterService.getDate(maxDate)
+
+      $scope.minDate = minDateToDisplay[1] + " " + minDateToDisplay[0] + " " + minDateToDisplay[2];
+      $scope.maxDate = maxDateToDisplay[1] + " " + maxDateToDisplay[0] + " " + maxDateToDisplay[2];
 
       var uniqueIP = UniqueArrayService.getUnique(nodeList);
       var nodeToIP_promises = [];
@@ -796,7 +808,13 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
 
     //This service gets result, conduct analysis and update the graph.
     TraceroutePath_PopulateGraphService.loadErroneousTraceroutePath().then(function (response) {
-      $scope.noOfAnomalies = response;
+
+      $scope.noOfAnomalies = response[0];
+      var minDate = UnixTimeConverterService.getDate(response[1])
+      var maxDate = UnixTimeConverterService.getDate(response[2])
+      $scope.minDate = minDate[1] + " " + minDate[0] + " " + minDate[2];
+      $scope.maxDate = maxDate[1] + " " + maxDate[0] + " " + maxDate[2];
+
     })
 
     //Event
@@ -820,6 +838,8 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
           errorStatus: element.data().pathAnomaly,
           time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[1] + " " + date[0] + " " + date[2]
         }
+
+        $scope.$broadcast('LoadIndividualTraceroute', element.data().metadataKey);
 
       });
 
@@ -1232,6 +1252,10 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
           // $scope.individualPath_PastResultsCount = pastResultsList.length;
 
 
+        } else {
+
+          //TODO
+          // NO Errorneous path found.
         }
       }
 
@@ -1258,6 +1282,11 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
 
   }
+
+  $scope.$on('LoadIndividualTraceroute', function (event, metadata) {
+
+    $scope.loadHistorialTraceroutePath(metadata);
+  })
 
 }]);
 
@@ -1661,8 +1690,6 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 
 
   $scope.individualGraph_loadNextTraceroutePath = function (index, resultsArray) {
-
-
 
 
     $scope.individualPath_time = resultsArray[index].time[0] + ":" + resultsArray[index].time[1] + ":" + resultsArray[index].time[2] + " " + resultsArray[index].time[3]

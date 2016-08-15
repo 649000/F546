@@ -655,7 +655,7 @@ tracerouteServices.factory('TraceroutePath_GraphService', ['$log', function ($lo
  on traceroute_path.html
  Date: August 6th 2016
  */
-tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'TraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, TraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroute, UniqueArrayService) {
+tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'TraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroutePath', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, TraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroutePath, UniqueArrayService) {
 
   // $log.debug("TraceroutePath_PopulateGraphService: START");
 
@@ -1021,6 +1021,8 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
       }).then(function (response) {
 
         var noOfAnomalies = 0;
+        var minDate = 0;
+        var maxDate = 0
 
         for (var i = 0; i < response.length; i++) {
 
@@ -1031,7 +1033,12 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
           //Analyzation of Path begins:
           if (response[i].data.length > 1) {
 
-            pathAnomaly = AnalyzeTraceroute.analyzePath(reversedResponse)[0];
+            var tempResults = AnalyzeTraceroutePath.getAnalysis(reversedResponse)
+            pathAnomaly = tempResults[0];
+            minDate = tempResults[2]
+            maxDate = tempResults[3]
+
+            // minMaxDateTime = AnalyzeTraceroute.getMinMaxDate(reversedResponse);
 
           } else {
             // only 1 result available.
@@ -1040,8 +1047,9 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
           }
 
-          var startNode = sourceAndDestinationList[i].source;
-          var destinationNode = sourceAndDestinationList[i].destination;
+
+          // var startNode = sourceAndDestinationList[i].source;
+          // var destinationNode = sourceAndDestinationList[i].destination;
           var metadataKey = sourceAndDestinationList[i].metadataKey;
           var errorInTraceroute = null;
 
@@ -1070,7 +1078,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
           }).update();
 
 
-        return noOfAnomalies;
+        return [noOfAnomalies, minDate, maxDate];
 
 
       }).catch(function (error) {
@@ -1245,7 +1253,7 @@ tracerouteServices.factory('IndividualTraceroutePath_GraphService', ['$http', '$
 
 }]);
 
-tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroute', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, IndividualTraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroute, UniqueArrayService) {
+tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', 'AnalyzeTraceroutePath', 'UniqueArrayService', function ($http, $q, $cacheFactory, $log, HostService, IndividualTraceroutePath_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService, AnalyzeTraceroutePath, UniqueArrayService) {
 
   // $log.debug("IndividualTraceroutePath_PopulateGraphService: START");
 
@@ -1599,22 +1607,22 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
           var reversedResponse = response[i].data.reverse();
 
           //TODO: THIS IS A KNOWN BUG WHERE THE RESULTS ARE NOT THE LATEST.
-          for (var x = 0; x < reversedResponse.length; x++) {
-            if ("bce34b84177d42e09b213dd0faf06b94" == sourceAndDestinationList[i].metadataKey) {
-              console.log(" ORIGINAL TIME OF RESULTS: " + reversedResponse[x]['ts'])
-              console.log("TIME FORMATTED: " + UnixTimeConverterService.getTime(reversedResponse[x]['ts']))
-              console.log("DATE FORMATTED: " + UnixTimeConverterService.getDate(reversedResponse[x]['ts']))
-            }
-
-          }
+          // for (var x = 0; x < reversedResponse.length; x++) {
+          //   if ("bce34b84177d42e09b213dd0faf06b94" == sourceAndDestinationList[i].metadataKey) {
+          //     console.log(" ORIGINAL TIME OF RESULTS: " + reversedResponse[x]['ts'])
+          //     console.log("TIME FORMATTED: " + UnixTimeConverterService.getTime(reversedResponse[x]['ts']))
+          //     console.log("DATE FORMATTED: " + UnixTimeConverterService.getDate(reversedResponse[x]['ts']))
+          //   }
+          //
+          // }
 
           var pathAnomaly = false;
           var anomalyIndex = null;
 
           //Analyzation of Path begins:
           if (response[i].data.length > 1) {
-            pathAnomaly = AnalyzeTraceroute.analyzePath(reversedResponse)[0];
-            anomalyIndex = AnalyzeTraceroute.analyzePath(reversedResponse)[1]
+            pathAnomaly = AnalyzeTraceroutePath.getAnalysis(reversedResponse)[0];
+            anomalyIndex = AnalyzeTraceroutePath.getAnalysis(reversedResponse)[1]
             //  console.log("MORE THAN 1 RESULTS")
 
           } else {
