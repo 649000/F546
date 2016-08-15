@@ -342,9 +342,13 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
           }
 
         }
-        traceroutePaths.push(singleExistingPath);
+
+        // traceroutePaths.push(singleExistingPath);
+        traceroutePaths.push(JSON.stringify(singleExistingPath));
+
       }
 
+      console.log("Stringify done");
 
       // $log.debug("traceroutePath.length: "+ traceroutePaths.length);
       //pastPath[0] -> Latest traceroute path to compare with.
@@ -399,16 +403,24 @@ analyzationService.factory('AnalyzeTraceroute', ['$http', '$q', '$log', 'HostSer
 
       //FIXME: Still requires fixing as subsequent traceroute inside index are still in it.
       //Temporary fixed done.
-      firstTRResultString = JSON.stringify(traceroutePaths[0]);
+
+      // firstTRResultString = JSON.stringify(traceroutePaths[0]);
+      firstTRResultString = traceroutePaths[0];
 
       for (var i = 1; i < traceroutePaths.length; i++) {
 
-        observedTR = JSON.stringify(traceroutePaths[i]);
+        // observedTR = JSON.stringify(traceroutePaths[i]);
+        observedTR = (traceroutePaths[i]);
+
         if (firstTRResultString!== observedTR) {
           anomaliesExist =true;
           indexesOfError.push(i);
 
-          if(JSON.stringify(traceroutePaths[indexesOfError[indexesOfError.length-2]]) ===observedTR){
+          // if(JSON.stringify(traceroutePaths[indexesOfError[indexesOfError.length-2]]) ===observedTR){
+          //   indexesOfError.pop();
+          // }
+
+          if((traceroutePaths[indexesOfError[indexesOfError.length-2]]) ===observedTR){
             indexesOfError.pop();
           }
 
