@@ -502,17 +502,24 @@
 
                <span class="list-group-item">
               <i class="fa fa-clock-o fa-fw"></i>
-              Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
+              Date:<div class="pull-right">{{selectedPath.time}} </div>
             </span>
-                           <a ng-href="" class="list-group-item"
+            <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Time:<div class="pull-right">{{selectedPath.date}} </div>
+            </span>
+
+
+            <a ng-href="" class="list-group-item"
                               ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">
               <i class="fa fa-clock-o fa-fw"></i>
               Error Status:<div class="pull-right">{{selectedPath.errorStatus}} </div>
             </a>
-                                       <a ng-href="" class="list-group-item">
-              <i class="fa fa-clock-o fa-fw"></i>
-              <div class="pull-right">{{selectedPath.metadata}} </div>
-            </a>
+
+            <!--<a ng-href="" class="list-group-item">-->
+              <!--<i class="fa fa-clock-o fa-fw"></i>-->
+              <!--<div class="pull-right">{{selectedPath.metadata}} </div>-->
+            <!--</a>-->
 
           </div>
 
@@ -660,14 +667,15 @@ TODO: Load Latest and Anomaly
             </h5>
 
             <!--<a href="" class="list-group-item" ng-repeat="(key, val) in errorTracerouteResults | orderBy: 'sourceIP'"-->
-               <!--ng-click="individualGraph_loadTraceroutePath(val.metadata);">-->
+            <!--ng-click="individualGraph_loadTraceroutePath(val.metadata);">-->
 
-              <!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
-              <!--S: {{val.source.ip}}-->
-              <!--D: {{val.destination.ip}}-->
+            <!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
+            <!--S: {{val.source.ip}}-->
+            <!--D: {{val.destination.ip}}-->
             <!--</a>            -->
 
-            <a href="" class="list-group-item" ng-repeat="(key, val) in individualPath_PastResults | orderBy: 'sourceIP'"
+            <a href="" class="list-group-item"
+               ng-repeat="(key, val) in individualPath_PastResults | orderBy: 'sourceIP'"
                ng-click="individualGraph_loadNextTraceroutePath(key,individualPath_PastResults);">
 
               <i class="fa fa-bar-chart-o fa-fw"></i>
