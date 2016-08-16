@@ -857,9 +857,10 @@ analyzationService.factory('Analyze_Bandwidth', [function () {
 
 }]);
 
-analyzationService.factory('Analyze_Latency', [function () {
-  //Conditions of an anomaly
-  // 1. Values are different in a certain threshold.
+analyzationService.factory('AnalyzeLatency', ['$log', 'UnixTimeConverterService', function ($log, UnixTimeConverterService) {
+
+  var maxDate = Number.MIN_VALUE;
+  var minDate = Number.MAX_VALUE;
 
 
   var comparison = [];
@@ -883,8 +884,14 @@ analyzationService.factory('Analyze_Latency', [function () {
 
       // Do something
     },
+
     add: {
       //Do Something
+    },
+
+    getAnalysis: function (){
+
+      return true;
     }
   }
 

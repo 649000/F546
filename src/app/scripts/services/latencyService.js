@@ -4,10 +4,45 @@
 
 var latencyServices = angular.module('LatencyServices', ['ngResource', 'GeneralServices']);
 
+latencyServices.factory('LatencyResultsService', ['$http', '$log', 'HostService', function ($http, $log, HostService) {
+
+
+  return {
+
+    getMainResult: function (params) {
+      return $http({
+        method: 'GET',
+        url: HostService.getHost(),
+        params: params,
+        cache: true
+      })
+
+    },
+
+    //TODO: To update.
+    getIndividualResult: function (url, params) {
+      //URL is the response[i]['url'] taken from the getMainResult();
+
+      return $http({
+        method: 'GET',
+        url: url + "packet-trace/base",
+        params: params,
+        cache: true
+      });
+
+
+    }
+
+  }
+
+
+}]);
+
+
 // This service draws the main Latency graph
 latencyServices.factory('LatencyGraphService', [function () {
 
-// cache http://stackoverflow.com/questions/21660647/angular-js-http-cache-time
+
 
   var cy = cytoscape({
     container: document.getElementById('latency_graph_cytoscape'),
@@ -18,7 +53,7 @@ latencyServices.factory('LatencyGraphService', [function () {
         style: {
           'height': 20,
           'width': 20,
-          'background-color': 'LightSeaGreen',
+          'background-color': '#30c9bc',
           'label': 'data(label)'
         }
       },
@@ -27,12 +62,15 @@ latencyServices.factory('LatencyGraphService', [function () {
         selector: 'edge',
         style: {
           'width': 2,
-          'opacity': 0.8,
-          'label': 'data(latency)',
+          'opacity': 1,
+          'label': 'data(bandwidth)',
           'line-color': 'GreenYellow',
           'target-arrow-color': 'black',
+          //Note that this is expensive to load.
+          'curve-style': 'bezier',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
-          'target-arrow-shape': 'triangle'
+          'target-arrow-shape': 'triangle',
+          'min-zoomed-font-size': 50
         }
       },
       {
@@ -40,8 +78,27 @@ latencyServices.factory('LatencyGraphService', [function () {
         style: {
           'text-wrap': 'wrap'
         }
+      },
+      {
+        selector: 'node[sourceNode = "true"]',
+        style: {
+          'height': 30,
+          'width': 30,
+          'background-color': 'DimGray'
+        }
+      },
+      {
+        // selector: 'edge[tracerouteError = "true"]',
+        // style: {
+        //   'line-color': 'IndianRed'
+        // }
       }
     ],
+    pixelRatio: 1,
+    //Might want to consider to true if graph is taking a long time to load.
+    textureOnViewport: false,
+    hideEdgesOnViewport: false,
+
     ready: function () {
       // window.cy = this;
 
@@ -53,6 +110,7 @@ latencyServices.factory('LatencyGraphService', [function () {
 
 
   return {
+
     add_node: function (ID, main) {
       var mainNode;
 
@@ -70,7 +128,7 @@ latencyServices.factory('LatencyGraphService', [function () {
           // element data (put dev data here)
           // mandatory for each element, assigned automatically on undefined
           id: ID,
-          mainNode: mainNode,
+          sourceNode: mainNode,
           // startNode: 0,
           // endNode: 0,
           country: null,
@@ -157,7 +215,7 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
         style: {
           'height': 20,
           'width': 20,
-          'background-color': 'LightSeaGreen',
+          'background-color': '#30c9bc',
           'label': 'data(label)'
         }
       },
@@ -166,12 +224,15 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
         selector: 'edge',
         style: {
           'width': 2,
-          'opacity': 0.8,
-          'label': 'data(latency)',
+          'opacity': 1,
+          'label': 'data(bandwidth)',
           'line-color': 'GreenYellow',
           'target-arrow-color': 'black',
+          //Note that this is expensive to load.
+          'curve-style': 'bezier',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
-          'target-arrow-shape': 'triangle'
+          'target-arrow-shape': 'triangle',
+          'min-zoomed-font-size': 50
         }
       },
       {
@@ -179,8 +240,26 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
         style: {
           'text-wrap': 'wrap'
         }
+      },
+      {
+        selector: 'node[sourceNode = "true"]',
+        style: {
+          'height': 30,
+          'width': 30,
+          'background-color': 'DimGray'
+        }
+      },
+      {
+        // selector: 'edge[tracerouteError = "true"]',
+        // style: {
+        //   'line-color': 'IndianRed'
+        // }
       }
     ],
+    pixelRatio: 1,
+    //Might want to consider to true if graph is taking a long time to load.
+    textureOnViewport: false,
+    hideEdgesOnViewport: false,
     ready: function () {
 
       // window.cy = this;
@@ -212,7 +291,7 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
         // NB: id fields must be strings or numbers
         data: {
           id: ID,
-          mainNode: mainNode,
+          sourceNode: mainNode,
           // startNode: startNode,
           // endNode: endNode,
           country: null,
@@ -287,7 +366,7 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
 }]);
 
 //This services pulls information to draw Traceroute and uses Latency_To_Traceroute_GraphService to draw it.
-latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'Latency_To_Traceroute_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', function ($http, $q, $cacheFactory, $log, HostService, Latency_To_Traceroute_GraphService, GeoIPNekudoService, UnixTimeConverterService) {
+latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'Latency_To_Traceroute_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService','TracerouteResultsService', function ($http, $q, $cacheFactory, $log, HostService, Latency_To_Traceroute_GraphService, GeoIPNekudoService, UnixTimeConverterService,TracerouteResultsService) {
 
   $log.debug("Latency_To_Traceroute_InfoService:START");
 
@@ -297,7 +376,10 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
 
   return {
+
     //Clear traceroute path and calls info to populate
+
+
     setTracerouteGraph: function (source, destination) {
       var host = HostService.getHost();
       var sourceAndDestinationList = [];
@@ -308,22 +390,14 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
       Latency_To_Traceroute_GraphService.getGraph().remove('node');
       Latency_To_Traceroute_GraphService.getGraph().remove('edge');
 
-
-      return $http({
-        method: 'GET',
-        url: host,
-        params: {
-          'format': 'json',
-          'event-type': 'packet-trace',
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          'time-range': 604800,
-
-          'source': source,
-          'destination': destination
-        },
-        cache: true
-
+      return TracerouteResultsService.getMainResult({
+        'format': 'json',
+        'event-type': 'packet-trace',
+        // 'limit': 10,
+        // 'time-end': (Math.floor(Date.now() / 1000)),
+        'time-range': 86400,
+        'source': source,
+        'destination': destination
       }).then(function (response) {
 
         var promises = [];
@@ -331,7 +405,6 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
         for (var i = 0; i < response.data.length; i++) {
           //Taking only the latest path
           var reversedResponse = response.data.reverse();
-
           sourceAndDestinationList.push(
             {
               source: reversedResponse[i]['source'],
@@ -347,10 +420,10 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
             nodeList.push(reversedResponse[i]['source']);
 
             // Event
-            Latency_To_Traceroute_GraphService.getGraph().on('tap', 'node[id = "' + reversedResponse[i]['source'] + '"]', function (event) {
-              var element = event.cyTarget;
-
-            });
+            // Latency_To_Traceroute_GraphService.getGraph().on('tap', 'node[id = "' + reversedResponse[i]['source'] + '"]', function (event) {
+            //   var element = event.cyTarget;
+            //
+            // });
           }
 
 
@@ -358,18 +431,14 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
             if (reversedResponse[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-              var promise = $http({
-                method: 'GET',
-                url: reversedResponse[i]['url'] + "packet-trace/base",
-                params: {
-                  'format': 'json',
-                  // 'limit': '2',
-                  // 'time-end': (Math.floor(Date.now() / 1000)),
-                  'time-range': 86400
-                  //48 Hours = 172800
-                  // 24 hours = 86400
-                },
-                cache: true
+              var promise = TracerouteResultsService.getIndividualResult(reversedResponse[i]['url'],{
+                'format': 'json',
+                // 'limit': '2',
+                // 'time-end': (Math.floor(Date.now() / 1000)),
+                // 'time-range': 86400
+                //48 Hours = 172800
+                // 24 hours = 86400
+                'time-start': reversedResponse[i]['event-types'][j]['time-updated'] - 900
               });
 
               promises.push(promise);
@@ -383,10 +452,6 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
         return $q.all(promises);
 
       }).then(function (response) {
-
-        // $log.debug("$q response length: " + response.length);
-        // $log.debug("sourceAndDestinationList length: " + response.length);
-
 
         for (var i = 0; i < response.length; i++) {
 
@@ -408,13 +473,13 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
           var reversedResponse = response[i].data.reverse();
 
           for (var j = 0; j < reversedResponse.length; j++) {
-            // $log.debug("reversedResponse Length: " + reversedResponse.length)
-            // $log.debug("ts : " + reversedResponse[j]['ts'])
+
             ts = reversedResponse[j]['ts'];
 
             // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
             var temp_ip = [];
             var temp_rtt = [];
+            var tempResultList = [];
 
             for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
 
@@ -424,6 +489,11 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
                 if (reversedResponse[j]['val'][k]['query'] == 1) {
                   temp_ip.push(reversedResponse[j]['val'][k]['ip']);
                   temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
+
+                  tempResultList.push({
+                    ip: reversedResponse[j]['val'][k]['ip'],
+                    rtt: reversedResponse[j]['val'][k]['rtt']
+                  })
                 }
               }
               if (reversedResponse[j]['val'][k]['success'] == 0) {

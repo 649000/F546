@@ -453,7 +453,7 @@
             </a>
 
             <a href="" class="list-group-item" ng-click="mainGraph_graphCentred();">
-              <i class="fa fa-wrench fa-fw"></i> Back to Centre
+              <i class="fa fa-crosshairs fa-fw"></i> Back to Centre
             </a>
 
           </div>
@@ -502,18 +502,27 @@
 
                <span class="list-group-item">
               <i class="fa fa-clock-o fa-fw"></i>
-              Date:<div class="pull-right">{{selectedPath.time}} </div>
+              Time:<div class="pull-right">{{selectedPath.time}} </div>
             </span>
             <span class="list-group-item">
-              <i class="fa fa-clock-o fa-fw"></i>
-              Time:<div class="pull-right">{{selectedPath.date}} </div>
+              <i class="fa fa-calendar fa-fw"></i>
+              Date::<div class="pull-right">{{selectedPath.date}} </div>
             </span>
 
 
-            <a ng-href="" class="list-group-item"
+
+
+            <a ng-href="" class="list-group-item" ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"
                               ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">
-              <i class="fa fa-clock-o fa-fw"></i>
-              Error Status:<div class="pull-right">{{selectedPath.errorStatus}} </div>
+              <!--<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>-->
+              <i class="fa fa-info fa-fw"></i>
+              <!--<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>-->
+
+              Error Status:
+
+              <div ng-if="selectedPath.errorStatus" class="pull-right"><span class="pull-right glyphicon glyphicon-remove"></span></div>
+              <div ng-if="!selectedPath.errorStatus"class="pull-right"><span class="pull-right glyphicon glyphicon-ok"></span></div>
+
             </a>
 
             <!--<a ng-href="" class="list-group-item">-->

@@ -269,6 +269,15 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         var time = UnixTimeConverterService.getTime(element.data().time);
         var date = UnixTimeConverterService.getDate(element.data().time);
+        //
+        // var errorStatus = null;
+        //
+        // if(element.data().tracerouteError=="true"){
+        //   errorStatus=true;
+        // } else if(element.data().tracerouteError =="false"){
+        //   errorStatus=false;
+        // }
+
         $scope.selectedPath = {
           metadata: element.data().metadataKey,
           source: element.data().startNode,
@@ -831,11 +840,20 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
         var time = UnixTimeConverterService.getTime(element.data().time);
         var date = UnixTimeConverterService.getDate(element.data().time);
 
+        var errorStatus = null;
+
+        if(element.data().pathAnomaly=="true"){
+          errorStatus=true;
+        } else if(element.data().pathAnomaly =="false"){
+          errorStatus=false;
+        }
+
+        errorStatus
         $scope.selectedPath = {
           metadata: element.data().metadataKey,
           source: element.data().startNode,
           destination: element.data().endNode,
-          errorStatus: element.data().pathAnomaly,
+          errorStatus: errorStatus,
           time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
           date:date[1] + " " + date[0] + " " + date[2]
         }

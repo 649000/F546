@@ -1,20 +1,18 @@
-angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'Latency_To_Traceroute_InfoService', function ($scope, $http, $q, $log, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, Latency_To_Traceroute_InfoService) {
+angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'Latency_To_Traceroute_InfoService', 'LatencyResultsService', function ($scope, $http, $q, $log, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, Latency_To_Traceroute_InfoService, LatencyResultsService) {
 
   var host = HostService.getHost();
   var sourceAndDestinationList;
   var nodeToIPList;
 
-  $http({
-    method: 'GET',
-    url: host,
-    params: {
-      'format': 'json',
-      'event-type': 'histogram-rtt',
-      // 'limit': 10,
-      // 'time-end': (Math.floor(Date.now() / 1000)),
-      // 'time-range': 86400
-    },
-    cache: true
+  LatencyResultsService.getMainResult({
+    'format': 'json',
+    'event-type': 'histogram-rtt',
+    // 'limit': 10,
+    // 'time-end': (Math.floor(Date.now() / 1000)),
+    // 'time-range': 604800
+    //48 Hours = 172800
+    // 24 hours = 86400
+    // 7 days = 604800
   }).then(function (response) {
 
     sourceAndDestinationList = [];
@@ -37,10 +35,10 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
         LatencyGraphService.add_node(response.data[i]['destination'], false, null, null);
         nodeToIPList.push(response.data[i]['destination']);
 
-        // Event
-        LatencyGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['destination'] + '"]', function (event) {
-
-        });
+        // // Event
+        // LatencyGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['destination'] + '"]', function (event) {
+        //
+        // });
       }
 
       //Adding SOURCE nodes into visualisation
@@ -50,14 +48,14 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
         nodeToIPList.push(response.data[i]['source']);
 
         // Event
-        LatencyGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
-
-        });
+        // LatencyGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
+        //
+        // });
 
       } else {
         //update it to be source node as well.
         LatencyGraphService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').data({
-          mainNode: "true"
+          sourceNode: "true"
         });
       }
 
@@ -65,59 +63,6 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
       if (LatencyGraphService.getGraph().elements('edge[id = "' + response.data[i]['metadata-key'] + '"]').size() == 0) {
 
         LatencyGraphService.add_edge(response.data[i]['metadata-key'], response.data[i]['source'], response.data[i]['destination'], null, null, null, response.data[i]['source'], response.data[i]['destination'], response.data[i]['metadata-key']);
-
-        // Event
-        LatencyGraphService.getGraph().getElementById(response.data[i]['metadata-key']).on('tap', function (event) {
-          var element = event.cyTarget;
-
-          // window.dispatchEvent(new Event('resize'));
-
-          Latency_To_Traceroute_InfoService.setMetadata(element.data().metadataKey)
-          Latency_To_Traceroute_InfoService.setTracerouteGraph(element.data().startNode, element.data().endNode).then(function (response) {
-
-            $scope.tracerouteTime = response[0][0] + ":" + response[0][1] + ":" + response[0][2] + " " + response[0][3];
-            $scope.tracerouteDate = response[1][0] + " " + response[1][1] + " " + response[1][2];
-
-
-          });
-
-          $scope.$apply(function (response) {
-
-
-            $scope.latencyMetadata = element.data().metadataKey;
-
-            $scope.$broadcast('LatencyMetadata', element.data().metadataKey);
-            // $scope.showLatencyInfo = true;
-            // $scope.latencyDate = UnixTimeConverterService.getDate(element.data().latencyTime);
-            // $scope.latencyTime = UnixTimeConverterService.getTime(element.data().latencyTime);
-
-
-          });
-
-
-          // Style Options
-          Latency_To_Traceroute_InfoService.getGraph().style()
-            .selector('node[mainNode = "true"]')
-            .style({
-              'background-color': 'DimGray'
-            }).update();
-
-
-          // search for ALL edges with same metadata, make it GreenYellow, make everything else the same.
-          LatencyGraphService.getGraph().style().selector("edge").style({
-            'line-color': 'GreenYellow',
-            'width': 2
-          }).update();
-
-          LatencyGraphService.getGraph().style()
-            .selector('edge[id = "' + element.data().metadataKey + '"]')
-            .style({
-              'line-color': 'SteelBlue',
-              'width': 4.5
-            }).update();
-
-
-        })
 
       }
 
@@ -129,14 +74,12 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
           for (var k = 0; k < response.data[i]['event-types'][j]['summaries'].length; k++) {
 
             //Choose Aggregation or Statistics.
-
             if (response.data[i]['event-types'][j]['summaries'][k]['summary-type'] == "statistics" && response.data[i]['event-types'][j]['summaries'][k]['summary-window'] == 0) {
 
 
               var latencyURL = response.data[i]['url'] + "histogram-rtt/" + response.data[i]['event-types'][j]['summaries'][k]['summary-type'] + "/" + response.data[i]['event-types'][j]['summaries'][k]['summary-window']
 
               // $log.debug("LATENCY URL: "+ latencyURL)
-
               var promise = $http({
                 method: 'GET',
                 url: latencyURL,
@@ -144,9 +87,10 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
                   'format': 'json',
                   // 'limit': '2',
                   // 'time-end': (Math.floor(Date.now() / 1000)),
-                  'time-range': 86400
+                  'time-range': 604800
                   //48 Hours = 172800
                   // 24 hours = 86400
+                  // 7 days = 604800
                 },
                 cache: true
               });
@@ -162,7 +106,7 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
     }
 
-    // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length);
+
     return $q.all(promises);
 
   }).then(function (response) {
@@ -209,7 +153,6 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
     for (var i = 0; i < response.length; i++) {
 
-      // ('[id = "203.30.39.127"]')
       var node = LatencyGraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
       node.data({
         label: response[i].ip + "\n" + response[i].city + ", " + response[i].countrycode
@@ -217,17 +160,9 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
     }
 
-    //Style Options
-    LatencyGraphService.getGraph().style()
-      .selector('node[mainNode = "true"]')
-      .style({
-        'background-color': 'DimGray'
-      }).update();
 
-
-    var layoutOptions = {
+    LatencyGraphService.getGraph().layout({
       name: 'concentric',
-
       fit: true, // whether to fit the viewport to the graph
       padding: 30, // the padding on fit
       startAngle: 3 / 2 * Math.PI, // where nodes start in radians
@@ -250,17 +185,72 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
       animationEasing: undefined, // easing of animation if enabled
       ready: undefined, // callback on layoutready
       stop: undefined // callback on layoutstop
-    };
+    });
 
-    LatencyGraphService.getGraph().layout(layoutOptions);
+    LatencyGraphService.getGraph().on('tap', 'edge,:selected', function (event) {
+      var element = event.cyTarget;
+
+      // window.dispatchEvent(new Event('resize'));
+      Latency_To_Traceroute_InfoService.setMetadata(element.data().metadataKey)
+
+      Latency_To_Traceroute_InfoService.setTracerouteGraph(element.data().startNode, element.data().endNode).then(function (response) {
+
+        $scope.tracerouteTime = response[0][0] + ":" + response[0][1] + ":" + response[0][2] + " " + response[0][3];
+        $scope.tracerouteDate = response[1][0] + " " + response[1][1] + " " + response[1][2];
+      });
+
+      $scope.$apply(function (response) {
+
+        $scope.latencyMetadata = element.data().metadataKey;
+        $scope.$broadcast('LatencyMetadata', element.data().metadataKey);
+
+      });
+
+      LatencyGraphService.getGraph().style()
+        .selector('edge')
+        .style({
+          'line-color': '#a8ea00',
+          'width': 2
+        }).update();
+
+      LatencyGraphService.getGraph().style()
+        .selector('edge[id = "' + element.data().metadataKey + '"]')
+        .style({
+          'line-color': 'green',
+          'width': 4
+        }).update();
+
+      //
+      //
+      // if (element.data().tracerouteError == "true") {
+      //   //Make this Dark Red
+      //   TracerouteGraphService.getGraph().style()
+      //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+      //     .style({
+      //       'line-color': 'DarkRed',
+      //       'width': 4
+      //     }).update();
+      // } else if (element.data().tracerouteError == "false") {
+      //   TracerouteGraphService.getGraph().style()
+      //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+      //     .style({
+      //       'line-color': 'green',
+      //       'width': 4
+      //     }).update();
+      // }
+
+    });
 
 
   }).catch(function (error) {
     $log.debug("LatencyGraphCtrl ERROR:")
-    $log.debug(error);
+    $log.error(error);
     $log.debug("Server Response: " + error.status);
 
   });
+
+
+  //Add onlayoutstop here if needed.
 
 
 }]);
@@ -488,12 +478,14 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
   }
 
 
+
+
 }]);
 
 
 angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', 'LatencyGraphService', 'Latency_To_Traceroute_GraphService', function ($scope, $log, $cacheFactory, LatencyGraphService, Latency_To_Traceroute_GraphService) {
 
-  $scope.layoutBreathFirst = function () {
+  $scope.mainGraph_layoutBreathFirst = function () {
 
     var options = {
       name: 'breadthfirst',
@@ -517,7 +509,7 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
     LatencyGraphService.getGraph().layout(options);
   }
 
-  $scope.layoutdisplayConcentric = function () {
+  $scope.mainGraph_layoutdisplayConcentric = function () {
 
     var options = {
       name: 'concentric',
@@ -550,7 +542,7 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
   }
 
-  $scope.layoutGrid = function () {
+  $scope.mainGraph_layoutGrid = function () {
     var options = {
       name: 'grid',
 
@@ -576,7 +568,7 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
   }
 
-  $scope.layoutCose = function () {
+  $scope.mainGraph_layoutCose = function () {
 
     var options = {
       name: 'cose',
@@ -656,7 +648,7 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
   }
 
-  $scope.layoutCircle = function () {
+  $scope.mainGraph_layoutCircle = function () {
 
     var options = {
       name: 'circle',
@@ -681,10 +673,25 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
 
   }
 
-  $scope.graphCentred = function () {
+  $scope.mainGraph_Centred = function () {
     LatencyGraphService.getGraph().centre();
     LatencyGraphService.getGraph().fit();
     // LatencyGraphService.getGraph().zoomingEnabled(true);
+  }
+
+  $scope.mainGraphSearchNode = function (IPAddr) {
+
+    // $log.debug("Node Search: " + IPAddr);
+
+    LatencyGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+
+  }
+
+  $scope.mainGraphSearchNodeKeypress = function () {
+    if (keyEvent.which === 13) {
+      // $log.debug("Node Search: " + IPAddr);
+      LatencyGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
+    }
   }
 
   $scope.tracerouteGraphCentred = function () {
@@ -692,40 +699,6 @@ angular.module('traceroute').controller('LatencyGraphPanelCtrl', ['$scope', '$lo
     Latency_To_Traceroute_GraphService.getGraph().centre();
     Latency_To_Traceroute_GraphService.getGraph().fit();
 
-  }
-
-  // $scope.graphCentred_traceroute = function () {
-  //   //FIXME: Insert the
-  //   LatencyGraphService.getGraph().centre();
-  //   LatencyGraphService.getGraph().fit();
-  // }
-
-  $scope.graphLoadAllResults = function () {
-
-    LatencyGraphService.getGraph().remove('node');
-    LatencyGraphService.getGraph().remove('edge');
-    //Calls a function to pull and load everything.
-
-
-  }
-
-  $scope.searchNode = function (IPAddr) {
-
-
-    $log.debug("Node Search: " + IPAddr);
-
-    // elements('node[id = "' + response.data[i]['source'] + '"]')
-
-    // LatencyGraphService.getGraph().center('node[id = "' + IPAddr.trim() + '"]');
-    LatencyGraphService.getGraph().fit('node[id = "' + IPAddr.trim() + '"]');
-
-
-  }
-
-  $scope.clearCache = function () {
-    $cacheFactory.get('$http').removeAll();
-
-    //FIXME: Perhaps do a restart as well.
   }
 
 

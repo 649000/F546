@@ -387,13 +387,8 @@
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-
-
           <div>
-
             <div id="latency_graph_cytoscape"></div>
-
-
           </div>
 
         </div>
@@ -404,103 +399,55 @@
     <!-- /.col-lg-8 -->
 
     <div class="col-lg-3">
+
       <div class="panel panel-default">
         <div class="panel-heading">
           <i class="fa fa-gear fa-fw"></i> Graph Panel
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-
+                  <div class="form-group input-group"  ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
+              <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"
+                                                        ng-click="mainGraphSearchNode(nodeSearch);"><i
+                                                  class="fa fa-search"></i></button>
+                                            </span>
+            </div>
           <div class="list-group">
             <h5>Graph Layout
-              <small>Sub-heading</small>
+              <small></small>
             </h5>
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl"
-               ng-click="layoutdisplayConcentric();">
+
+
+            <a href="" class="list-group-item"
+               ng-click="mainGraph_layoutdisplayConcentric();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl"
-               ng-click="layoutBreathFirst();">
+            <a href="" class="list-group-item"               ng-click="mainGraph_layoutBreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
 
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl" ng-click="layoutGrid();">
+            <a href="" class="list-group-item" ng-click="mainGraph_layoutGrid();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Grid
             </a>
 
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl" ng-click="layoutCose();">
+            <a href="" class="list-group-item" ng-click="mainGraph_layoutCose();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Cose
             </a>
 
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl" ng-click="layoutCircle();">
+            <a href="" class="list-group-item" ng-click="mainGraph_layoutCircle();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Circle
             </a>
 
-            <a href="" class="list-group-item" ng-controller="LatencyGraphPanelCtrl" ng-click="graphCentred();">
-              <i class="fa fa-wrench fa-fw"></i> Centred
+            <a href="" class="list-group-item" ng-click="mainGraph_Centred();">
+              <i class="fa fa-crosshairs fa-fw"></i> Back to Centre
             </a>
 
           </div>
 
-          <div class="list-group">
-            <h5>Graph Nodes
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <a href="#" class="list-group-item" ng-controller="LatencyGraphPanelCtrl"
-               ng-click="graphLoadAllResults();" data-toggle="tooltip" data-placement="left"
-               data-original-title="Resets graph to show traceroute path from ALL results.">
-              <i class="fa fa-bar-chart-o fa-fw"></i> Overview of Traceroute Path
-            </a>
-
-          </div>
-
-          <div class="list-group">
-            <h5>Latency Information
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <div class="form-group input-group" ng-controller="LatencyGraphPanelCtrl">
-              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
-              <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button"
-                                                        ng-click="searchNode(nodeSearch);"><i
-                                                  class="fa fa-search"></i></button>
-                                            </span>
-            </div>
-
-
-            <a href="#" class="list-group-item disabled">
-              <i class="fa fa-asterisk fa-fw"></i>
-              <span class="badge" ng-controller="LatencyInformation">{{noOfSourceNodes}}</span> No. of Source Nodes:
-              {{noOfSourceNodes}}
-            </a>
-
-          </div>
-
-
-          <div class="list-group">
-            <h5>// To Be Separated
-              <small>Sub-heading</small>
-            </h5>
-
-
-            <a href="#" class="list-group-item" ng-controller="LatencyGraphPanelCtrl" ng-click="clearCache();">
-              <i class="fa fa-refresh fa-fw"></i> Clear Cache
-            </a>
-
-
-            <a href="#" class="list-group-item">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>
-              <span class="badge ">abc</span> Example:
-            </a>
-
-          </div>
-          <!-- /.list-group -->
 
         </div>
         <!-- /.panel-body -->
@@ -512,7 +459,7 @@
 
 
 
-
+<!--TR and random stats-->
   <div class="panel panel-default">
 
 
@@ -617,6 +564,22 @@
 
     </div>
     <!-- /.panel-body -->
+  </div>
+
+
+    <div class="panel panel-default">
+
+
+        <div class="panel-heading">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Latency History {{tracerouteTime}} {{tracerouteDate}} Metadata: {{latencyMetadata}}
+HEADER
+    </div>
+      <!-- /.panel-heading -->
+    <div class="panel-body">
+
+
+    </div>
+      <!-- /.panel-body -->
   </div>
 
 
