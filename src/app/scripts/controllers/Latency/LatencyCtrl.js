@@ -453,64 +453,138 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
         //   }
         // };
 
-
-
         for (var i = 0; i < reversedResponse.length; i++) {
+          var labelsWithFloat = {};
           var labels = [];
           var values = [];
+          var keys = Object.keys(reversedResponse[i]['val']),len = keys.length;
+          var keysFloat=[];
 
-          // reversedResponse[i]['val'].s
+          for (var k = 0; k < len; k++) {
+            // keysFloat.push(parseFloat(keys[k]));
 
-          angular.forEach(reversedResponse[i]['val'], function (value, key) {
+            // labelsWithFloat[keys[k]] = parseFloat(keys[k]);
+            labelsWithFloat[parseFloat(keys[k])] = keys[k];
 
-            labels.push(key);
-            values.push(value);
+            // labelsWithFloat.push({
+            //   float:keys[k],
+            //   string:parseFloat(keys[k])
+            // });
+          }
 
-          });
 
-          $log.debug(labels);
-          $log.debug(values);
+          var floatKeys = Object.keys(labelsWithFloat),len2 = floatKeys.length;
+          floatKeys.sort(function(a,b) { return a - b;});
+
+          for (var k = 0; k < len2; k++) {
+
+            var objKey = floatKeys[k];
+            console.log("OBJKEY:" + objKey + "TYPE: "+ typeof(objKey))
+            console.log(reversedResponse[i]['val'][labelsWithFloat[objKey]])
+
+
+            // var objKeyStr = keys[k];
+            labels.push(objKey);
+            values.push(reversedResponse[i]['val'][labelsWithFloat[objKey]]);
+
+          }
+
+
+
+
+
+          // labelsWithFloat.float.sort(function(a,b) { return a - b;});
+          // keys.sort();
+          //
+          // for (var k = 0; k < len; k++) {
+          //   var objKey = keysFloat[k];
+          //   console.log(objKey)
+          //   // var objKeyStr = keys[k];
+          //   labels.push(objKey);
+          //   values.push(reversedResponse[i]['val'][objKey.toString()]);
+          // }
+
+
+          // angular.forEach(reversedResponse[i]['val'], function (value, key) {
+          //
+          //   labels.push(key);
+          //   values.push(value);
+          //
+          //
+          // });
+
 
           var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
           var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
 
-          $scope.options = {
-            title: {
-              display: true,
-              text: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[0] + " " + date[1] + " " + date[2]
-            },
-            scales: {
-              yAxes: [
-                {
-                  display: true,
-                  position: 'left',
-                  scaleLabel:{
-                    labelString: "Number of Packets",
-                    display: true
-                  }
-                }
-              ],
-              xAxes: [
-                {
-                  display: true,
-                  position: 'bottom',
-                  scaleLabel:{
-                    labelString: "Time in milliseconds",
-                    display: true
-                  }
-                }
-              ]
-            }
-          };
 
+
+          // $scope.options = {
+          //   title: {
+          //     display: true,
+          //     // text: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[0] + " " + date[1] + " " + date[2]
+          //   },
+          //   scales: {
+          //     yAxes: [
+          //       {
+          //         display: true,
+          //         position: 'left',
+          //         scaleLabel:{
+          //           labelString: "Number of Packets",
+          //           display: true
+          //         }
+          //       }
+          //     ],
+          //     xAxes: [
+          //       {
+          //         display: true,
+          //         position: 'bottom',
+          //         scaleLabel:{
+          //           labelString: "Time in milliseconds",
+          //           display: true
+          //         }
+          //       }
+          //     ]
+          //   }
+          // };
+          //
 
 
 
           $scope.individualLatencyResults.push({
+            ts:reversedResponse[i]['ts'],
             time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
             date: date[0] + " " + date[1] + " " + date[2],
             label: labels,
-            data: values
+            data: values,
+            options:{
+              title: {
+                display: true,
+                text: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[0] + " " + date[1] + " " + date[2]
+              },
+              scales: {
+                yAxes: [
+                  {
+                    display: true,
+                    position: 'left',
+                    scaleLabel:{
+                      labelString: "Number of Packets",
+                      display: true
+                    }
+                  }
+                ],
+                xAxes: [
+                  {
+                    display: true,
+                    position: 'bottom',
+                    scaleLabel:{
+                      labelString: "Time in milliseconds",
+                      display: true
+                    }
+                  }
+                ]
+              }
+            }
 
             // type: response.data['event-types'][j]['summaries'][k]['summary-type'],
             // uri: response.data['event-types'][j]['summaries'][k]['uri'],

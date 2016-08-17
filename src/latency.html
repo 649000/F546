@@ -548,11 +548,11 @@
 
             <div ng-repeat="(key, val) in individualLatencyResults" class="text-center" ng-if="resultTypeAggregation">
 
-              <p>Date: {{val.date}}</p>
-              <p>Time: {{val.time}}</p>
 
 
-              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label" chart-options="options">
+
+
+              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label" chart-options="val.options">
               </canvas>
 
             </div>
