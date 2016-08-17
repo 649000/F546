@@ -406,7 +406,7 @@
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
-                  <div class="form-group input-group"  ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
+                  <div class="form-group input-group" ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
               <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch">
               <span class="input-group-btn">
                                                 <button class="btn btn-default" type="button"
@@ -425,7 +425,7 @@
               <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
             </a>
 
-            <a href="" class="list-group-item"               ng-click="mainGraph_layoutBreathFirst();">
+            <a href="" class="list-group-item" ng-click="mainGraph_layoutBreathFirst();">
               <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
             </a>
 
@@ -448,18 +448,67 @@
 
           </div>
 
+ <div class="list-group" ng-if="selectedPath">
+            <h5>
+             Selected Latency Information
+            </h5>
 
+            <span class="list-group-item">
+              <i class="fa fa-flag-checkered fa-fw"></i>
+              Source:
+
+                        <div class="pull-right">
+            {{selectedPath.source}}
+          </div>
+            </span>
+                     <span class="list-group-item">
+              <i class="fa fa-flag-o fa-fw"></i>
+               Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
+            </span>
+
+               <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Time:<div class="pull-right">{{selectedPath.time}} </div>
+            </span>
+            <span class="list-group-item">
+              <i class="fa fa-calendar fa-fw"></i>
+              Date:<div class="pull-right">{{selectedPath.date}} </div>
+            </span>
+
+
+
+
+            <a ng-href="" class="list-group-item"
+               ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"
+               ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">
+              <!--<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>-->
+              <i class="fa fa-info fa-fw"></i>
+              <!--<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>-->
+
+              Error Status:
+
+              <div ng-if="selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-remove"></span></div>
+              <div ng-if="!selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-ok"></span></div>
+
+            </a>
+
+          </div>
         </div>
         <!-- /.panel-body -->
       </div>
       <!-- /.panel -->
+
+
+
+
     </div>
     <!-- /.col-lg-4 -->
   </div>
 
 
-
-<!--TR and random stats-->
+  <!--TR and random stats-->
   <div class="panel panel-default">
 
 
@@ -483,7 +532,7 @@
 
 
 
-    <uib-tab index="0" ng-click="showTracerouteFunction()">
+    <uib-tab index="0" ng-click="showTracerouteFunction()" ng-if="showTraceroute">
             <uib-tab-heading>
     Traceroute Visualisation
       </uib-tab-heading>
@@ -492,16 +541,18 @@
     </uib-tab>
 
     <uib-tab index="key+1" ng-repeat="(key, val) in latencySummaryData"
-             ng-click="loadLatencySummaryChart(val.url, val.event_type, val.type, val.window, val.uri);">
+             ng-click="loadChart_LatencySummary(val.url, val.event_type, val.type, val.window, val.uri);">
       <uib-tab-heading>
-    {{val.type}}:{{val.window}}
+    {{val.tabName}}
       </uib-tab-heading>
 
             <div ng-repeat="(key, val) in individualLatencyResults" class="text-center" ng-if="resultTypeAggregation">
 
               <p>Date: {{val.date}}</p>
               <p>Time: {{val.time}}</p>
-              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">
+
+
+              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label" chart-options="options">
               </canvas>
 
             </div>

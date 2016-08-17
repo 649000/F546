@@ -19,13 +19,12 @@ latencyServices.factory('LatencyResultsService', ['$http', '$log', 'HostService'
 
     },
 
-    //TODO: To update.
     getIndividualResult: function (url, params) {
       //URL is the response[i]['url'] taken from the getMainResult();
 
       return $http({
         method: 'GET',
-        url: url + "packet-trace/base",
+        url: url,
         params: params,
         cache: true
       });
@@ -41,7 +40,6 @@ latencyServices.factory('LatencyResultsService', ['$http', '$log', 'HostService'
 
 // This service draws the main Latency graph
 latencyServices.factory('LatencyGraphService', [function () {
-
 
 
   var cy = cytoscape({
@@ -63,14 +61,14 @@ latencyServices.factory('LatencyGraphService', [function () {
         style: {
           'width': 2,
           'opacity': 1,
-          'label': 'data(bandwidth)',
+          'label': 'data(latency)',
           'line-color': 'GreenYellow',
           'target-arrow-color': 'black',
           //Note that this is expensive to load.
           'curve-style': 'bezier',
           // tee, triangle, triangle-tee, triangle-backcurve, square, circle, diamond, or none
-          'target-arrow-shape': 'triangle',
-          'min-zoomed-font-size': 50
+          'target-arrow-shape': 'triangle'
+          // 'min-zoomed-font-size': 50
         }
       },
       {
@@ -168,23 +166,23 @@ latencyServices.factory('LatencyGraphService', [function () {
       return cy;
     },
 
-    add_edge: function (ID, source, target, tracerouteRTT, bandwidth, latency, startNode, endNode, metadataKey, latencyTime) {
+    add_edge: function (ID, source, target, tracerouteRTT, latency, time, startNode, endNode, metadataKey) {
 
 
       var edge = {
         group: 'edges',
         data: {
           id: ID,
-          // inferred as an edge because `source` and `target` are specified:
           source: source, // the source node id (edge comes from this node)
           target: target,  // the target node id (edge goes to this node)
+
           rtt: tracerouteRTT,
-          bandwidth: bandwidth,
+          // bandwidth: bandwidth,
           latency: latency,
+          time: time,
           startNode: startNode,
           endNode: endNode,
-          metadataKey: metadataKey,
-          latencyTime: latencyTime
+          metadataKey: metadataKey
         }
 
       };
@@ -366,7 +364,7 @@ latencyServices.factory('Latency_To_Traceroute_GraphService', [function () {
 }]);
 
 //This services pulls information to draw Traceroute and uses Latency_To_Traceroute_GraphService to draw it.
-latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$cacheFactory', '$log', 'HostService', 'Latency_To_Traceroute_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService','TracerouteResultsService', function ($http, $q, $cacheFactory, $log, HostService, Latency_To_Traceroute_GraphService, GeoIPNekudoService, UnixTimeConverterService,TracerouteResultsService) {
+latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$cacheFactory', '$log', 'Latency_To_Traceroute_GraphService', 'GeoIPNekudoService', 'UnixTimeConverterService', 'TracerouteResultsService', function ($http, $q, $cacheFactory, $log, Latency_To_Traceroute_GraphService, GeoIPNekudoService, UnixTimeConverterService, TracerouteResultsService) {
 
   $log.debug("Latency_To_Traceroute_InfoService:START");
 
@@ -381,7 +379,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
 
     setTracerouteGraph: function (source, destination) {
-      var host = HostService.getHost();
+
       var sourceAndDestinationList = [];
       var nodeList = [];
       var errorInTraceroute = false;
@@ -393,8 +391,6 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
       return TracerouteResultsService.getMainResult({
         'format': 'json',
         'event-type': 'packet-trace',
-        // 'limit': 10,
-        // 'time-end': (Math.floor(Date.now() / 1000)),
         'time-range': 86400,
         'source': source,
         'destination': destination
@@ -413,17 +409,9 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
             }
           );
 
-
           if (Latency_To_Traceroute_GraphService.getGraph().elements('node[id = "' + reversedResponse[i]['source'] + '"]').size() == 0) {
-
             Latency_To_Traceroute_GraphService.add_node(reversedResponse[i]['source'], true);
             nodeList.push(reversedResponse[i]['source']);
-
-            // Event
-            // Latency_To_Traceroute_GraphService.getGraph().on('tap', 'node[id = "' + reversedResponse[i]['source'] + '"]', function (event) {
-            //   var element = event.cyTarget;
-            //
-            // });
           }
 
 
@@ -431,7 +419,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
             if (reversedResponse[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-              var promise = TracerouteResultsService.getIndividualResult(reversedResponse[i]['url'],{
+              var promise = TracerouteResultsService.getIndividualResult(reversedResponse[i]['url'], {
                 'format': 'json',
                 // 'limit': '2',
                 // 'time-end': (Math.floor(Date.now() / 1000)),
@@ -477,8 +465,8 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
             ts = reversedResponse[j]['ts'];
 
             // IP keeps appending and adding inside, without checking if it's unique. Unique at per iteration.
-            var temp_ip = [];
-            var temp_rtt = [];
+            // var temp_ip = [];
+            // var temp_rtt = [];
             var tempResultList = [];
 
             for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
@@ -487,8 +475,8 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
 
                 if (reversedResponse[j]['val'][k]['query'] == 1) {
-                  temp_ip.push(reversedResponse[j]['val'][k]['ip']);
-                  temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
+                  // temp_ip.push(reversedResponse[j]['val'][k]['ip']);
+                  // temp_rtt.push(reversedResponse[j]['val'][k]['rtt']);
 
                   tempResultList.push({
                     ip: reversedResponse[j]['val'][k]['ip'],
@@ -504,40 +492,24 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
 
 
             // Adding Nodes
-            for (var m = 0; m < temp_ip.length; m++) {
-              if (Latency_To_Traceroute_GraphService.getGraph().elements('node[id = "' + temp_ip[m] + '"]').size() == 0) {
-
-                // $log.debug("Node To Add: "+temp_ip[m] )
-                Latency_To_Traceroute_GraphService.add_node(temp_ip[m], false);
-                nodeList.push(temp_ip[m]);
-
-                //event
-                Latency_To_Traceroute_GraphService.getGraph().on('tap', 'node[id = "' + temp_ip[m] + '"]', function (event) {
-
-                })
+            for (var m = 0; m < tempResultList.length; m++) {
+              if (Latency_To_Traceroute_GraphService.getGraph().elements('node[id = "' + tempResultList[m].ip + '"]').size() == 0) {
+                // $log.debug("Node To Add: "+tempResultList[m].ip)
+                Latency_To_Traceroute_GraphService.add_node(tempResultList[m].ip, false);
+                nodeList.push(tempResultList[m].ip);
 
               }
             }
 
             // Adding edges
-            for (var m = 0; m < temp_ip.length; m++) {
-              if (m != (temp_ip.length - 1 )) {
+            for (var m = 0; m < tempResultList.length; m++) {
+              if (m != (tempResultList.length - 1 )) {
 
                 // var edgeID = temp_ip[m] + "to" + temp_ip[m + 1];
                 var edgeID = Math.random();
 
                 if (Latency_To_Traceroute_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-
-                  Latency_To_Traceroute_GraphService.add_edge(edgeID, temp_ip[m], temp_ip[m + 1], temp_rtt[m], null, null, startNode, destinationNode, metadataKey);
-
-                  //event
-                  Latency_To_Traceroute_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                    var element = event.cyTarget;
-                    //ID: element.id()
-                    //metadataKey: element.data().metadataKey
-
-                  });
-
+                  Latency_To_Traceroute_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, tempResultList[m].rtt, null, null, startNode, destinationNode, metadataKey);
                 }
               }
 
@@ -550,15 +522,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
             var edgeID = Math.random();
 
             if (Latency_To_Traceroute_GraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-
-              Latency_To_Traceroute_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], temp_rtt[m], null, null, startNode, destinationNode, metadataKey);
-
-              Latency_To_Traceroute_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                var element = event.cyTarget;
-
-              });
-
-
+              Latency_To_Traceroute_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], null, null, null, startNode, destinationNode, metadataKey);
             }
 
             // Break so that we grab only the latest traceroute path
@@ -576,6 +540,12 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
         return $q.all(nodeToIP_promises);
 
       }).then(function (response) {
+
+        if (response.length == 0) {
+          //No Traceroute is available.
+          return undefined;
+        }
+
         for (var i = 0; i < response.length; i++) {
 
           var node = Latency_To_Traceroute_GraphService.getGraph().elements('[id = "' + response[i].ip + '"]');
@@ -602,6 +572,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
           stop: undefined // callback on layoutstop
         });
 
+
         if (errorInTraceroute == true) {
           Latency_To_Traceroute_GraphService.getGraph().elements('node[id = "' + sourceAndDestinationList[0].source + '"]').qtip
           ({
@@ -624,12 +595,11 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
           });
         }
 
-
         return [UnixTimeConverterService.getTime(ts), UnixTimeConverterService.getDate(ts)];
 
       }).catch(function (error) {
         $log.debug("Latency_To_Traceroute_InfoService:setTracerouteGraph()")
-        console.log(error)
+        $log.error(error)
         $log.debug("Server Response: " + error.status);
 
       })
@@ -644,6 +614,7 @@ latencyServices.factory('Latency_To_Traceroute_InfoService', ['$http', '$q', '$c
       //$http
 
     },
+
     addMetadataList: function (metadata_key) {
       metadataList.push(metadata_key);
       return metadataList;
