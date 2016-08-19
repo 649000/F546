@@ -7,4 +7,4 @@ Running the project:<br />
 2. bower install //To download all depedencies handled by Bower.<br />
 3. gulp serve // run project<br />
 <br />
-Note: Remember to disable CORS - Cross Origin Resource Sharing. This can be done through the developer menu in Safari Browser or install a plugin in Chrome.<br />
+Note: Remember to enable CORS - Cross Origin Resource Sharing. This can be done through the developer menu in Safari Browser or install a plugin in Chrome.<br />
