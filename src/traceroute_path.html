@@ -63,13 +63,13 @@
         <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Visualisations<span class="fa arrow"></span></a>
         <ul class="nav nav-second-level collapse in" aria-expanded="true" style="">
           <li>
-            <a href="traceroute.html.html">Traceroute</a>
+            <a href="traceroute.html">Traceroute</a>
           </li>
           <li>
-            <a href="traceroute_path.html.html">Traceroute Path</a>
+            <a href="traceroute_path.html">Traceroute Path</a>
           </li>
                   <li>
-            <a href="latency.html.html">Latency</a>
+            <a href="latency.html">Latency</a>
           </li>
         </ul>
         <!-- /.nav-second-level -->
@@ -277,22 +277,22 @@
 
 
 
-                                      <span class="text-center" ng-if="individualPath_PastResults!==undefined">
-    <ul uib-pagination boundary-links="true" items-per-page="1" rotate="true" boundary-link-numbers="false" max-size="8"
-        total-items="individualPath_PastResults.length"
-        ng-model="individualPastResultscurrentPage"
-        class="pagination-sm"
-        ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"
-        previous-text="Previous"
-        next-text="Next" first-text="First" last-text="Last">
+                                      <!--<span class="text-center" ng-if="individualPath_PastResults!==undefined">-->
+    <!--<ul uib-pagination boundary-links="true" items-per-page="1" rotate="true" boundary-link-numbers="false" max-size="8"-->
+        <!--total-items="individualPath_PastResults.length"-->
+        <!--ng-model="individualPastResultscurrentPage"-->
+        <!--class="pagination-sm"-->
+        <!--ng-change="individualGraph_loadNextTraceroutePath(individualPastResultscurrentPage-1,individualPath_PastResults)"-->
+        <!--previous-text="Previous"-->
+        <!--next-text="Next" first-text="First" last-text="Last">-->
 
-     </ul>
-      </span>
+     <!--</ul>-->
+      <!--</span>-->
 
-The selected page no: {{individualPastResultscurrentPage}}
-{{anomalyIndex}}
-TODO: Load Latest and Anomaly
-            Using Pill Maybe.
+<!--The selected page no: {{individualPastResultscurrentPage}}-->
+<!--{{anomalyIndex}}-->
+<!--TODO: Load Latest and Anomaly-->
+            <!--Using Pill Maybe.-->
           </div>
 
           <!--Visualisation goes here-->
