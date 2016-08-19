@@ -31,6 +31,20 @@
 <span id="secondController" ng-controller="TracerouteGraphPanelCtrl">
 <span id="thirdController" ng-controller="TracerouteTableCtrl">
 <!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="index.html">Network Visualization</a>
+  </div>
+  <!-- /.navbar-header -->
+
+
+
   <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
       <ul class="nav" id="side-menu">
@@ -79,6 +93,8 @@
     </div>
     <!-- /.sidebar-collapse -->
   </div>
+  <!-- /.navbar-static-side -->
+</nav>
   <!-- End of Navigation -->
 <div id="page-wrapper">
   <!--ACTUAL BODY STARTS HERE-->
@@ -218,7 +234,11 @@
 
                <span class="list-group-item">
               <i class="fa fa-clock-o fa-fw"></i>
-              Last Updated:<div class="pull-right">{{selectedPath.time}} </div>
+              Time:<div class="pull-right">{{selectedPath.time}} </div>
+            </span>
+            <span class="list-group-item">
+              <i class="fa fa-calendar fa-fw"></i>
+              Date:<div class="pull-right">{{selectedPath.date}} </div>
             </span>
 
               <a ng-href="#{{selectedPath.metadata}}" class="list-group-item" >
@@ -333,22 +353,22 @@
   </div>
 
 
-  <!--Empty Panel-->
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      <div class="container">
+  <!--&lt;!&ndash;Empty Panel&ndash;&gt;-->
+  <!--<div class="panel panel-default">-->
+    <!--<div class="panel-heading">-->
+      <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
+    <!--</div>-->
+    <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+    <!--<div class="panel-body">-->
+      <!--<div class="container">-->
 
 
-      </div>
+      <!--</div>-->
 
 
-    </div>
-    <!-- /.panel-body -->
-  </div>
+    <!--</div>-->
+    <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
 
 </div>
   <!-- build:js(src) scripts/vendor.js -->

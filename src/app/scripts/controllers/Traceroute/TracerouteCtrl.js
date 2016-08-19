@@ -283,7 +283,8 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           source: element.data().startNode,
           destination: element.data().endNode,
           errorStatus: element.data().tracerouteError,
-          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[1] + " " + date[0] + " " + date[2]
+          time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
+          date:date[1] + " " + date[0] + " " + date[2]
         }
 
       });
