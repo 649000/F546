@@ -199,9 +199,6 @@
               <span class="badge">{{noOfNodes}}</span>
             </span>
 
-                  <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
-              <span class="badge ">TO DO</span>
-            </span>
 
              <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
               <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
@@ -241,14 +238,26 @@
               Date:<div class="pull-right">{{selectedPath.date}} </div>
             </span>
 
-              <a ng-href="#{{selectedPath.metadata}}" class="list-group-item" >
+            <!--<a ng-href="#{{selectedPath.metadata}}" class="list-group-item" >-->
 
 
-                <i class="fa fa-exclamation-triangle fa-fw"></i>
-              Error Status: <div class="pull-right">{{selectedPath.errorStatus}} </div>
+            <!--<i class="fa fa-exclamation-triangle fa-fw"></i>-->
+            <!--Error Status: <div class="pull-right">{{selectedPath.errorStatus}} </div>-->
 
-              </a>
+            <!--</a>-->
 
+
+
+                        <a ng-href="#{{selectedPath.metadata}}" class="list-group-item"
+                           ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"
+                        >
+              <i class="fa fa-info fa-fw"></i>
+              Error Status:
+              <div ng-if="selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-remove"></span></div>
+              <div ng-if="!selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-ok"></span></div>
+            </a>
 
 
 
@@ -328,7 +337,7 @@
                       <span class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
 
                     <td class="" ng-if="!val.status">
-                      <span class="glyphicon glyphicon-ok"> {{val.status}} </span>
+                      <span class="glyphicon glyphicon-ok">  TO BE REMOVED {{val.status}} </span>
                     </td>
 
                   </tr>
@@ -355,19 +364,19 @@
 
   <!--&lt;!&ndash;Empty Panel&ndash;&gt;-->
   <!--<div class="panel panel-default">-->
-    <!--<div class="panel-heading">-->
-      <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
-    <!--<div class="panel-body">-->
-      <!--<div class="container">-->
+  <!--<div class="panel-heading">-->
+  <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+  <!--<div class="panel-body">-->
+  <!--<div class="container">-->
 
 
-      <!--</div>-->
+  <!--</div>-->
 
 
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
   <!--</div>-->
 
 </div>

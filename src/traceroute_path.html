@@ -200,13 +200,16 @@
               <i class="fa fa-asterisk fa-fw"></i> No. of Nodes
               <span class="badge">{{noOfNodes}}</span>
             </span>
-
-                  <span class="list-group-item"> <i class="fa fa-wrench fa-fw"></i> Measurement Agents
-              <span class="badge ">TO DO</span>
+                                <span class="list-group-item">
+              <i class="fa fa-asterisk fa-fw"></i> No. of Paths
+              <span class="badge">{{noOfPaths}}</span>
             </span>
 
-             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
-              <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
+
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies"
+                   uib-popover="Click on the red paths to show unique paths underneath." popover-placement="left"
+                   popover-trigger="'mouseenter'">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous Path:
                         <div class="pull-right">
                   <span class="badge">{{noOfAnomalies}}</span>
                 </div>
@@ -286,9 +289,13 @@
 
 
           </span>
-                    <i class="fa fa-bar-chart-o fa-fw pull-left"></i>Individual Traceroute Path Visualisation
-         {{individualPath_time}}
-        {{individualPath_date}}
+                    <i class="fa fa-bar-chart-o fa-fw pull-left"></i>Erroneous Traceroute Path Visualisation
+          <small ng-if="selectedPath.errorStatus">: {{selectedPath.source}}<i class="fa fa-arrow-right fa-fw"></i>{{selectedPath.destination}}</small>
+          <span class="pull-right" ng-if="selectedPath.errorStatus">
+                     {{individualPath_date}}, {{individualPath_time}}
+
+          </span>
+
         </div>
         <!-- /.panel-heading -->
         <div class="panel-body">
@@ -338,29 +345,6 @@
         <!-- /.panel-heading -->
         <div class="panel-body">
 
-             <!--<div class="list-group">-->
-          <!--<h5>Past Results-->
-          <!--<small></small>-->
-          <!--</h5>-->
-
-
-          <!--<a href="" class="list-group-item"-->
-          <!--ng-click="individualGraph_layoutdisplayConcentric();">-->
-          <!--<i class="fa fa-wrench fa-fw"></i> Layout: Concentric-->
-          <!--</a>-->
-
-          <!--<a href="" class="list-group-item"-->
-          <!--ng-click="individualGraph_layoutBreathFirst();">-->
-          <!--<i class="fa fa-wrench fa-fw"></i> Layout: Breath First-->
-          <!--</a>-->
-
-
-          <!--<a href="" class="list-group-item" ng-click="individualGraph_layoutGrid();">-->
-          <!--<i class="fa fa-wrench fa-fw"></i> Layout: Grid-->
-          <!--</a>-->
-
-
-          <!--</div>-->
 
           <div class="list-group">
             <h5>Graph Layout
@@ -396,8 +380,7 @@
           </div>
 
 
-          <div class="list-group text-danger panel-red"
-               ng-if="errorTracerouteResultsLength!=0">
+          <div class="list-group text-danger panel-red" ng-if="selectedPath.errorStatus">
             <h5>Unique Traceroute Paths
               <small></small>
             </h5>
@@ -435,98 +418,98 @@
 
   <!--<div class="panel panel-default">-->
 
-    <!--<div class="panel-body">-->
+  <!--<div class="panel-body">-->
 
 
-      <!--<div class="container">-->
+  <!--<div class="container">-->
 
 
-      <!--</div>-->
+  <!--</div>-->
 
 
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
   <!--</div>-->
 
 
   <!--<div class="panel panel-default">-->
-    <!--<div class="panel-heading">-->
-      <!--Traceroute Results-->
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
-    <!--<div class="panel-body">-->
-      <!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
-      <!--<ul class="nav nav-pills">-->
-        <!--<li class="active"><a href="#home-pills" data-toggle="tab" aria-expanded="true">Source<span-->
-          <!--class="badge">42</span></a>-->
-        <!--</li>-->
-        <!--<li class=""><a href="#profile-pills" data-toggle="tab" aria-expanded="false">Destination</a>-->
-        <!--</li>-->
-        <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Intermediary Nodes</a>-->
-        <!--</li>-->
-        <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Anomalies</a>-->
-        <!--</li>-->
-        <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Erroneous Traceroute Result</a>-->
-        <!--</li>-->
+  <!--<div class="panel-heading">-->
+  <!--Traceroute Results-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+  <!--<div class="panel-body">-->
+  <!--&lt;!&ndash; Nav tabs &ndash;&gt;-->
+  <!--<ul class="nav nav-pills">-->
+  <!--<li class="active"><a href="#home-pills" data-toggle="tab" aria-expanded="true">Source<span-->
+  <!--class="badge">42</span></a>-->
+  <!--</li>-->
+  <!--<li class=""><a href="#profile-pills" data-toggle="tab" aria-expanded="false">Destination</a>-->
+  <!--</li>-->
+  <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Intermediary Nodes</a>-->
+  <!--</li>-->
+  <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Anomalies</a>-->
+  <!--</li>-->
+  <!--<li class=""><a href="#messages-pills" data-toggle="tab" aria-expanded="false">Erroneous Traceroute Result</a>-->
+  <!--</li>-->
 
-      <!--</ul>-->
+  <!--</ul>-->
 
-      <!--&lt;!&ndash; Tab panes &ndash;&gt;-->
-      <!--<div class="tab-content">-->
+  <!--&lt;!&ndash; Tab panes &ndash;&gt;-->
+  <!--<div class="tab-content">-->
 
-        <!--<div class="tab-pane fade active in" id="home-pills">-->
-          <!--<h4>Home Tab</h4>-->
-          <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
-            <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
-            <!--ea commodo consequat.-->
-            <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
-            <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
-            <!--laborum.</p>-->
-        <!--</div>-->
+  <!--<div class="tab-pane fade active in" id="home-pills">-->
+  <!--<h4>Home Tab</h4>-->
+  <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
+  <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
+  <!--ea commodo consequat.-->
+  <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
+  <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
+  <!--laborum.</p>-->
+  <!--</div>-->
 
-        <!--<div class="tab-pane fade" id="profile-pills">-->
-          <!--<h4>Profile Tab</h4>-->
-          <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
-            <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
-            <!--ea commodo consequat.-->
-            <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
-            <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
-            <!--laborum.</p>-->
-        <!--</div>-->
+  <!--<div class="tab-pane fade" id="profile-pills">-->
+  <!--<h4>Profile Tab</h4>-->
+  <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
+  <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
+  <!--ea commodo consequat.-->
+  <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
+  <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
+  <!--laborum.</p>-->
+  <!--</div>-->
 
-        <!--<div class="tab-pane fade" id="messages-pills">-->
-          <!--<h4>Messages Tab</h4>-->
-          <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
-            <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
-            <!--ea commodo consequat.-->
-            <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
-            <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
-            <!--laborum.</p>-->
-        <!--</div>-->
+  <!--<div class="tab-pane fade" id="messages-pills">-->
+  <!--<h4>Messages Tab</h4>-->
+  <!--<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et-->
+  <!--dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex-->
+  <!--ea commodo consequat.-->
+  <!--Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.-->
+  <!--Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est-->
+  <!--laborum.</p>-->
+  <!--</div>-->
 
 
-      <!--</div>-->
+  <!--</div>-->
 
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
   <!--</div>-->
 
 
   <!--&lt;!&ndash;Empty Panel&ndash;&gt;-->
   <!--<div class="panel panel-default">-->
-    <!--<div class="panel-heading">-->
-      <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
-    <!--<div class="panel-body">-->
-      <!--<div class="container">-->
+  <!--<div class="panel-heading">-->
+  <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+  <!--<div class="panel-body">-->
+  <!--<div class="container">-->
 
 
-      <!--</div>-->
+  <!--</div>-->
 
 
-    <!--</div>-->
-    <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
   <!--</div>-->
 
 

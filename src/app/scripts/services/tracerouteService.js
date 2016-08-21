@@ -672,7 +672,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
       TraceroutePath_GraphService.getGraph().remove('edge');
 
 
-      TracerouteResultsService.getMainResult(
+      return TracerouteResultsService.getMainResult(
         {
           'format': 'json',
           'event-type': 'packet-trace',
@@ -731,9 +731,8 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
         }
 
         // $log.debug("sourceAndDestinationList Size: " + sourceAndDestinationList.length)
-
-        //Index = 0, Number of Source Nodes
-        toReturnList.push(UniqueArrayService.getUnique(nodeList).length);
+        //Index 0 holds number of paths
+        toReturnList.push(sourceAndDestinationList.length);
 
         return $q.all(promises);
 
@@ -809,49 +808,6 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
                   TraceroutePath_GraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, false, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
-                  // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                  //   var element = event.cyTarget;
-                  //   //ID: element.id()
-                  //   //metadataKey: element.data().metadataKey
-                  //
-                  //   // search for ALL edges with same metadata, make it red, make everything else the same.
-                  //   TraceroutePath_GraphService.getGraph().style()
-                  //     .selector('edge[pathAnomaly = "true"]')
-                  //     .style({
-                  //       'line-color': 'IndianRed',
-                  //       'width': 2
-                  //     }).update();
-                  //
-                  //   TraceroutePath_GraphService.getGraph().style()
-                  //     .selector('edge[pathAnomaly = "false"]')
-                  //     .style({
-                  //       'line-color': '#a8ea00',
-                  //       'width': 2
-                  //     }).update();
-                  //
-                  //
-                  //   if (element.data().pathAnomaly == "true") {
-                  //     //Make this Dark Red
-                  //     TraceroutePath_GraphService.getGraph().style()
-                  //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                  //       .style({
-                  //         'line-color': 'DarkRed',
-                  //         'width': 4
-                  //       }).update();
-                  //   }
-                  //
-                  //   if (element.data().pathAnomaly == "false") {
-                  //     TraceroutePath_GraphService.getGraph().style()
-                  //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                  //       .style({
-                  //         'line-color': 'green',
-                  //         'width': 4
-                  //       }).update();
-                  //   }
-                  //
-                  //
-                  // });
-
                 }
               }
             }
@@ -864,46 +820,6 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
 
               TraceroutePath_GraphService.add_edge(edgeID, startNode, reversedResponse[j]['val'][0]['ip'], false, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
-              // TraceroutePath_GraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-              //   var element = event.cyTarget;
-              //   $log.debug("Element METADATA: " + element.data().metadataKey)
-              //
-              //   TraceroutePath_GraphService.getGraph().style()
-              //     .selector('edge[pathAnomaly = "true"]')
-              //     .style({
-              //       'line-color': 'IndianRed',
-              //       'width': 2
-              //     }).update();
-              //
-              //   TraceroutePath_GraphService.getGraph().style()
-              //     .selector('edge[pathAnomaly = "false"]')
-              //     .style({
-              //       'line-color': '#a8ea00',
-              //       'width': 2
-              //     }).update();
-              //
-              //
-              //   if (element.data().pathAnomaly == "true") {
-              //     //Make this Dark Red
-              //     TraceroutePath_GraphService.getGraph().style()
-              //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-              //       .style({
-              //         'line-color': 'DarkRed',
-              //         'width': 4
-              //       }).update();
-              //   }
-              //
-              //   if (element.data().pathAnomaly == "false") {
-              //     TraceroutePath_GraphService.getGraph().style()
-              //       .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-              //       .style({
-              //         'line-color': 'green',
-              //         'width': 4
-              //       }).update();
-              //   }
-              //
-              //
-              // });
             }
 
             // Break so that we grab only the latest traceroute path
@@ -918,6 +834,8 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
         for (var i = 0; i < uniqueNodes.length; i++) {
           nodeToIP_promises.push(GeoIPNekudoService.getCountry(uniqueNodes[i]));
         }
+        //Index 0 holds number of paths
+        toReturnList.push(uniqueNodes.length);
 
         return $q.all(nodeToIP_promises);
 
@@ -952,6 +870,8 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
         });
 
         //return if needed to path information to controller.
+
+        return toReturnList;
 
 
       }).catch(function (error) {

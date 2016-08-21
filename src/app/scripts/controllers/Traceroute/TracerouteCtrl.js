@@ -269,22 +269,22 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         var time = UnixTimeConverterService.getTime(element.data().time);
         var date = UnixTimeConverterService.getDate(element.data().time);
-        //
-        // var errorStatus = null;
-        //
-        // if(element.data().tracerouteError=="true"){
-        //   errorStatus=true;
-        // } else if(element.data().tracerouteError =="false"){
-        //   errorStatus=false;
-        // }
+
+        var errorStatus = null;
+
+        if(element.data().tracerouteError=="true"){
+          errorStatus=true;
+        } else if(element.data().tracerouteError =="false"){
+          errorStatus=false;
+        }
 
         $scope.selectedPath = {
           metadata: element.data().metadataKey,
           source: element.data().startNode,
           destination: element.data().endNode,
-          errorStatus: element.data().tracerouteError,
+          errorStatus: errorStatus,
           time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
-          date:date[1] + " " + date[0] + " " + date[2]
+          date: date[1] + " " + date[0] + " " + date[2]
         }
 
       });
@@ -811,7 +811,14 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$log', 'TraceroutePath_GraphService', 'UnixTimeConverterService', 'TraceroutePath_PopulateGraphService', function ($scope, $log, TraceroutePath_GraphService, UnixTimeConverterService, TraceroutePath_PopulateGraphService) {
   // Benefits of populating graph into service
   // Able to call and reload as needed without refreshing the page.
-  TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview();
+
+  // $scope.noOfNodes = tempUniqueIP.length;
+
+  TraceroutePath_PopulateGraphService.loadGraph_TracerouteOverview().then(function (response) {
+    //Returns number of nodes.
+    $scope.noOfPaths = response[0];
+    $scope.noOfNodes = response[1];
+  })
 
   // When the MAIN Traceroute Path graph is ready and loaded, we shall conduct the analysis.
   TraceroutePath_GraphService.getGraph().one('layoutstop', function () {
@@ -830,36 +837,39 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
     //Event
     TraceroutePath_GraphService.getGraph().on('tap', 'edge,:selected', function (event) {
       var element = event.cyTarget;
-      $log.debug("Element METADATA: " + element.data().metadataKey)
-      $log.debug("Element METADATA: " + element.data().time)
+      // $log.debug("Element METADATA: " + element.data().metadataKey)
+      // $log.debug("Element METADATA: " + element.data().time)
       // console.log("STATUS: " + element.data().pathAnomaly)
 
       window.dispatchEvent(new Event('resize'));
 
       $scope.$apply(function (response) {
 
+
         var time = UnixTimeConverterService.getTime(element.data().time);
         var date = UnixTimeConverterService.getDate(element.data().time);
 
         var errorStatus = null;
 
-        if(element.data().pathAnomaly=="true"){
-          errorStatus=true;
-        } else if(element.data().pathAnomaly =="false"){
-          errorStatus=false;
+
+        if (element.data().pathAnomaly == "true") {
+          errorStatus = true;
+        } else if (element.data().pathAnomaly == "false") {
+          errorStatus = false;
         }
 
-        errorStatus
         $scope.selectedPath = {
           metadata: element.data().metadataKey,
           source: element.data().startNode,
           destination: element.data().endNode,
           errorStatus: errorStatus,
           time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
-          date:date[1] + " " + date[0] + " " + date[2]
+          date: date[1] + " " + date[0] + " " + date[2]
         }
 
         $scope.$broadcast('LoadIndividualTraceroute', element.data().metadataKey);
+
+
 
       });
 
@@ -1118,6 +1128,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
     IndividualTraceroutePath_PopulateGraphService.getHistorialPath().then(function (response) {
 
+      window.dispatchEvent(new Event('resize'));
       IndividualTraceroutePath_GraphService.getGraph().remove('node');
       IndividualTraceroutePath_GraphService.getGraph().remove('edge');
 
@@ -1274,6 +1285,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 
         } else {
 
+
           //TODO
           // NO Errorneous path found.
         }
@@ -1298,6 +1310,8 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
         stop: undefined // callback on layoutstop
       });
 
+
+
     });
 
 
@@ -1315,7 +1329,7 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 //TODO: Better Name for this controller
 angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope, $http, $q, $log, HostService, IndividualTraceroutePath_GraphService, UnixTimeConverterService, GeoIPNekudoService, IndividualTraceroutePath_PopulateGraphService) {
 
-  $log.debug("IndividualTraceroutePathGraphCtrl: START");
+  // $log.debug("IndividualTraceroutePathGraphCtrl: START");
 
 
   // IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {

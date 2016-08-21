@@ -127,11 +127,11 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
 
         var edge = LatencyGraphService.getGraph().elements('edge[startNode = "' + startNode + '"][endNode = "' + destinationNode + '"][metadataKey = "' + metadataKey + '"]');
-        var latencyMean = reversedResponse[j]['val']['mean'];
+        var latencyMin = reversedResponse[j]['val']['minimum'];
         // console.log(latencyMean)
 
         edge.data({
-          latency: math.round(latencyMean, 3),
+          latency: math.round(latencyMin, 3),
           time: reversedResponse[j]['ts']
         })
 
