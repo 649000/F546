@@ -1,4 +1,4 @@
-angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'Latency_To_Traceroute_InfoService', 'LatencyResultsService', function ($scope, $http, $q, $log, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, Latency_To_Traceroute_InfoService, LatencyResultsService) {
+angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'Latency_To_Traceroute_InfoService', 'LatencyResultsService', 'AnalyzeLatency', function ($scope, $http, $q, $log, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, Latency_To_Traceroute_InfoService, LatencyResultsService, AnalyzeLatency) {
 
   var sourceAndDestinationList;
   var nodeToIPList;
@@ -111,6 +111,8 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
   }).then(function (response) {
 
+
+
     for (var i = 0; i < response.length; i++) {
 
       var startNode = sourceAndDestinationList[i].source;
@@ -118,6 +120,15 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
       var metadataKey = sourceAndDestinationList[i].metadataKey;
 
       var reversedResponse = response[i].data.reverse();
+
+      var returnedData = AnalyzeLatency.getMinMaxDate(reversedResponse);
+
+      var minDateToDisplay = UnixTimeConverterService.getDate(returnedData[0])
+      var maxDateToDisplay = UnixTimeConverterService.getDate(returnedData[1])
+
+      $scope.minDate = minDateToDisplay[1] + " " + minDateToDisplay[0] + " " + minDateToDisplay[2];
+      $scope.maxDate = maxDateToDisplay[1] + " " + maxDateToDisplay[0] + " " + maxDateToDisplay[2];
+
 
       //TODO: Consider removing showing unnecessary values.
 
@@ -206,8 +217,8 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
           //No Traceroute is available.
           // console.log("NO TR");
           $scope.showTraceroute = false;
-          $scope.tracerouteTime="";
-          $scope.tracerouteDate="";
+          $scope.tracerouteTime = "";
+          $scope.tracerouteDate = "";
         }
 
 
@@ -304,8 +315,6 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
   $scope.$on('LatencyMetadata', function (event, metadata) {
 
 
-
-
     window.dispatchEvent(new Event('resize'));
     var latencyMetadata = metadata;
     var metadataURL = host + latencyMetadata + "/";
@@ -348,21 +357,20 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
           for (var k = 0; k < response.data['event-types'][j]['summaries'].length; k++) {
 
-            var tabName ="";
+            var tabName = "";
 
-            if(response.data['event-types'][j]['summaries'][k]['summary-type']=="aggregation"){
-              tabName="Aggregated Results: " + (response.data['event-types'][j]['summaries'][k]['summary-window']/60/60) +" hour";
+            if (response.data['event-types'][j]['summaries'][k]['summary-type'] == "aggregation") {
+              tabName = "Aggregated Results: " + (response.data['event-types'][j]['summaries'][k]['summary-window'] / 60 / 60) + " hour";
 
 
-
-            }else if(response.data['event-types'][j]['summaries'][k]['summary-type']=="statistics"){
-              tabName="Statistical Results: "+ (response.data['event-types'][j]['summaries'][k]['summary-window']/60/60) +" hour";
+            } else if (response.data['event-types'][j]['summaries'][k]['summary-type'] == "statistics") {
+              tabName = "Statistical Results: " + (response.data['event-types'][j]['summaries'][k]['summary-window'] / 60 / 60) + " hour";
 
             }
 
-            if(response.data['event-types'][j]['summaries'][k]['summary-window']!= 0){
+            if (response.data['event-types'][j]['summaries'][k]['summary-window'] != 0) {
               $scope.latencySummaryData.push({
-                tabName:tabName,
+                tabName: tabName,
                 type: response.data['event-types'][j]['summaries'][k]['summary-type'],
                 uri: response.data['event-types'][j]['summaries'][k]['uri'],
                 time: UnixTimeConverterService.getTime(response.data['event-types'][j]['summaries'][k]['time-updated']),
@@ -374,7 +382,6 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
               });
 
             }
-
 
 
           }
@@ -457,8 +464,8 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
           var labelsWithFloat = {};
           var labels = [];
           var values = [];
-          var keys = Object.keys(reversedResponse[i]['val']),len = keys.length;
-          var keysFloat=[];
+          var keys = Object.keys(reversedResponse[i]['val']), len = keys.length;
+          var keysFloat = [];
 
           for (var k = 0; k < len; k++) {
             // keysFloat.push(parseFloat(keys[k]));
@@ -473,13 +480,15 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
           }
 
 
-          var floatKeys = Object.keys(labelsWithFloat),len2 = floatKeys.length;
-          floatKeys.sort(function(a,b) { return a - b;});
+          var floatKeys = Object.keys(labelsWithFloat), len2 = floatKeys.length;
+          floatKeys.sort(function (a, b) {
+            return a - b;
+          });
 
           for (var k = 0; k < len2; k++) {
 
             var objKey = floatKeys[k];
-            console.log("OBJKEY:" + objKey + "TYPE: "+ typeof(objKey))
+            console.log("OBJKEY:" + objKey + "TYPE: " + typeof(objKey))
             console.log(reversedResponse[i]['val'][labelsWithFloat[objKey]])
 
 
@@ -488,9 +497,6 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
             values.push(reversedResponse[i]['val'][labelsWithFloat[objKey]]);
 
           }
-
-
-
 
 
           // labelsWithFloat.float.sort(function(a,b) { return a - b;});
@@ -516,7 +522,6 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
           var time = UnixTimeConverterService.getTime(reversedResponse[i]['ts']);
           var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
-
 
 
           // $scope.options = {
@@ -550,14 +555,13 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
           //
 
 
-
           $scope.individualLatencyResults.push({
-            ts:reversedResponse[i]['ts'],
+            ts: reversedResponse[i]['ts'],
             time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
             date: date[0] + " " + date[1] + " " + date[2],
             label: labels,
             data: values,
-            options:{
+            options: {
               title: {
                 display: true,
                 text: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3] + ", " + date[0] + " " + date[1] + " " + date[2]
@@ -567,7 +571,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
                   {
                     display: true,
                     position: 'left',
-                    scaleLabel:{
+                    scaleLabel: {
                       labelString: "Number of Packets",
                       display: true
                     }
@@ -577,7 +581,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
                   {
                     display: true,
                     position: 'bottom',
-                    scaleLabel:{
+                    scaleLabel: {
                       labelString: "Time in milliseconds",
                       display: true
                     }

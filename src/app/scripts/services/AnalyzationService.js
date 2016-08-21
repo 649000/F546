@@ -868,6 +868,28 @@ analyzationService.factory('AnalyzeLatency', ['$log', 'UnixTimeConverterService'
   var threshold = 100;
 
   return {
+
+    getMinMaxDate: function (individual_traceroute_results) {
+
+      //TODO: Due to the sheer amount of data, double for loops increases the processing time exponentially.
+
+
+      for (var i = 0; i < individual_traceroute_results.length; i++) {
+
+        var ts = individual_traceroute_results[i]['ts'];
+        console.log("TS: " + ts)
+
+        if (ts > maxDate) {
+          maxDate = ts;
+        } else if (ts < minDate) {
+          minDate = ts
+        }
+
+      }
+
+      return [minDate, maxDate]
+    },
+    
     compare: function (bandwidth_1, bandwidth_2) {
 
       var diff = bandwidth_1 - bandwidth_2;
