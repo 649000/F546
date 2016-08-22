@@ -59,43 +59,43 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
 
       // console.log(IndividualTracerouteCacheService.getCacheObject().keys())
 
-      for (var i = 0; i < IndividualTracerouteCacheService.getCacheObject().keys().length; i++) {
-        var toAppend = "?"
-
-        angular.forEach(params, function (value, key) {
-          toAppend = toAppend + key + "=" + value + "&"
-
-        });
-
-        var toCheck = url + "packet-trace/base" + toAppend
-
-        if (IndividualTracerouteCacheService.getCacheObject().keys()[i] == toCheck.slice(0, -1)) {
-
-          // console.log("CACHE IS CALLED")
-          return $http({
-            method: 'GET',
-            url: url + "packet-trace/base",
-            params: params,
-            // {
-            //   'format': 'json',
-            //   // 'limit': '2',
-            //   // 'time-end': (Math.floor(Date.now() / 1000)),
-            //   'time-range': 86400
-            //   //48 Hours = 172800
-            //   // 24 hours = 86400
-            // },
-            cache: IndividualTracerouteCacheService.getCacheObject()
-          });
-        }
-
-      }
-
-
-      var toCache = true
-
-      if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
-        toCache = IndividualTracerouteCacheService.getCacheObject();
-      }
+      // for (var i = 0; i < IndividualTracerouteCacheService.getCacheObject().keys().length; i++) {
+      //   var toAppend = "?"
+      //
+      //   angular.forEach(params, function (value, key) {
+      //     toAppend = toAppend + key + "=" + value + "&"
+      //
+      //   });
+      //
+      //   var toCheck = url + "packet-trace/base" + toAppend
+      //
+      //   if (IndividualTracerouteCacheService.getCacheObject().keys()[i] == toCheck.slice(0, -1)) {
+      //
+      //     // console.log("CACHE IS CALLED")
+      //     return $http({
+      //       method: 'GET',
+      //       url: url + "packet-trace/base",
+      //       params: params,
+      //       // {
+      //       //   'format': 'json',
+      //       //   // 'limit': '2',
+      //       //   // 'time-end': (Math.floor(Date.now() / 1000)),
+      //       //   'time-range': 86400
+      //       //   //48 Hours = 172800
+      //       //   // 24 hours = 86400
+      //       // },
+      //       cache: IndividualTracerouteCacheService.getCacheObject()
+      //     });
+      //   }
+      //
+      // }
+      //
+      //
+      // var toCache = true
+      //
+      // if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
+      //   toCache = IndividualTracerouteCacheService.getCacheObject();
+      // }
 
       return $http({
         method: 'GET',

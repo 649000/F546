@@ -110,3 +110,7 @@
 /*}*/
 
 
+/*FOR MODAL CLASS*/
+.app-modal-window .modal-dialog {
+  width: 90%;
+}

@@ -29,8 +29,9 @@
 <body>
 <span id="firstController" ng-controller="TracerouteGraphCtrl">
 <span id="secondController" ng-controller="TracerouteGraphPanelCtrl">
-<span id="thirdController" ng-controller="TracerouteTableCtrl">
-<!-- Navigation -->
+
+<!--<span id="thirdController" ng-controller="TracerouteTableCtrl">-->
+  <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -43,6 +44,11 @@
   </div>
   <!-- /.navbar-header -->
 
+
+<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval"
+    popover-placement="bottom" popover-trigger="'mouseenter'">
+Updated at {{lastUpdated}}
+            </ul>
 
 
   <div class="navbar-default sidebar" role="navigation">
@@ -101,7 +107,9 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Traceroute            <small class="pull-right">
+      <h1 class="page-header">Traceroute <small></small>
+        <small class="pull-right" uib-popover="Date of results." popover-placement="bottom"
+               popover-trigger="'mouseenter'">
         <span ng-if="minDate!==undefined">{{minDate}} to </span>
         <span ng-if="maxDate!==undefined">{{maxDate}}</span>
       </small></h1>
@@ -295,7 +303,6 @@
           <div class="panel" ng-class="{'panel-danger': val.anomaliesExist, 'panel-default': !val.anomaliesExist}">
             <div class="panel-heading">
 
-
               <h4> {{val.nodes[0].startTime[0]}}:{{val.nodes[0].startTime[1]}}:{{val.nodes[0].startTime[2]}}
                 {{val.nodes[0].startTime[3]}}
                 <small>{{val.nodes[0].startDate[0]}} {{val.nodes[0].startDate[1]}} {{val.nodes[0].startDate[2]}}</small>
@@ -325,19 +332,19 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr ng-repeat="(key, val) in val.nodes ">
+                  <tr ng-repeat="(key, val2) in val.nodes ">
                     <td>{{key+1}}</td>
-                    <td>{{val.ip}}</td>
-                    <td>{{val.rtt}}</td>
-                    <td>{{val.rttMin}}</td>
-                    <td>{{val.rttAvg}}</td>
-                    <td>{{val.rttStd}}</td>
+                    <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a href="">{{val2.ip}}</a></td>
+                    <td>{{val2.rtt}}</td>
+                    <td>{{val2.rttMin}}</td>
+                    <td>{{val2.rttAvg}}</td>
+                    <td>{{val2.rttStd}}</td>
 
-                    <td class="danger" ng-if="val.status">
-                      <span class="glyphicon glyphicon-remove"> {{val.status}} </span></td>
+                    <td class="danger" ng-if="val2.status">
+                      <span class="glyphicon glyphicon-remove"> {{val2.status}} </span></td>
 
-                    <td class="" ng-if="!val.status">
-                      <span class="glyphicon glyphicon-ok">  TO BE REMOVED {{val.status}} </span>
+                    <td class="" ng-if="!val2.status">
+                      <span class="glyphicon glyphicon-ok">  TO BE REMOVED {{val2.status}} </span>
                     </td>
 
                   </tr>
@@ -396,15 +403,27 @@
   <!-- endinject -->
   <!-- endbuild -->
 
-<script>
+    <script type="text/ng-template" id="myModalContent.html">
+        <!--<div class="modal-header" >-->
+            <!--<h3 class="modal-title" id="modal-title"></h3>-->
+        <!--</div>-->
+        <div class="modal-body" id="modal-body" >
 
-  $(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-  });
 
-</script>
+        <canvas id="lineChart_individualRTThistory" class="chart chart-bar" chart-data="individualRTT_data"
+        chart-labels="individualRTT_labels" chart-options="individualRTT_option">
+          </canvas>
 
-</span>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+
+        </div>
+    </script>
+
+  <!--</span>-->
+
 </span>
 </span>
 

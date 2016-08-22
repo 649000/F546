@@ -49,7 +49,7 @@ generalServices.service('UnixTimeConverterService', function () {
   }
 
   this.getTime = function (timestamp) {
-    date = new Date(timestamp * 1000)
+    var date = new Date(timestamp * 1000)
 
       var hours = date.getHours();
       var minutes = date.getMinutes();
@@ -61,7 +61,7 @@ generalServices.service('UnixTimeConverterService', function () {
       if(seconds<10){
         seconds = "0"+seconds;
       }
-      timevalues = [
+      var timevalues = [
 
         hours,
         minutes,
@@ -76,18 +76,44 @@ generalServices.service('UnixTimeConverterService', function () {
 generalServices.factory('CurrentTimeUnixService', function () {
   return {
 
+    // time: function () {
+    //
+    //   date = new Date(Date.now() * 1000),
+    //     timevalues = [
+    //
+    //       date.getHours(),
+    //       date.getMinutes(),
+    //       date.getSeconds(),
+    //     ];
+    //
+    //   return timevalues;
+    // },
+
     time: function () {
 
-      date = new Date(Date.now() * 1000),
-        timevalues = [
+    // var date = new Date(Date.now() * 1000)
+    var date = new Date()
 
-          date.getHours(),
-          date.getMinutes(),
-          date.getSeconds(),
-        ];
-
-      return timevalues;
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var seconds = date.getSeconds();
+    if(seconds<10){
+      seconds = "0"+seconds;
     }
+    var timevalues = [
+
+      hours,
+      minutes,
+      seconds,
+      ampm
+    ];
+
+    return timevalues;
+  }
   }
 });
 
