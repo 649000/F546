@@ -1783,7 +1783,6 @@ traceroute.controller('testController', ['$scope', '$log', 'AnalyzeTraceroute', 
 
 
 traceroute.controller('WebWorkerController', ['$scope', '$http', 'Webworker', 'TracerouteResultsService', function ($scope, $http, Webworker, TracerouteResultsService) {
-  $scope.testMsg = "CAN YOUSEE ME"
   console.log("ENTERED")
 
   // function doubler(num) {

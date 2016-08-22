@@ -6,11 +6,19 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', 'IndividualTracerouteCacheService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService, IndividualTracerouteCacheService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'toastr', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', 'IndividualTracerouteCacheService', function ($scope, $http, $q, $log, $interval, toastr, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService) {
 
+  $interval(function () {
+
+    console.log("Hello!");
+    var date = new Date();
+    console.log(date.getMinutes() + ":" + date.getSeconds());
+
+  }, 2000);
 
   var sourceAndDestinationList;
   var nodeList;
+
   TracerouteResultsService.getMainResult(
     {
       'format': 'json',
@@ -41,23 +49,15 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
       //Adding main nodes into graph
       if (TracerouteGraphService.getGraph().elements('node[id = "' + response.data[i]['source'] + '"]').size() == 0) {
-
         // True as this is a SOURCE node.
         TracerouteGraphService.add_node(response.data[i]['source'], true);
         nodeList.push(response.data[i]['source']);
 
-        // Event
-        // TracerouteGraphService.getGraph().on('tap', 'node[id = "' + response.data[i]['source'] + '"]', function (event) {
-        //   var element = event.cyTarget;
-        //   // $log.debug("Clicked on Node ID: " + element.data().id)
-        //
-        // });
       }
 
 
       for (var j = 0; j < response.data[i]['event-types'].length; j++) {
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
-
 
           promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
             {
@@ -74,7 +74,6 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         }
       }
-
 
     }
 
@@ -144,53 +143,53 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             var edgeID = Math.random();
 
             if (TracerouteGraphService.getGraph().elements('edge[id = "' + edgeID + '"]').size() == 0) {
-//ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey
+              //ID, source, target, tracerouteError, tracerouteRTT, timeUpdated, startNode, endNode, metadataKey
               TracerouteGraphService.add_edge(edgeID, tempResultList[m].ip, tempResultList[m + 1].ip, false, tempResultList[m].rtt, reversedResponse[j]['ts'], startNode, destinationNode, metadataKey);
 
-              TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
-                var element = event.cyTarget;
-                //ID: element.id()
-                //metadataKey: element.data().metadataKey
-
-
-                // search for ALL edges with same metadata, make it red, make everything else the same.
-
-
-                // TracerouteGraphService.getGraph().style()
-                //   .selector('edge[tracerouteError = "true"]')
-                //   .style({
-                //     'line-color': 'IndianRed',
-                //     'width': 2
-                //   }).update();
-                //
-                // TracerouteGraphService.getGraph().style()
-                //   .selector('edge[tracerouteError = "false"]')
-                //   .style({
-                //     'line-color': '#a8ea00',
-                //     'width': 2
-                //   }).update();
-                //
-                // if (element.data().tracerouteError == "true") {
-                //   //Make this Dark Red
-                //   TracerouteGraphService.getGraph().style()
-                //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                //     .style({
-                //       'line-color': 'DarkRed',
-                //       'width': 4
-                //     }).update();
-                // }
-
-                // if (element.data().tracerouteError == "false") {
-                //   TracerouteGraphService.getGraph().style()
-                //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
-                //     .style({
-                //       'line-color': 'green',
-                //       'width': 4
-                //     }).update();
-                // }
-
-
-              });
+              // TracerouteGraphService.getGraph().on('tap', 'edge[id = "' + edgeID + '"]', function (event) {
+              //   var element = event.cyTarget;
+              //   //ID: element.id()
+              //   //metadataKey: element.data().metadataKey
+              //
+              //
+              //   // search for ALL edges with same metadata, make it red, make everything else the same.
+              //
+              //
+              //   // TracerouteGraphService.getGraph().style()
+              //   //   .selector('edge[tracerouteError = "true"]')
+              //   //   .style({
+              //   //     'line-color': 'IndianRed',
+              //   //     'width': 2
+              //   //   }).update();
+              //   //
+              //   // TracerouteGraphService.getGraph().style()
+              //   //   .selector('edge[tracerouteError = "false"]')
+              //   //   .style({
+              //   //     'line-color': '#a8ea00',
+              //   //     'width': 2
+              //   //   }).update();
+              //   //
+              //   // if (element.data().tracerouteError == "true") {
+              //   //   //Make this Dark Red
+              //   //   TracerouteGraphService.getGraph().style()
+              //   //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+              //   //     .style({
+              //   //       'line-color': 'DarkRed',
+              //   //       'width': 4
+              //   //     }).update();
+              //   // }
+              //
+              //   // if (element.data().tracerouteError == "false") {
+              //   //   TracerouteGraphService.getGraph().style()
+              //   //     .selector('edge[metadataKey = "' + element.data().metadataKey + '"]')
+              //   //     .style({
+              //   //       'line-color': 'green',
+              //   //       'width': 4
+              //   //     }).update();
+              //   // }
+              //
+              //
+              // });
 
             }
           }
@@ -272,10 +271,10 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         var errorStatus = null;
 
-        if(element.data().tracerouteError=="true"){
-          errorStatus=true;
-        } else if(element.data().tracerouteError =="false"){
-          errorStatus=false;
+        if (element.data().tracerouteError == "true") {
+          errorStatus = true;
+        } else if (element.data().tracerouteError == "false") {
+          errorStatus = false;
         }
 
         $scope.selectedPath = {
@@ -330,6 +329,18 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
     $log.error(error);
     $log.debug("Server Response: " + error.status);
 
+    if (error.status == 500) {
+      //500 on server.
+      toastr.error('Unable to reach host.');
+    }
+
+    if (error.status == -1) {
+      toastr.error('No Internet Connection.');
+    }
+
+
+
+
   });
 
 
@@ -338,7 +349,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 angular.module('traceroute').controller('TracerouteTableCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTracerouteRtt', 'UniqueArrayService', 'TracerouteResultsService', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTracerouteRtt, UniqueArrayService, TracerouteResultsService) {
 
-//FIXME: On mouse over, or wait for about 10 seconds and then do it.
+  //FIXME: Add interval
   // Other possible options: layoutstart, layoutready, layoutstop, ready
   TracerouteGraphService.getGraph().one('layoutstop', function () {
     var sourceAndDestinationList;
@@ -870,7 +881,6 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
         $scope.$broadcast('LoadIndividualTraceroute', element.data().metadataKey);
 
 
-
       });
 
 
@@ -1309,7 +1319,6 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
         ready: undefined, // callback on layoutready
         stop: undefined // callback on layoutstop
       });
-
 
 
     });
