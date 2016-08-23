@@ -334,17 +334,17 @@ Updated at {{lastUpdated}}
                   <tbody>
                   <tr ng-repeat="(key, val2) in val.nodes ">
                     <td>{{key+1}}</td>
-                    <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a href="">{{val2.ip}}</a></td>
-                    <td>{{val2.rtt}}</td>
+                    <td>{{val2.ip}}</td>
+                    <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a href="">{{val2.rtt}}</a></td>
                     <td>{{val2.rttMin}}</td>
                     <td>{{val2.rttAvg}}</td>
                     <td>{{val2.rttStd}}</td>
 
                     <td class="danger" ng-if="val2.status">
-                      <span class="glyphicon glyphicon-remove"> {{val2.status}} </span></td>
+                      <span class="glyphicon glyphicon-remove"> </span></td>
 
                     <td class="" ng-if="!val2.status">
-                      <span class="glyphicon glyphicon-ok">  TO BE REMOVED {{val2.status}} </span>
+                      <span class="glyphicon glyphicon-ok">   </span>
                     </td>
 
                   </tr>
@@ -410,7 +410,7 @@ Updated at {{lastUpdated}}
         <div class="modal-body" id="modal-body" >
 
 
-        <canvas id="lineChart_individualRTThistory" class="chart chart-bar" chart-data="individualRTT_data"
+        <canvas id="lineChart_individualRTThistory" class="chart chart-bar" chart-data="individualRTT_data" chart-dataset-override="datasetOverride"
         chart-labels="individualRTT_labels" chart-options="individualRTT_option">
           </canvas>
 

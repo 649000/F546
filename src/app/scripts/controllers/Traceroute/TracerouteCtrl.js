@@ -911,7 +911,9 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
         for (var k = 0; k < reversedResponse[j]['val'].length; k++) {
 
           if (reversedResponse[j]['val'][k]['ip'] == ipaddr) {
+
             $scope.individualRTT_data.push(reversedResponse[j]['val'][k]['rtt']);
+            // $scope.individualRTT_data.push(math.round(reversedResponse[j]['val'][k]['rtt'], 0));
             var time = UnixTimeConverterService.getTime(reversedResponse[j]['ts']);
             var date = UnixTimeConverterService.getDate(reversedResponse[j]['ts']);
             $scope.individualRTT_labels.push(date[1]+" "+date[0]+ " "+ date[2]+ " "+time[0] + ":" + time[1] + ":" + time[2] + " " + time[3]);
