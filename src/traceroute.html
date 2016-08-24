@@ -324,6 +324,7 @@ Updated at {{lastUpdated}}
                   <tr>
                     <th>Hop</th>
                     <th>IP</th>
+                     <th>Domain</th>
                     <th>RTT</th>
                     <th>Min RTT</th>
                     <th>Mean RTT</th>
@@ -334,7 +335,9 @@ Updated at {{lastUpdated}}
                   <tbody>
                   <tr ng-repeat="(key, val2) in val.nodes ">
                     <td>{{key+1}}</td>
-                    <td>{{val2.ip}}</td>
+                    <td uib-popover="{{dnsName}}" popover-trigger="'mouseenter'" popover-append-to-body="true" popover-placement="top-left" ng-mouseover="getDNS(val2.ip)" role="button">{{val2.ip}}</td>
+                    <!--<td>{{val2.ip}}</td>-->
+                    <td>{{val2.dns}}</td>
                     <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a href="">{{val2.rtt}}</a></td>
                     <td>{{val2.rttMin}}</td>
                     <td>{{val2.rttAvg}}</td>

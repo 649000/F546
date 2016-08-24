@@ -573,7 +573,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 // }]);
 
 
-angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', '$uibModal', '$q', 'TracerouteGraphService', function ($scope, $log, $cacheFactory, $uibModal, $q, TracerouteGraphService) {
+angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', '$uibModal', '$q', 'TracerouteGraphService', 'DNSLookup', function ($scope, $log, $cacheFactory, $uibModal, $q, TracerouteGraphService, DNSLookup) {
 
   $scope.mainGraphLayout_BreathFirst = function () {
 
@@ -824,6 +824,14 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
   };
 
 
+  //The following is a mouseover to getDNS
+
+  $scope.getDNS = function (ipaddr) {
+    $scope.dnsName = DNSLookup.getDomain(ipaddr)["dns"];
+
+  }
+
+
 }]);
 
 angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$scope', '$log', '$q', '$uibModalInstance', 'TracerouteResultsService', 'metadata', 'ipaddr', 'UnixTimeConverterService', function ($scope, $log, $q, $uibModalInstance, TracerouteResultsService, metadata, ipaddr, UnixTimeConverterService) {
@@ -878,7 +886,7 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
       $scope.individualRTT_option = {
         title: {
           display: true,
-            text: "24 Hours View"
+          text: "24 Hours View"
         },
         scales: {
           yAxes: [
@@ -891,7 +899,7 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
               }
             }
           ],
-            xAxes: [
+          xAxes: [
             {
               display: true,
               position: 'bottom',
@@ -916,7 +924,7 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
             // $scope.individualRTT_data.push(math.round(reversedResponse[j]['val'][k]['rtt'], 0));
             var time = UnixTimeConverterService.getTime(reversedResponse[j]['ts']);
             var date = UnixTimeConverterService.getDate(reversedResponse[j]['ts']);
-            $scope.individualRTT_labels.push(date[1]+" "+date[0]+ " "+ date[2]+ " "+time[0] + ":" + time[1] + ":" + time[2] + " " + time[3]);
+            $scope.individualRTT_labels.push(date[1] + " " + date[0] + " " + date[2] + " " + time[0] + ":" + time[1] + ":" + time[2] + " " + time[3]);
           }
 
         }

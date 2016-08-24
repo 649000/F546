@@ -44,7 +44,8 @@
   </div>
   <!-- /.navbar-header -->
 
-<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval" popover-placement="bottom" popover-trigger="'mouseenter'">
+<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval"
+    popover-placement="bottom" popover-trigger="'mouseenter'">
 Updated at {{lastUpdated}}
             </ul>
 
@@ -64,15 +65,15 @@ Updated at {{lastUpdated}}
         </li>
 
         <!--<li>-->
-          <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute</a>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute</a>-->
         <!--</li>-->
 
         <!--<li>-->
-          <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute Path</a>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute Path</a>-->
         <!--</li>-->
 
         <!--<li>-->
-          <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Latency</a>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Latency</a>-->
         <!--</li>-->
 
       <li class="active">
@@ -88,7 +89,7 @@ Updated at {{lastUpdated}}
             <a href="latency.html">Latency</a>
           </li>
         </ul>
-      <!-- /.nav-second-level -->
+        <!-- /.nav-second-level -->
         </li>
 
 
@@ -184,53 +185,114 @@ Updated at {{lastUpdated}}
 
           </div>
 
- <div class="list-group" ng-if="selectedPath">
-            <h5>
-             Selected Latency Information
-            </h5>
+ <div class="list-group " ng-if="selectedPath">
+            <h5>Selected Latency Information</h5>
 
             <span class="list-group-item">
               <i class="fa fa-flag-checkered fa-fw"></i>
               Source:
-
-                        <div class="pull-right">
-            {{selectedPath.source}}
-          </div>
-            </span>
-                     <span class="list-group-item">
-              <i class="fa fa-flag-o fa-fw"></i>
-               Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
+              <div class="pull-right">{{selectedPath.source}}</div>
             </span>
 
-               <span class="list-group-item">
-              <i class="fa fa-clock-o fa-fw"></i>
-              Time:<div class="pull-right">{{selectedPath.time}} </div>
-            </span>
             <span class="list-group-item">
-              <i class="fa fa-calendar fa-fw"></i>
-              Date:<div class="pull-right">{{selectedPath.date}} </div>
+              <i class="fa fa-flag-o fa-fw"></i>
+               Destination: <div class="pull-right">{{selectedPath.destination}}</div>
             </span>
 
+            <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>Time:<div class="pull-right">{{selectedPath.time}} </div>
+            </span>
+
+            <span class="list-group-item">
+              <i class="fa fa-calendar fa-fw"></i>Date:<div class="pull-right">{{selectedPath.date}} </div>
+            </span>
+
+          <!--<span class="list-group-item">-->
+              <!--<i class="fa fa-th-list fasb-fw"></i>-->
+              <!--RTT Results:-->
+            <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
+            <!--</span>-->
 
 
 
-            <a ng-href="" class="list-group-item"
-               ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"
-               ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">
-              <!--<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>-->
-              <i class="fa fa-info fa-fw"></i>
-              <!--<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>-->
+     <!--<div class="list-group">-->
+           <!--<div class="list-group">-->
+             <!--<span class="list-group-item">Minimum: <div class="pull-right">{{selectedPath.rttMin}}</div></span>-->
+             <!--<span class="list-group-item">Mean: <div class="pull-right">{{selectedPath.rttMean}}</div></span>-->
+             <!--<span class="list-group-item">Maximum: <div class="pull-right">{{selectedPath.rttMax}}</div></span>-->
 
-              Error Status:
 
-              <div ng-if="selectedPath.errorStatus" class="pull-right"><span
-                class="pull-right glyphicon glyphicon-remove"></span></div>
-              <div ng-if="!selectedPath.errorStatus" class="pull-right"><span
-                class="pull-right glyphicon glyphicon-ok"></span></div>
 
-            </a>
+    <!--</div>-->
+       <!--</div>-->
+
+
+
+
+
+
+
+            <!--<a ng-href="" class="list-group-item"-->
+               <!--ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"-->
+               <!--ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">-->
+              <!--&lt;!&ndash;<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>&ndash;&gt;-->
+              <!--<i class="fa fa-info fa-fw"></i>-->
+              <!--&lt;!&ndash;<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>&ndash;&gt;-->
+
+              <!--Error Status:-->
+
+              <!--<div ng-if="selectedPath.errorStatus" class="pull-right"><span-->
+                <!--class="pull-right glyphicon glyphicon-remove"></span></div>-->
+              <!--<div ng-if="!selectedPath.errorStatus" class="pull-right"><span-->
+                <!--class="pull-right glyphicon glyphicon-ok"></span></div>-->
+
+            <!--</a>-->
 
           </div>
+
+
+           <div class="list-group " ng-if="selectedPath">
+            <h5>Selected Latency RTT Results</h5>
+
+
+
+          <!--<span class="list-group-item">-->
+              <!---->
+              <!--RTT Results:-->
+            <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
+            <!--</span>-->
+
+
+             <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Minimum: <div class="pull-right">{{selectedPath.rttMin}}</div></span>
+             <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Mean: <div class="pull-right">{{selectedPath.rttMean}}</div></span>
+             <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Maximum: <div class="pull-right">{{selectedPath.rttMax}}</div></span>
+
+
+
+
+
+
+
+
+
+             <!--<a ng-href="" class="list-group-item"-->
+             <!--ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"-->
+             <!--ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">-->
+             <!--&lt;!&ndash;<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>&ndash;&gt;-->
+             <!--<i class="fa fa-info fa-fw"></i>-->
+             <!--&lt;!&ndash;<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>&ndash;&gt;-->
+
+             <!--Error Status:-->
+
+             <!--<div ng-if="selectedPath.errorStatus" class="pull-right"><span-->
+             <!--class="pull-right glyphicon glyphicon-remove"></span></div>-->
+             <!--<div ng-if="!selectedPath.errorStatus" class="pull-right"><span-->
+             <!--class="pull-right glyphicon glyphicon-ok"></span></div>-->
+
+             <!--</a>-->
+
+          </div>
+
         </div>
         <!-- /.panel-body -->
       </div>
@@ -245,17 +307,14 @@ Updated at {{lastUpdated}}
 
 
   <!--TR and random stats-->
-  <div class="panel panel-default">
+  <div class="panel panel-default" ng-if="latencySummaryData">
 
 
         <div class="panel-heading">
       <i class="fa fa-bar-chart-o fa-fw"></i> Latency Information
       <div class="pull-right">
 
-        <button ng-show="showTraceroute" type="button" class="btn btn-default btn-xs"
-                ng-click="tracerouteGraphCentred();">
-          Centred
-        </button>
+
 
 
       </div>
@@ -269,12 +328,12 @@ Updated at {{lastUpdated}}
 
 
     <!--<uib-tab index="0" ng-click="showTracerouteFunction()" ng-if="showTraceroute">-->
-            <!--<uib-tab-heading>-->
-    <!--Traceroute Visualisation-->
-      <!--</uib-tab-heading>-->
-      <!--&lt;!&ndash;TRACEROUTE GRAPH HERE&ndash;&gt;-->
+        <!--<uib-tab-heading>-->
+        <!--Traceroute Visualisation-->
+        <!--</uib-tab-heading>-->
+        <!--&lt;!&ndash;TRACEROUTE GRAPH HERE&ndash;&gt;-->
 
-    <!--</uib-tab>-->
+        <!--</uib-tab>-->
 
     <uib-tab index="key+1" ng-repeat="(key, val) in latencySummaryData"
              ng-click="loadChart_LatencySummary(val.url, val.event_type, val.type, val.window, val.uri);">
@@ -284,55 +343,93 @@ Updated at {{lastUpdated}}
 
             <div ng-repeat="(key, val) in individualLatencyResults" class="text-center" ng-if="resultTypeAggregation">
 
-              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label" chart-options="val.options">
+              <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label"
+                      chart-options="val.options">
               </canvas>
 
             </div>
 
-            <div class="" ng-if="!resultTypeAggregation" ng-repeat="(key, val) in individualLatencyResults">
+      <!--<div class="" ng-if="!resultTypeAggregation" ng-repeat="(key, val) in individualLatencyResults">-->
+      <!--<h3>{{val.date}}  <small>{{val.time}}</small></h3>-->
 
-              <h3>{{val.date}}  <small>{{val.time}}</small></h3>
+      <!--<div class="table-responsive">-->
+      <!--<table class="table table-striped text-center">-->
 
+      <!--<thead>-->
+      <!--<tr>-->
+      <!--<th>Mean</th>-->
+      <!--<th>Std Deviation</th>-->
+      <!--<th>Variance</th>-->
+      <!--<th>Median</th>-->
+      <!--<th>Maximum</th>-->
+      <!--<th>Minimum</th>-->
+      <!--<th>95th Percentile</th>-->
+      <!--<th>75th Percentile</th>-->
+      <!--<th>25th Percentile</th>-->
+      <!--</tr>-->
+      <!--</thead>-->
+
+      <!--<tbody>-->
+      <!--<tr>-->
+      <!--<td>{{val.mean}}</td>-->
+      <!--<td>{{val.stddev}}</td>-->
+      <!--<td>{{val.variance}}</td>-->
+      <!--<td>{{val.median}}</td>-->
+      <!--<td>{{val.maximum}}</td>-->
+      <!--<td>{{val.minimum}}</td>-->
+      <!--<td>{{val.percentile95}}</td>-->
+      <!--<td>{{val.percentile75}}</td>-->
+      <!--<td>{{val.percentile25}}</td>-->
+      <!--</tr>-->
+
+
+      <!--</tbody>-->
+      <!--</table>-->
+      <!--</div>-->
+
+      <!--</div>-->
+
+      <!--NEW TABLE-->
+      <div class="" ng-if="!resultTypeAggregation">
               <div class="table-responsive">
-              <table class="table table-striped text-center">
+        <table class="table table-striped text-center">
 
-              <thead>
-              <tr>
+        <thead>
+        <tr>
+        <th>Date</th>
+          <th>Time</th>
+          <th>Mean</th>
+        <th>Std Deviation</th>
+        <th>Variance</th>
+        <th>Median</th>
+        <th>Maximum</th>
+        <th>Minimum</th>
+        <th>95th Percentile</th>
+        <th>75th Percentile</th>
+        <th>25th Percentile</th>
+        </tr>
+        </thead>
 
-              <th>Mean</th>
-              <th>Std Deviation</th>
-              <th>Variance</th>
-              <th>Median</th>
-              <th>Maximum</th>
-              <th>Minimum</th>
-              <th>95th Percentile</th>
-              <th>75th Percentile</th>
-              <th>25th Percentile</th>
-
-              </tr>
-              </thead>
-
-              <tbody>
-              <tr>
-
-              <td>{{val.mean}}</td>
-              <td>{{val.stddev}}</td>
-              <td>{{val.variance}}</td>
-              <td>{{val.median}}</td>
-              <td>{{val.maximum}}</td>
-              <td>{{val.minimum}}</td>
-              <td>{{val.percentile95}}</td>
-              <td>{{val.percentile75}}</td>
-              <td>{{val.percentile25}}</td>
-
-              </tr>
+        <tbody>
+        <tr ng-repeat="(key, val) in individualLatencyResults">
+        <td>{{val.date}}</td>
+        <td>{{val.time}}</td>
+        <td>{{val.mean}}</td>
+        <td>{{val.stddev}}</td>
+        <td>{{val.variance}}</td>
+        <td>{{val.median}}</td>
+        <td>{{val.maximum}}</td>
+        <td>{{val.minimum}}</td>
+        <td>{{val.percentile95}}</td>
+        <td>{{val.percentile75}}</td>
+        <td>{{val.percentile25}}</td>
+        </tr>
 
 
-              </tbody>
-              </table>
-              </div>
-
-            </div>
+        </tbody>
+        </table>
+        </div>
+        </div>
 
 
       </uib-tab>
@@ -349,8 +446,9 @@ Updated at {{lastUpdated}}
   </div>
 
 
-//In Progress
-            <div ng-show="showTraceroute" id="latency_graph_cytoscape_traceroute"></div>
+  <!--//In Progress-->
+  <!--<div ng-show="showTraceroute" id="latency_graph_cytoscape_traceroute"></div>-->
+
 </div>
   <!-- build:js(src) scripts/vendor.js -->
   <!-- bower:js -->

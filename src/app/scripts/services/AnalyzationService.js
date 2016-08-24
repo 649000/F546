@@ -10,7 +10,7 @@
 
 var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'Webworker', function ($http, $q, $log, HostService, UnixTimeConverterService, Webworker) {
+analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'Webworker', 'DNSLookup', function ($http, $q, $log, HostService, UnixTimeConverterService, Webworker, DNSLookup) {
 
   var maxDate = Number.MIN_VALUE;
   var minDate = Number.MAX_VALUE;
@@ -206,10 +206,14 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
 
             if (IPExist == false) {
 
+              //IP Does not exist.
+
+
               var newNode = {
                 IP: IPAddr,
                 rtt: [rtt],
-                date: [ts]
+                date: [ts],
+                dns: DNSLookup.getDomain(IPAddr).dns
               }
 
               nodeAndRttList_RawData.push(newNode);
@@ -238,6 +242,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
         nodeAndRttList_CalculatedData.push(
           {
             ip: nodeAndRttList_RawData[i]['IP'],
+            dns: nodeAndRttList_RawData[i]['dns'],
             rtt: rrtResult,
             rttAvg: math.round(rttMean, 4),
             rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
@@ -877,7 +882,7 @@ analyzationService.factory('AnalyzeLatency', ['$log', 'UnixTimeConverterService'
       for (var i = 0; i < individual_traceroute_results.length; i++) {
 
         var ts = individual_traceroute_results[i]['ts'];
-        console.log("TS: " + ts)
+        // console.log("TS: " + ts)
 
         if (ts > maxDate) {
           maxDate = ts;
@@ -889,7 +894,7 @@ analyzationService.factory('AnalyzeLatency', ['$log', 'UnixTimeConverterService'
 
       return [minDate, maxDate]
     },
-    
+
     compare: function (bandwidth_1, bandwidth_2) {
 
       var diff = bandwidth_1 - bandwidth_2;
@@ -911,7 +916,7 @@ analyzationService.factory('AnalyzeLatency', ['$log', 'UnixTimeConverterService'
       //Do Something
     },
 
-    getAnalysis: function (){
+    getAnalysis: function () {
 
       return true;
     }

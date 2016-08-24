@@ -235,18 +235,18 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 
 }]);
 
-//TODO:
-ipAddrDecodeServices.factory('ReverseIPLookUp', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
-  var host = "http://geoip.nekudo.com/api/";
+ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
-  var IPAddr_LocationCache;
-//IPAddr_Location
+  //FIXME: REMEMBER TO CHANGE IP ADDRESS
+  var host = "http://127.0.0.1:5002/reversednslookup";
+  var DNSCache;
+
   if (!CacheFactory.get("ReverseIPLookup")) {
-    IPAddr_LocationCache = CacheFactory('ReverseIPLookup', {
-      maxAge: 10080 * 60 * 1000, // Items added to this cache expire after 1 week,
-      //10080 minutes = 1 week
-      // 20160  = 2 weeks
+
+    DNSCache = CacheFactory('ReverseIPLookup', {
+      maxAge: 7200 * 60 * 1000, // Items added to this cache expire after 5 days,
+      //1440 = 24 hours
       deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
       storageMode: 'localStorage' // This cache will use `localStorage`.
     });
@@ -255,86 +255,45 @@ ipAddrDecodeServices.factory('ReverseIPLookUp', ['$http', '$log', 'CacheFactory'
 
   return {
 
-    getCountry: function (IPAddress) {
+    getDomain: function (IPAddress) {
 
 
       if (CacheFactory.get("ReverseIPLookup").get(IPAddress)) {
 
-        // $log.debug("Cache Found for " + IPAddress)
         return CacheFactory.get("ReverseIPLookup").get(IPAddress);
 
       } else {
-        var country = $http({
+
+        var dnsLookup = $http({
           method: 'GET',
-          url: host + IPAddress,
+          url: host,
           params: {
-            // 'format': 'json'
+            'ipaddress': IPAddress
           },
           cache: true,
           ignoreLoadingBar: true
+
         }).then(function (response) {
 
+          var tempResult = {
+            ip: IPAddress,
+            dns: response.data.dns
+          }
           // console.log(response)
-
-          if (response.data.hasOwnProperty("type") && response.data.hasOwnProperty("msg")) {
-
-            var geocodedIP = {
-              ip: IPAddress,
-              city: "Unknown",
-              // country: "",//response.data.country.name,
-              countrycode: "Unknown"//response.data.country.code
-            }
-            // IPAddr_LocationCache.put(IPAddress, geocodedIP);
-
-          } else {
-            var cityName = response.data.city
-
-            if (cityName == false) {
-              cityName = "Unknown"
-            }
-            var geocodedIP = {
-              ip: IPAddress,
-              city: cityName,
-              // country: response.data.country.name,
-              countrycode: response.data.country.code
-            }
-            IPAddr_LocationCache.put(IPAddress, geocodedIP);
-
+          if (response.data.dns != "Unknown") {
+            DNSCache.put(IPAddress, tempResult);
           }
 
+          return tempResult;
 
-          return geocodedIP;
 
         });
-
-        return country;
-
+        return dnsLookup;
       }
 
-
-    },
-
-    getCoordinates: function (IPAddress) {
-      var coordinates = [];
-
-      coordinates = $http({
-        method: 'GET',
-        url: host + IPAddress,
-        params: {
-
-          // 'format': 'json',
-          // 'event-type': 'packet-trace'
-          // 'limit': 10,
-          // 'time-end': (Math.floor(Date.now() / 1000)),
-          // 'time-range': timeRange
-        },
-        cache: true
-      }).then(function (response) {
-
-        return [response.data, response.data];
-      });
-      return coordinates;
     }
+
+
   };
 
 }]);
