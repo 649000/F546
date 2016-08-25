@@ -2,7 +2,7 @@
  * Created by Nazri on 27/7/16.
  */
 
-var latencyServices = angular.module('LatencyServices', ['ngResource', 'GeneralServices']);
+var latencyServices = angular.module('LatencyServices', ['GeneralServices']);
 
 latencyServices.factory('LatencyResultsService', ['$http', '$log', 'HostService', function ($http, $log, HostService) {
 

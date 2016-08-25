@@ -8,9 +8,9 @@
 
 //http://status.sgaf.org.sg/traceSG-US.html
 
-var analyzationService = angular.module('AnalyzationServices', ['ngResource', 'GeneralServices', 'TracerouteServices']);
+var analyzationService = angular.module('AnalyzationServices', ['GeneralServices', 'TracerouteServices']);
 
-analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'Webworker', 'DNSLookup', function ($http, $q, $log, HostService, UnixTimeConverterService, Webworker, DNSLookup) {
+analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'DNSLookup', function ($http, $q, $log, HostService, UnixTimeConverterService, DNSLookup) {
 
   var maxDate = Number.MIN_VALUE;
   var minDate = Number.MAX_VALUE;
@@ -291,7 +291,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
 
 }]);
 
-analyzationService.factory('AnalyzeTraceroutePath', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'Webworker', function ($http, $q, $log, HostService, UnixTimeConverterService, Webworker) {
+analyzationService.factory('AnalyzeTraceroutePath', ['$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', function ($http, $q, $log, HostService, UnixTimeConverterService) {
 
   var maxDate = Number.MIN_VALUE;
   var minDate = Number.MAX_VALUE;
@@ -316,51 +316,51 @@ analyzationService.factory('AnalyzeTraceroutePath', ['$http', '$q', '$log', 'Hos
   //   return toReturn;
   // }
 
-  function uniquePathWebWorker(traceroutePaths) {
-    console.log("WEB WORKER STARTS");
-    var indexesOfError = [];
-    var uniquePaths = [];
-
-    for (var i = 0; i < traceroutePaths.length; i++) {
-
-
-      if (uniquePaths.length == 0) {
-        // uniquePaths.push(JSON.stringify(traceroutePaths[i]));
-
-        uniquePaths.push(traceroutePaths[i]);
-      }
-
-      if (uniquePaths.length > 0) {
-        for (var j = 0; j < uniquePaths.length; j++) {
-
-
-          for (var k = 0; k < uniquePaths[j].length; k++) {
-
-            if (uniquePaths[j][k] != traceroutePaths[i][k]) {
-              uniquePaths.push(traceroutePaths[i]);
-              indexesOfError.push(i);
-            }
-
-          }
-
-          // var trString = JSON.stringify(traceroutePaths[i]);
-          // if (uniquePaths !== trString) {
-          //   uniquePaths.push(trString);
-          //   indexesOfError.push(i);
-          // }
-
-
-        }
-
-      }
-
-
-    }
-
-    return [uniquePaths, indexesOfError];
-  }
-
-  var myWorker = Webworker.create(uniquePathWebWorker);
+  // function uniquePathWebWorker(traceroutePaths) {
+  //   console.log("WEB WORKER STARTS");
+  //   var indexesOfError = [];
+  //   var uniquePaths = [];
+  //
+  //   for (var i = 0; i < traceroutePaths.length; i++) {
+  //
+  //
+  //     if (uniquePaths.length == 0) {
+  //       // uniquePaths.push(JSON.stringify(traceroutePaths[i]));
+  //
+  //       uniquePaths.push(traceroutePaths[i]);
+  //     }
+  //
+  //     if (uniquePaths.length > 0) {
+  //       for (var j = 0; j < uniquePaths.length; j++) {
+  //
+  //
+  //         for (var k = 0; k < uniquePaths[j].length; k++) {
+  //
+  //           if (uniquePaths[j][k] != traceroutePaths[i][k]) {
+  //             uniquePaths.push(traceroutePaths[i]);
+  //             indexesOfError.push(i);
+  //           }
+  //
+  //         }
+  //
+  //         // var trString = JSON.stringify(traceroutePaths[i]);
+  //         // if (uniquePaths !== trString) {
+  //         //   uniquePaths.push(trString);
+  //         //   indexesOfError.push(i);
+  //         // }
+  //
+  //
+  //       }
+  //
+  //     }
+  //
+  //
+  //   }
+  //
+  //   return [uniquePaths, indexesOfError];
+  // }
+  //
+  // var myWorker = Webworker.create(uniquePathWebWorker);
 
   return {
 

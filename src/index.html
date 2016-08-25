@@ -1,8 +1,9 @@
 <!doctype html>
 <html ng-app="traceroute">
+
 <head>
   <meta charset="utf-8">
-  <title>Traceroute Visualization</title>
+  <title>Network Visualization - Traceroute</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <!--<script-->
@@ -24,8 +25,13 @@
   <!-- endbuild -->
 
 </head>
+
 <body>
-<!-- Navigation -->
+<span id="firstController" ng-controller="TracerouteGraphCtrl">
+<span id="secondController" ng-controller="TracerouteGraphPanelCtrl">
+
+<!--<span id="thirdController" ng-controller="TracerouteTableCtrl">-->
+  <!-- Navigation -->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -34,223 +40,16 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="index.html">Traceroute Visualization</a>
+    <a class="navbar-brand" href="index.html">Network Visualization</a>
   </div>
   <!-- /.navbar-header -->
 
-  <ul class="nav navbar-top-links navbar-right">
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-messages">
-        <li>
-          <a href="#">
-            <div>
-              <strong>John Smith</strong>
-              <span class="pull-right text-muted">
-                                        <em>Yesterday</em>
-                                    </span>
-            </div>
-            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <strong>John Smith</strong>
-              <span class="pull-right text-muted">
-                                        <em>Yesterday</em>
-                                    </span>
-            </div>
-            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <strong>John Smith</strong>
-              <span class="pull-right text-muted">
-                                        <em>Yesterday</em>
-                                    </span>
-            </div>
-            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a class="text-center" href="#">
-            <strong>Read All Messages</strong>
-            <i class="fa fa-angle-right"></i>
-          </a>
-        </li>
-      </ul>
-      <!-- /.dropdown-messages -->
-    </li>
-    <!-- /.dropdown -->
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-tasks">
-        <li>
-          <a href="#">
-            <div>
-              <p>
-                <strong>Task 1</strong>
-                <span class="pull-right text-muted">40% Complete</span>
-              </p>
-              <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0"
-                     aria-valuemax="100" style="width: 40%">
-                  <span class="sr-only">40% Complete (success)</span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <p>
-                <strong>Task 2</strong>
-                <span class="pull-right text-muted">20% Complete</span>
-              </p>
-              <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0"
-                     aria-valuemax="100" style="width: 20%">
-                  <span class="sr-only">20% Complete</span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <p>
-                <strong>Task 3</strong>
-                <span class="pull-right text-muted">60% Complete</span>
-              </p>
-              <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0"
-                     aria-valuemax="100" style="width: 60%">
-                  <span class="sr-only">60% Complete (warning)</span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <p>
-                <strong>Task 4</strong>
-                <span class="pull-right text-muted">80% Complete</span>
-              </p>
-              <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0"
-                     aria-valuemax="100" style="width: 80%">
-                  <span class="sr-only">80% Complete (danger)</span>
-                </div>
-              </div>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a class="text-center" href="#">
-            <strong>See All Tasks</strong>
-            <i class="fa fa-angle-right"></i>
-          </a>
-        </li>
-      </ul>
-      <!-- /.dropdown-tasks -->
-    </li>
-    <!-- /.dropdown -->
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-alerts">
-        <li>
-          <a href="#">
-            <div>
-              <i class="fa fa-comment fa-fw"></i> New Comment
-              <span class="pull-right text-muted small">4 minutes ago</span>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-              <span class="pull-right text-muted small">12 minutes ago</span>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <i class="fa fa-envelope fa-fw"></i> Message Sent
-              <span class="pull-right text-muted small">4 minutes ago</span>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <i class="fa fa-tasks fa-fw"></i> New Task
-              <span class="pull-right text-muted small">4 minutes ago</span>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a href="#">
-            <div>
-              <i class="fa fa-upload fa-fw"></i> Server Rebooted
-              <span class="pull-right text-muted small">4 minutes ago</span>
-            </div>
-          </a>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <a class="text-center" href="#">
-            <strong>See All Alerts</strong>
-            <i class="fa fa-angle-right"></i>
-          </a>
-        </li>
-      </ul>
-      <!-- /.dropdown-alerts -->
-    </li>
-    <!-- /.dropdown -->
-    <li class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-user">
-        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
-        </li>
-        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
-        </li>
-        <li class="divider"></li>
-        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-        </li>
-      </ul>
-      <!-- /.dropdown-user -->
-    </li>
-    <!-- /.dropdown -->
-  </ul>
-  <!-- /.navbar-top-links -->
+
+<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval"
+    popover-placement="bottom" popover-trigger="'mouseenter'">
+Updated at {{lastUpdated}}
+            </ul>
+
 
   <div class="navbar-default sidebar" role="navigation">
     <div class="sidebar-nav navbar-collapse">
@@ -266,376 +65,331 @@
           </div>
           <!-- /input-group -->
         </li>
-        <li>
-          <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+
+        <!--<li>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute</a>-->
+        <!--</li>-->
+
+        <!--<li>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Traceroute Path</a>-->
+        <!--</li>-->
+
+        <!--<li>-->
+        <!--<a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Latency</a>-->
+        <!--</li>-->
+
+      <li class="active">
+        <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Visualisations<span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level collapse in" aria-expanded="true" style="">
+          <li>
+            <a href="index.html">Traceroute</a>
+          </li>
+          <li>
+            <a href="traceroute_path.html">Traceroute Path</a>
+          </li>
+                  <li>
+            <a href="latency.html">Latency</a>
+          </li>
+        </ul>
+        <!-- /.nav-second-level -->
         </li>
-        <li>
-          <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
-          <ul class="nav nav-second-level">
-            <li>
-              <a href="flot.html">Flot Charts</a>
-            </li>
-            <li>
-              <a href="morris.html">Morris.js Charts</a>
-            </li>
-          </ul>
-          <!-- /.nav-second-level -->
-        </li>
-        <li>
-          <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
-        </li>
-        <li>
-          <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
-        </li>
-        <li>
-          <a href="#"><i class="fa fa-wrench fa-fw"></i> UI Elements<span class="fa arrow"></span></a>
-          <ul class="nav nav-second-level">
-            <li>
-              <a href="panels-wells.html">Panels and Wells</a>
-            </li>
-            <li>
-              <a href="buttons.html">Buttons</a>
-            </li>
-            <li>
-              <a href="notifications.html">Notifications</a>
-            </li>
-            <li>
-              <a href="typography.html">Typography</a>
-            </li>
-            <li>
-              <a href="icons.html"> Icons</a>
-            </li>
-            <li>
-              <a href="grid.html">Grid</a>
-            </li>
-          </ul>
-          <!-- /.nav-second-level -->
-        </li>
-        <li>
-          <a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>
-          <ul class="nav nav-second-level">
-            <li>
-              <a href="#">Second Level Item</a>
-            </li>
-            <li>
-              <a href="#">Second Level Item</a>
-            </li>
-            <li>
-              <a href="#">Third Level <span class="fa arrow"></span></a>
-              <ul class="nav nav-third-level">
-                <li>
-                  <a href="#">Third Level Item</a>
-                </li>
-                <li>
-                  <a href="#">Third Level Item</a>
-                </li>
-                <li>
-                  <a href="#">Third Level Item</a>
-                </li>
-                <li>
-                  <a href="#">Third Level Item</a>
-                </li>
-              </ul>
-              <!-- /.nav-third-level -->
-            </li>
-          </ul>
-          <!-- /.nav-second-level -->
-        </li>
-        <li>
-          <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
-          <ul class="nav nav-second-level">
-            <li>
-              <a href="blank.html">Blank Page</a>
-            </li>
-            <li>
-              <a href="login.html">Login Page</a>
-            </li>
-          </ul>
-          <!-- /.nav-second-level -->
-        </li>
+
+
       </ul>
     </div>
     <!-- /.sidebar-collapse -->
   </div>
   <!-- /.navbar-static-side -->
 </nav>
-<!-- End of Navigation -->
+  <!-- End of Navigation -->
 <div id="page-wrapper">
   <!--ACTUAL BODY STARTS HERE-->
 
-  <div class="panel panel-default">
-
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape - Traceroute
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Traceroute <small></small>
+        <small class="pull-right" uib-popover="Date of results." popover-placement="bottom"
+               popover-trigger="'mouseenter'">
+        <span ng-if="minDate!==undefined">{{minDate}} to </span>
+        <span ng-if="maxDate!==undefined">{{maxDate}}</span>
+      </small></h1>
     </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      <div class="container">
-        <button type="button" id="123234" class="btn btn-default" data-placement="top"
-                data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." data-original-title=""
-                title="">
-          Popover on top
-        </button>
-        <button id="testButton" type="button" class="btn btn-default" ng-controller="testController"
-                ng-click="analyzetr()">Test
-        </button>
-
-        <!--Node1: <input type="text" name="node1" value="http://ps2.jp.apan.net/esmond/perfsonar/archive/" ng-model="input_node1"><br>-->
-        <!--Node2: <input type="text" name="node2" ng-model="input_node2"><br>-->
-        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-        <!--<div ng-controller="tr_cytoscape">-->
-        <!--Main Nodes: {{mainNodes}}-->
-
-        <!--Total Nodes: {{totalNodes}}-->
-        <!--Date of Traceroute Test: {{tracerouteDate}}-->
-        <!--Time of Traceroute Test: {{tracerouteTime}}-->
-        <!--</div>-->
-
-
-        <!--<div class="container" id="tr_plot_cytoscape" ng-controller="tr_cytoscape">-->
-
-        <!--</div>-->
-
-
-      </div>
-
-    </div>
-    <!-- /.panel-body -->
+    <!-- /.col-lg-12 -->
   </div>
 
+  <div class="row">
+    <div class="col-lg-9">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute Visualisation
+          <div class="pull-right">
 
-  <div class="panel panel-default">
-
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Traceroute - No Duplicated Path
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      Show Visualisation: <input class="checkbox-inline" type="checkbox" ng-model="myVar">
-
-      <button type="button" class="btn btn-default" ng-controller="Traceroute_NoDuplicateCtrl"
-              ng-click="loadTraceroute_NoDuplicate()">Load Traceroute
-      </button>
-
-      <div class="container" ng-show="myVar">
-
-        <div ng-controller="Traceroute_NoDuplicateCtrl">
-          Main Nodes: {{mainNodes}}
-          NON - Main Nodes: {{NonMainNodes}}
-          Total Nodes: {{totalNodes}}
-          Date of Traceroute Test: {{tracerouteDate}}
-          Time of Traceroute Test: {{tracerouteTime}}
-
-
+          </div>
         </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
 
 
-        <div class="container" id="traceroute_noduplicate" ng-controller="Traceroute_NoDuplicateCtrl">
+          <div>
 
+            <div id="traceroute_graph_cytoscape"></div>
+
+          </div>
         </div>
-
-
+        <!-- /.panel-body -->
       </div>
-
+      <!-- /.panel -->
     </div>
-    <!-- /.panel-body -->
-  </div>
+    <!-- /.col-lg-8 -->
+
+    <div class="col-lg-3">
+      <div class="panel panel-default">
 
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Bandwidth - AngularJS Service
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
-      Overview of all, click, show from that clicked node perspective.
-      <button type="button" class="btn btn-default" ng-controller="updateBandwidth" ng-click="getBandwidth()">Get
-        Bandwidth
-      </button>
-      <button id="latencyButton" type="button" class="btn btn-default" ng-controller="updateBandwidth"
-              ng-click="getBandwidth()">Get Latency
-      </button>
-      <div class="container" id="cytoscape_bandwidth" ng-controller="bw_cytoscape">
-        <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
+        <div class="panel-heading">
+          <i class="fa fa-gear fa-fw"></i> Graph Panel
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <div class="form-group input-group">
 
 
-      </div>
-    </div>
-    <!-- /.panel-body -->
-  </div>
+              <input type="text" class="form-control" placeholder="IP Address" ng-model="nodeSearch"
+                     ng-keypress="mainGraphSearchNodeKeypress($event,nodeSearch)">
+              <span class="input-group-btn">
+               <button class="btn btn-default" type="button"
+                       ng-click="mainGraphSearchNodeClick(nodeSearch);"><i
+                 class="fa fa-search"></i></button>
+               </span>
 
 
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Cytoscape Latency
-    </div>
-    <!-- /.panel-heading -->
-    <div class="panel-body">
 
-      <div ng-controller="LatencyVisualisation_DisplayOptionsCtrl">
-        <button type="button" class="btn btn-default" ng-click="displayBreathFirst();">Breath First</button>
-        <button type="button" class="btn btn-default" ng-click="displayConcentric();">Concenmetric</button>
-        <button type="button" class="btn btn-default" ng-click="displayGrid();">Grid</button>
-        <button type="button" class="btn btn-default" ng-click="displayCose();">Cose</button>
-        <button type="button" class="btn btn-default" ng-click="displayCircle();">Circle</button>
-      </div>
+            </div>
+          <div class="list-group">
+            <h5>Graph Layout
+            </h5>
+            <a href="" class="list-group-item"
+               ng-click="mainGraphLayout_Concentric();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Concentric
+            </a>
 
-
-      <div ng-controller="LatencyVisualisationCtrl">
+            <a href="" class="list-group-item"
+               ng-click="mainGraphLayout_BreathFirst();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Breath First
+            </a>
 
 
-        <p>Date of Latency Test: {{latencyDate}}</p>
-        <p>Time of Latency Test: {{latencyTime}}</p>
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Grid();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Grid
+            </a>
 
-        //Maybe do a qtip popup instead.
-        <p>ISSUE: Failure in traceroute is not mentioned</p>
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Cose();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Cose
+            </a>
 
-        <div class="container" id="latency_cytoscape"></div>
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Circle();">
+              <i class="fa fa-wrench fa-fw"></i> Layout: Circle
+            </a>
 
-
-        <!--<button type="button" class="btn btn-default" ng-click="showMe();">Show</button>-->
-        <!--<button type="button" class="btn btn-default" ng-click="hideMe();">Hide</button>-->
-
-
-        <!--ng-show="showLatencyInfo-->
-        <div id="LatencyInformation" class="container" ng-controller="LatencyInformationCtrl">
-
-          <button type="button" class="btn btn-default" ng-click="TestClick();">Breath First Layout</button>
-          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-          <button type="button" class="btn btn-default" ng-click="TestClick();">Additional Layout</button>
-
-
-          <div id="latency_cytoscape_traceroute">
-            <p> TRACEROUTE GOES HERE</p>
+            <a href="" class="list-group-item" ng-click="mainGraphLayout_Centred();">
+              <i class="fa fa-crosshairs fa-fw"></i> Back to Centre
+            </a>
 
           </div>
 
-          <div id="latency_metadata_summary">
+          <div class="list-group">
+            <h5>Traceroute Information
+              <small></small>
+            </h5>
+
+            <span class="list-group-item">
+              <i class="fa fa-asterisk fa-fw"></i> No. of Nodes
+              <span class="badge">{{noOfNodes}}</span>
+            </span>
 
 
-            <div class="table-responsive">
-              <table class="table">
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
+              <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
+                        <div class="pull-right">
+                  <span class="badge">{{noOfAnomalies}}</span>
+                </div>
+            </span>
 
-                <thead>
-                <tr>
-
-                  <th>Latency Summary Type</th>
-                  <th>Latency Summary Date</th>
-                  <th>Latency Summary Time</th>
-                  <th>Latency Summary Window</th>
-                  <th>Latency Histogram</th>
-                </tr>
-                </thead>
-
-                <tbody>
+          </div>
 
 
-                <tr ng-repeat="summary in latencySummaryData">
-                  <td>{{summary.type}}</td>
-                  <td>{{summary.date}}</td>
-                  <td>{{summary.time}}</td>
-                  <td>{{summary.window}}</td>
 
-                  <td>
-                    <button type="button" class="btn btn-default"
-                            ng-click="loadLatencySummaryChart(summary.url, summary.event_type, summary.type, summary.window, summary.uri);">
-                      Load Histogram
-                    </button>
-                  </td>
-                </tr>
+          <div class="list-group" ng-if="selectedPath">
+            <h5>
+             Selected Traceroute Information
+            </h5>
+
+            <span class="list-group-item">
+              <i class="fa fa-flag-checkered fa-fw"></i>
+              Source:
+
+                        <div class="pull-right">
+            {{selectedPath.source}}
+          </div>
+            </span>
+                     <span class="list-group-item">
+              <i class="fa fa-flag-o fa-fw"></i>
+               Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
+            </span>
+
+               <span class="list-group-item">
+              <i class="fa fa-clock-o fa-fw"></i>
+              Time:<div class="pull-right">{{selectedPath.time}} </div>
+            </span>
+            <span class="list-group-item">
+              <i class="fa fa-calendar fa-fw"></i>
+              Date:<div class="pull-right">{{selectedPath.date}} </div>
+            </span>
+
+            <!--<a ng-href="#{{selectedPath.metadata}}" class="list-group-item" >-->
 
 
-                </tbody>
-              </table>
+            <!--<i class="fa fa-exclamation-triangle fa-fw"></i>-->
+            <!--Error Status: <div class="pull-right">{{selectedPath.errorStatus}} </div>-->
+
+            <!--</a>-->
+
+
+
+                        <a ng-href="#{{selectedPath.metadata}}" class="list-group-item"
+                           ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"
+                        >
+              <i class="fa fa-info fa-fw"></i>
+              Error Status:
+              <div ng-if="selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-remove"></span></div>
+              <div ng-if="!selectedPath.errorStatus" class="pull-right"><span
+                class="pull-right glyphicon glyphicon-ok"></span></div>
+            </a>
+
+
+
+          </div>
+          <!-- /.list-group -->
+
+        </div>
+        <!-- /.panel-body -->
+      </div>
+      <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+  </div>
+
+
+  <div class="panel panel-default">
+
+    <div class="panel-body">
+
+
+      <div>
+
+
+        <div class="" id="{{val.metadata}}" ng-repeat="(key, val) in tracerouteResults | orderBy: 'source'">
+
+          <h3>{{val.source}}
+            <small>{{val.sourceCity}}, {{val.sourceCountry}}</small>
+            <i class="fa fa-arrow-right fa-fw"></i>
+            <!--<i class="fa fa-chevron-right fa-fw"></i>-->
+            {{val.destination}}
+            <small>{{val.destinationCity}}, {{val.destinationCountry}}</small>
+          </h3>
+
+
+          <div class="panel" ng-class="{'panel-danger': val.anomaliesExist, 'panel-default': !val.anomaliesExist}">
+            <div class="panel-heading">
+
+              <h4> {{val.nodes[0].startTime[0]}}:{{val.nodes[0].startTime[1]}}:{{val.nodes[0].startTime[2]}}
+                {{val.nodes[0].startTime[3]}}
+                <small>{{val.nodes[0].startDate[0]}} {{val.nodes[0].startDate[1]}} {{val.nodes[0].startDate[2]}}</small>
+                <i class="fa fa-minus fa-fw"></i>
+                {{val.nodes[0].endTime[0]}}:{{val.nodes[0].endTime[1]}}:{{val.nodes[0].endTime[2]}}
+                {{val.nodes[0].endTime[3]}}
+                <small>
+                  {{val.nodes[0].endDate[0]}} {{val.nodes[0].endDate[1]}} {{val.nodes[0].endDate[2]}}
+                </small>
+              </h4>
+
             </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table">
 
-            <div>
-              <p>Histogram</p>
+                  <thead>
+                  <tr>
+                    <th>Hop</th>
+                    <th>IP</th>
+                     <th>Domain</th>
+                    <th>RTT</th>
+                    <th>Min RTT</th>
+                    <th>Mean RTT</th>
+                    <th>Std Deviation RTT</th>
+                    <th>Status</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr ng-repeat="(key, val2) in val.nodes ">
+                    <td>{{key+1}}</td>
+                    <td uib-popover="{{dnsName}}" popover-trigger="'mouseenter'" popover-append-to-body="true" popover-placement="top-left" ng-mouseover="getDNS(val2.ip)" role="button">{{val2.ip}}</td>
+                    <!--<td>{{val2.ip}}</td>-->
+                    <td>{{val2.dns}}</td>
+                    <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a href="">{{val2.rtt}}</a></td>
+                    <td>{{val2.rttMin}}</td>
+                    <td>{{val2.rttAvg}}</td>
+                    <td>{{val2.rttStd}}</td>
 
+                    <td class="danger" ng-if="val2.status">
+                      <span class="glyphicon glyphicon-remove"> </span></td>
 
-              <ul class="pagination" ng-repeat="(key, val) in IndividualLatencyResults">
-                <li><a href="" ng-click="loadIndividualLatencyChart(key)">{{key+1}}</a></li>
+                    <td class="" ng-if="!val2.status">
+                      <span class="glyphicon glyphicon-ok">   </span>
+                    </td>
 
-              </ul>
+                  </tr>
+                  </tbody>
 
-              <!--<div ng-repeat="(key, val) in IndividualLatencyResults">-->
-                <!--<canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">-->
-                <!--</canvas>-->
-
-              <!--</div>-->
-
-              <div ng-repeat="(key, val) in IndividualLatencyResults">
-                <p>Date: {{val.date}}</p>
-                <p>Time: {{val.time}}</p>
-                <canvas class="chart chart-bar" chart-data="val.data" chart-labels="val.label">
-                </canvas>
-
+                </table>
               </div>
-
-
-              <canvas id="bar" class="chart chart-bar" chart-data="data" chart-labels="labels" chart-series="series">
-              </canvas>
-
+              <!-- /.table-responsive -->
             </div>
-
-
+            <!-- /.panel-body -->
           </div>
 
 
         </div>
 
 
-        1. Get Traceroute if possible - DONE.
-        2. Display Aggregation and Statistics.
-
-        Focus: detection of variating/anomaly in the health of links.
-        We need to get the data over time to see if there is progressive deterioration on links.
-        look ay past data you would see the changes in latency amd bandwidth.
-        visualisation and analysis tool for the network manager.
-
       </div>
-      <!-- /.panel-body -->
+
+
     </div>
-
-
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <i class="fa fa-bar-chart-o fa-fw"></i> Google Maps
-      </div>
-      <!-- /.panel-heading -->
-      <div class="panel-body">
-        <div class="container">
-
-
-          <!--<button type="button" ng-controller="tr_cytoscape" ng-click="updateGraph()">Update</button>-->
-
-
-          <!--<div id="tr_plot_gmaps" ng-controller="tr_gmaps">-->
-
-          <!--<ui-gmap-google-map center='map.center' zoom='map.zoom'>-->
-          <!--<ui-gmap-markers models="nodeMarkers" coords="'self'" icon="'icon'" options="'options'">-->
-          <!--<ui-gmap-windows show="show">-->
-          <!--<div ng-non-bindable>{{title}}</div>-->
-          <!--</ui-gmap-windows>-->
-          <!--</ui-gmap-markers>-->
-
-          <!--<ui-gmap-polylines models="edgeLines" path="'geotracks'" stroke="'stroke'">-->
-
-          <!--</ui-gmap-polylines>-->
-          <!--</ui-gmap-google-map>-->
-          <!--</div>-->
-
-        </div>
-
-
-      </div>
-      <!-- /.panel-body -->
-    </div>
-
-
+    <!-- /.panel-body -->
   </div>
 
+
+  <!--&lt;!&ndash;Empty Panel&ndash;&gt;-->
+  <!--<div class="panel panel-default">-->
+  <!--<div class="panel-heading">-->
+  <!--<i class="fa fa-bar-chart-o fa-fw"></i> Empty Panel-->
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+  <!--<div class="panel-body">-->
+  <!--<div class="container">-->
+
+
+  <!--</div>-->
+
+
+  <!--</div>-->
+  <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+  <!--</div>-->
+
+</div>
   <!-- build:js(src) scripts/vendor.js -->
   <!-- bower:js -->
   <!-- run `gulp inject` to automatically populate bower script dependencies -->
@@ -652,24 +406,31 @@
   <!-- endinject -->
   <!-- endbuild -->
 
-  <script>
-    // tooltip demo
-    $('.tooltip-demo').tooltip({
-      selector: "[data-toggle=tooltip]",
-      container: "body"
-    })
+    <script type="text/ng-template" id="myModalContent.html">
+        <!--<div class="modal-header" >-->
+            <!--<h3 class="modal-title" id="modal-title"></h3>-->
+        <!--</div>-->
+        <div class="modal-body" id="modal-body" >
 
-    // popover demo
-    $("#123234")
-      .popover()
 
-    $('#123234').qtip({ // Grab some elements to apply the tooltip to
-      content: {
-        text: 'My common piece of text here'
-      }
-    })
+        <canvas id="lineChart_individualRTThistory" class="chart chart-bar" chart-data="individualRTT_data" chart-dataset-override="datasetOverride"
+        chart-labels="individualRTT_labels" chart-options="individualRTT_option">
+          </canvas>
 
-  </script>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+
+        </div>
+    </script>
+
+  <!--</span>-->
+
+</span>
+</span>
+
 
 </body>
+
 </html>

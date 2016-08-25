@@ -2,7 +2,7 @@
  * Created by Nazri on 25/2/16.
  */
 
-var ipAddrDecodeServices = angular.module('IPAddrDecodeServices', ['ngResource']);
+var ipAddrDecodeServices = angular.module('IPAddrDecodeServices', []);
 
 
 /**
@@ -34,42 +34,42 @@ var executionURL_GEOIP_NEKUDO = baseAPIURL_GEOIP_NEKUDO + ':ip_address'
  * JSON RECEIVED AS
  * Latitude: latitude
  * Longitude: longitude
- */
-ipAddrDecodeServices.factory('FreeGeoIP', ['$resource', function ($resource) {
-
-  return $resource(executionURL_FreeGeoIP, {}, {
-    decode: {method: 'GET', params: {}, isArray: false}
-
-
-  });
-
-}]);
-
-/**
- * JSON RECEIVED AS
- * Latitude: lat
- * Longitude: lon
- */
-ipAddrDecodeServices.factory('IP_API', ['$resource', function ($resource) {
-
-  return $resource(executionURL_IPAPI, {}, {
-    decode: {method: 'GET', params: {}, isArray: false}
-  });
-
-}]);
-
-/**
- * JSON RECEIVED AS
- * Latitude: latitude
- * Longitude: longitude
- */
-ipAddrDecodeServices.factory('IP_INFO_DB', ['$resource', function ($resource) {
-
-  return $resource(executionURL_IP_INFO_DB, {}, {
-    decode: {method: 'GET', params: {}, isArray: false}
-  });
-
-}]);
+//  */
+// ipAddrDecodeServices.factory('FreeGeoIP', ['$resource', function ($resource) {
+//
+//   return $resource(executionURL_FreeGeoIP, {}, {
+//     decode: {method: 'GET', params: {}, isArray: false}
+//
+//
+//   });
+//
+// }]);
+//
+// /**
+//  * JSON RECEIVED AS
+//  * Latitude: lat
+//  * Longitude: lon
+//  */
+// ipAddrDecodeServices.factory('IP_API', ['$resource', function ($resource) {
+//
+//   return $resource(executionURL_IPAPI, {}, {
+//     decode: {method: 'GET', params: {}, isArray: false}
+//   });
+//
+// }]);
+//
+// /**
+//  * JSON RECEIVED AS
+//  * Latitude: latitude
+//  * Longitude: longitude
+//  */
+// ipAddrDecodeServices.factory('IP_INFO_DB', ['$resource', function ($resource) {
+//
+//   return $resource(executionURL_IP_INFO_DB, {}, {
+//     decode: {method: 'GET', params: {}, isArray: false}
+//   });
+//
+// }]);
 
 
 // ipAddrDecodeServices.factory('GEOIP_NEKUDO', ['$resource', function ($resource) {

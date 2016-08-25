@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'indexedDB','angular-loading-bar','ngWebworker']).config(['$logProvider', '$indexedDBProvider','cfpLoadingBarProvider', function ($logProvider, $indexedDBProvider,cfpLoadingBarProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'angular-loading-bar']).config(['$logProvider', 'cfpLoadingBarProvider', function ($logProvider, cfpLoadingBarProvider) {
 
   // Spinner for $http loading
   cfpLoadingBarProvider.includeSpinner = true;
@@ -26,7 +26,6 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
   //   objStore.createIndex('time_interval', 'time_interval', {unique: false});
   //   objStore.createIndex('ip_transport_protocol', 'ip_transport_protocol', {unique: false});
   // });
-
 
 
   // $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {

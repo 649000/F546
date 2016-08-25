@@ -2,7 +2,7 @@
  * Created by Nazri on 28/2/16.
  */
 
-var tracerouteServices = angular.module('TracerouteServices', ['ngResource', 'GeneralServices']);
+var tracerouteServices = angular.module('TracerouteServices', ['GeneralServices']);
 
 //var tracerouteListURL = 'http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/'
 //var tracerouteResultURL = tracerouteListURL + ':metadata_key/packet-trace/base'
@@ -21,7 +21,7 @@ var tracerouteServices = angular.module('TracerouteServices', ['ngResource', 'Ge
  MAIN SERVICE: Used to call Traceroute Results
  Checked on August 12th 2016
  */
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', 'CacheFactory', 'IndividualTracerouteCacheService', 'TracerouteResultsIndexedDBService', function ($http, $log, HostService, CacheFactory, IndividualTracerouteCacheService, TracerouteResultsIndexedDBService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', function ($http, $log, HostService) {
 
 
   return {
@@ -116,93 +116,93 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
  MAIN CACHE SERVICE:
  Date: August 6th 2016
  */
-tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', '$log', 'HostService', '$indexedDB', function ($http, $q, $log, HostService, $indexedDB) {
-
-
-  return {
-
-    addResult: function (url, result) {
-
-      return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
-
-        store.delete(url).then(function () {
-
-          store.insert({
-              "url": url,
-              "data": result
-            }
-          ).then(function (e) {
-
-            return true;
-
-          });
-
-
-        })
-
-      });
-
-
-    },
-
-    getResult: function (url) {
-
-      return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
-        store.find(url).then(function (e) {
-          return e;
-        });
-      });
-
-    }
-
-  }
-
-
-}]);
-
-tracerouteServices.factory('IndividualTracerouteCacheService', ['$http', '$q', '$log', 'HostService', 'CacheFactory', function ($http, $q, $log, HostService, CacheFactory) {
-  var TracerouteIndividualResult;
-
-  //TODO: probably update on expire.
-  if (!CacheFactory.get("TracerouteIndividualResult")) {
-    TracerouteIndividualResult = CacheFactory('TracerouteIndividualResult', {
-      maxAge: 30 * 60 * 1000, // Items added to this cache expire after X period,
-      // 15 = 15 minutes
-      //10080 minutes = 1 week
-      // 20160  = 2 weeks
-      deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
-      storageMode: 'localStorage' // This cache will use `localStorage`.
-
-    });
-  } else {
-    TracerouteIndividualResult = CacheFactory.get("TracerouteIndividualResult");
-  }
-
-  return {
-
-    storeResult: function (key, result) {
-
-      TracerouteIndividualResult.put(key, res);
-    },
-
-    getResult: function (key) {
-
-      return TracerouteIndividualResult.get(key);
-    },
-
-    getCacheObject: function () {
-      return TracerouteIndividualResult;
-    },
-
-    checkAvailableStorage: function (toBeAdded) {
-
-    }
-
-  }
-
-
-}]);
-
+// tracerouteServices.factory('TracerouteResultsIndexedDBService', ['$http', '$q', '$log', 'HostService', '$indexedDB', function ($http, $q, $log, HostService, $indexedDB) {
+//
+//
+//   return {
+//
+//     addResult: function (url, result) {
+//
+//       return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
+//
+//         store.delete(url).then(function () {
+//
+//           store.insert({
+//               "url": url,
+//               "data": result
+//             }
+//           ).then(function (e) {
+//
+//             return true;
+//
+//           });
+//
+//
+//         })
+//
+//       });
+//
+//
+//     },
+//
+//     getResult: function (url) {
+//
+//       return $indexedDB.openStore('IndividualTracerouteResult', function (store) {
+//         store.find(url).then(function (e) {
+//           return e;
+//         });
+//       });
+//
+//     }
+//
+//   }
+//
+//
+// }]);
+//
+// tracerouteServices.factory('IndividualTracerouteCacheService', ['$http', '$q', '$log', 'HostService', 'CacheFactory', function ($http, $q, $log, HostService, CacheFactory) {
+//   var TracerouteIndividualResult;
+//
+//   //TODO: probably update on expire.
+//   if (!CacheFactory.get("TracerouteIndividualResult")) {
+//     TracerouteIndividualResult = CacheFactory('TracerouteIndividualResult', {
+//       maxAge: 30 * 60 * 1000, // Items added to this cache expire after X period,
+//       // 15 = 15 minutes
+//       //10080 minutes = 1 week
+//       // 20160  = 2 weeks
+//       deleteOnExpire: 'aggressive', // Items will be deleted from this cache right when they expire.
+//       storageMode: 'localStorage' // This cache will use `localStorage`.
+//
+//     });
+//   } else {
+//     TracerouteIndividualResult = CacheFactory.get("TracerouteIndividualResult");
+//   }
+//
+//   return {
+//
+//     storeResult: function (key, result) {
+//
+//       TracerouteIndividualResult.put(key, res);
+//     },
+//
+//     getResult: function (key) {
+//
+//       return TracerouteIndividualResult.get(key);
+//     },
+//
+//     getCacheObject: function () {
+//       return TracerouteIndividualResult;
+//     },
+//
+//     checkAvailableStorage: function (toBeAdded) {
+//
+//     }
+//
+//   }
+//
+//
+// }]);
+//
 
 /*
  This services draws the Traceroute graph with DUPLICATED paths.
@@ -2735,94 +2735,94 @@ tracerouteServices.factory('CytoscapeService_Bandwidth', [function () {
 
 }]);
 
-
-tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function ($resource) {
-
-  // Calls the main result page.
-  // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
-  // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
-  // subject-type : "point-to-point"
-  // event-types
-  // source : "203.30.39.127"
-  // destination : "137.189.192.25"
-  // measurement-agent : "203.30.39.127"
-  // tool-name : "bwctl/tracepath"
-  // input-source : "203.30.39.127"
-  // input-destination : "ps1.itsc.cuhk.edu.hk"
-  // time-interval : "600"
-  // ip-transport-protocol : "icmp"
-  // ip-packet-size : "40"
-  // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
-  // metadata-count-total : 23
-  // metadata-previous-page : null
-  // metadata-next-page : null
-
-
-  // https://docs.angularjs.org/api/ngResource/service/$resource
-  return $resource(tracerouteResultURL, {}, {
-
-    list: {
-      method: 'GET',
-      params: {'format': 'json', 'event-type': 'packet-trace'},
-      isArray: true
-    }
-
-  });
-
-}]);
-tracerouteServices.factory('TracerouteMainResults', ['$resource', function ($resource) {
-
-  // Calls the main result page.
-  // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
-  // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
-  // subject-type : "point-to-point"
-  // event-types
-  // source : "203.30.39.127"
-  // destination : "137.189.192.25"
-  // measurement-agent : "203.30.39.127"
-  // tool-name : "bwctl/tracepath"
-  // input-source : "203.30.39.127"
-  // input-destination : "ps1.itsc.cuhk.edu.hk"
-  // time-interval : "600"
-  // ip-transport-protocol : "icmp"
-  // ip-packet-size : "40"
-  // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
-  // metadata-count-total : 23
-  // metadata-previous-page : null
-  // metadata-next-page : null
-
-
-  // https://docs.angularjs.org/api/ngResource/service/$resource
-  return $resource(tracerouteResultURL, {}, {
-
-    list: {
-      method: 'GET',
-      params: {'format': 'json', 'event-type': 'packet-trace'},
-      isArray: true
-    }
-
-  });
-
-}]);
-
-
-tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function ($resource) {
-
-  // Calls the individual test containing various hops.
-
-  //URL Format
-  // 'http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/123AAAAAAA/packet-trace/base'
-  // substitute 123AAAA with :metadata_key, similar to parameters
-
-  return $resource(tracerouteResultIndividualURL, {}, {
-    get: {
-      method: 'GET',
-      params: {'format': 'json'},
-      isArray: true
-    }
-
-
-  });
-
-}]);
-
+//
+// tracerouteServices.factory('TracerouteMainResult_URL', ['$resource', function ($resource) {
+//
+//   // Calls the main result page.
+//   // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+//   // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
+//   // subject-type : "point-to-point"
+//   // event-types
+//   // source : "203.30.39.127"
+//   // destination : "137.189.192.25"
+//   // measurement-agent : "203.30.39.127"
+//   // tool-name : "bwctl/tracepath"
+//   // input-source : "203.30.39.127"
+//   // input-destination : "ps1.itsc.cuhk.edu.hk"
+//   // time-interval : "600"
+//   // ip-transport-protocol : "icmp"
+//   // ip-packet-size : "40"
+//   // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+//   // metadata-count-total : 23
+//   // metadata-previous-page : null
+//   // metadata-next-page : null
+//
+//
+//   // https://docs.angularjs.org/api/ngResource/service/$resource
+//   return $resource(tracerouteResultURL, {}, {
+//
+//     list: {
+//       method: 'GET',
+//       params: {'format': 'json', 'event-type': 'packet-trace'},
+//       isArray: true
+//     }
+//
+//   });
+//
+// }]);
+// tracerouteServices.factory('TracerouteMainResults', ['$resource', function ($resource) {
+//
+//   // Calls the main result page.
+//   // url : "http://ps2.jp.apan.net/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+//   // metadata-key : "0a468985ca8b41029a22ae4e4645f869"
+//   // subject-type : "point-to-point"
+//   // event-types
+//   // source : "203.30.39.127"
+//   // destination : "137.189.192.25"
+//   // measurement-agent : "203.30.39.127"
+//   // tool-name : "bwctl/tracepath"
+//   // input-source : "203.30.39.127"
+//   // input-destination : "ps1.itsc.cuhk.edu.hk"
+//   // time-interval : "600"
+//   // ip-transport-protocol : "icmp"
+//   // ip-packet-size : "40"
+//   // uri : "/esmond/perfsonar/archive/0a468985ca8b41029a22ae4e4645f869/"
+//   // metadata-count-total : 23
+//   // metadata-previous-page : null
+//   // metadata-next-page : null
+//
+//
+//   // https://docs.angularjs.org/api/ngResource/service/$resource
+//   return $resource(tracerouteResultURL, {}, {
+//
+//     list: {
+//       method: 'GET',
+//       params: {'format': 'json', 'event-type': 'packet-trace'},
+//       isArray: true
+//     }
+//
+//   });
+//
+// }]);
+//
+//
+// tracerouteServices.factory('TracerouteIndividualResults', ['$resource', function ($resource) {
+//
+//   // Calls the individual test containing various hops.
+//
+//   //URL Format
+//   // 'http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/123AAAAAAA/packet-trace/base'
+//   // substitute 123AAAA with :metadata_key, similar to parameters
+//
+//   return $resource(tracerouteResultIndividualURL, {}, {
+//     get: {
+//       method: 'GET',
+//       params: {'format': 'json'},
+//       isArray: true
+//     }
+//
+//
+//   });
+//
+// }]);
+//

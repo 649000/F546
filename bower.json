@@ -3,13 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "angular-animate": "~1.4.2",
-    "angular-cookies": "~1.4.2",
-    "angular-touch": "~1.4.2",
-    "angular-sanitize": "~1.4.2",
-    "angular-messages": "~1.4.2",
-    "angular-aria": "~1.4.2",
     "jquery": "~2.1.4",
-    "angular-resource": "~1.4.2",
     "bootstrap": "~3.3.5",
     "angular": "~1.4.2",
     "cytoscape": "^2.6.5",
@@ -23,8 +17,6 @@
     "angular-bootstrap": "^2.0.1",
     "angular-cache": "^4.6.0",
     "Flot": "flot#0.8.3",
-    "ng-webworker": "^0.2.3",
-    "angular-indexedDB": "angular-indexed-db#^1.1.4",
     "angular-loading-bar": "^0.9.0"
   },
   "devDependencies": {
