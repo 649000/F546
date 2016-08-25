@@ -188,13 +188,13 @@ Updated at {{lastUpdated}}
  <div class="list-group " ng-if="selectedPath">
             <h5>Selected Latency Information</h5>
 
-            <span class="list-group-item">
+            <span class="list-group-item" tooltip-placement="left" uib-tooltip="{{selectedPath.sourceDNS}}">
               <i class="fa fa-flag-checkered fa-fw"></i>
               Source:
               <div class="pull-right">{{selectedPath.source}}</div>
             </span>
 
-            <span class="list-group-item">
+            <span class="list-group-item" tooltip-placement="left" uib-tooltip="{{selectedPath.destinationDNS}}">
               <i class="fa fa-flag-o fa-fw"></i>
                Destination: <div class="pull-right">{{selectedPath.destination}}</div>
             </span>
@@ -207,46 +207,39 @@ Updated at {{lastUpdated}}
               <i class="fa fa-calendar fa-fw"></i>Date:<div class="pull-right">{{selectedPath.date}} </div>
             </span>
 
-          <!--<span class="list-group-item">-->
-              <!--<i class="fa fa-th-list fasb-fw"></i>-->
-              <!--RTT Results:-->
-            <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
-            <!--</span>-->
+   <!--<span class="list-group-item">-->
+   <!--<i class="fa fa-th-list fasb-fw"></i>-->
+   <!--RTT Results:-->
+   <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
+   <!--</span>-->
 
 
-
-     <!--<div class="list-group">-->
-           <!--<div class="list-group">-->
-             <!--<span class="list-group-item">Minimum: <div class="pull-right">{{selectedPath.rttMin}}</div></span>-->
-             <!--<span class="list-group-item">Mean: <div class="pull-right">{{selectedPath.rttMean}}</div></span>-->
-             <!--<span class="list-group-item">Maximum: <div class="pull-right">{{selectedPath.rttMax}}</div></span>-->
-
+   <!--<div class="list-group">-->
+   <!--<div class="list-group">-->
+   <!--<span class="list-group-item">Minimum: <div class="pull-right">{{selectedPath.rttMin}}</div></span>-->
+   <!--<span class="list-group-item">Mean: <div class="pull-right">{{selectedPath.rttMean}}</div></span>-->
+   <!--<span class="list-group-item">Maximum: <div class="pull-right">{{selectedPath.rttMax}}</div></span>-->
 
 
-    <!--</div>-->
-       <!--</div>-->
+   <!--</div>-->
+   <!--</div>-->
 
 
+   <!--<a ng-href="" class="list-group-item"-->
+   <!--ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"-->
+   <!--ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">-->
+   <!--&lt;!&ndash;<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>&ndash;&gt;-->
+   <!--<i class="fa fa-info fa-fw"></i>-->
+   <!--&lt;!&ndash;<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>&ndash;&gt;-->
 
+   <!--Error Status:-->
 
+   <!--<div ng-if="selectedPath.errorStatus" class="pull-right"><span-->
+   <!--class="pull-right glyphicon glyphicon-remove"></span></div>-->
+   <!--<div ng-if="!selectedPath.errorStatus" class="pull-right"><span-->
+   <!--class="pull-right glyphicon glyphicon-ok"></span></div>-->
 
-
-
-            <!--<a ng-href="" class="list-group-item"-->
-               <!--ng-class="{'list-group-item-danger': selectedPath.errorStatus, 'list-group-item-success': !selectedPath.errorStatus}"-->
-               <!--ng-click="loadHistorialTraceroutePath(selectedPath.metadata);">-->
-              <!--&lt;!&ndash;<i class="glyphicon fa-info" ng-class="{'glyphicon-ok': !selectedPath.errorStatus, 'glyphicon-remove': selectedPath.errorStatus}"></i>&ndash;&gt;-->
-              <!--<i class="fa fa-info fa-fw"></i>-->
-              <!--&lt;!&ndash;<i class="glyphicon" ng-class="{true:'glyphicon-ok', false:'glyphicon-remove'}"></i>&ndash;&gt;-->
-
-              <!--Error Status:-->
-
-              <!--<div ng-if="selectedPath.errorStatus" class="pull-right"><span-->
-                <!--class="pull-right glyphicon glyphicon-remove"></span></div>-->
-              <!--<div ng-if="!selectedPath.errorStatus" class="pull-right"><span-->
-                <!--class="pull-right glyphicon glyphicon-ok"></span></div>-->
-
-            <!--</a>-->
+   <!--</a>-->
 
           </div>
 
@@ -255,24 +248,16 @@ Updated at {{lastUpdated}}
             <h5>Selected Latency RTT Results</h5>
 
 
-
-          <!--<span class="list-group-item">-->
-              <!---->
-              <!--RTT Results:-->
-            <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
-            <!--</span>-->
+             <!--<span class="list-group-item">-->
+             <!---->
+             <!--RTT Results:-->
+             <!--&lt;!&ndash;<div class="pull-right">VALUES GOES HERE</div>&ndash;&gt;-->
+             <!--</span>-->
 
 
              <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Minimum: <div class="pull-right">{{selectedPath.rttMin}}</div></span>
              <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Mean: <div class="pull-right">{{selectedPath.rttMean}}</div></span>
              <span class="list-group-item"><i class="fa fa-th-list fasb-fw"></i> Maximum: <div class="pull-right">{{selectedPath.rttMax}}</div></span>
-
-
-
-
-
-
-
 
 
              <!--<a ng-href="" class="list-group-item"-->
@@ -311,13 +296,11 @@ Updated at {{lastUpdated}}
 
 
         <div class="panel-heading">
-      <i class="fa fa-bar-chart-o fa-fw"></i> Latency Information
-      <div class="pull-right">
+      <i class="fa fa-bar-chart-o fa-fw"></i> Detailed Latency Information
 
 
+          <small class="" ng-if="selectedPath"> : <span tooltip-placement="top" uib-tooltip="{{selectedPath.sourceDNS}}">{{selectedPath.source}}</span><i class="fa fa-arrow-right fa-fw"></i><span tooltip-placement="top" uib-tooltip="{{selectedPath.destinationDNS}}">{{selectedPath.destination}}</span></small>
 
-
-      </div>
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
@@ -398,15 +381,19 @@ Updated at {{lastUpdated}}
         <tr>
         <th>Date</th>
           <th>Time</th>
+          <th>Minimum</th>
           <th>Mean</th>
+          <th>Maximum</th>
+          <th>Median</th>
         <th>Std Deviation</th>
         <th>Variance</th>
-        <th>Median</th>
-        <th>Maximum</th>
-        <th>Minimum</th>
+
+
+
         <th>95th Percentile</th>
         <th>75th Percentile</th>
         <th>25th Percentile</th>
+
         </tr>
         </thead>
 
@@ -414,15 +401,30 @@ Updated at {{lastUpdated}}
         <tr ng-repeat="(key, val) in individualLatencyResults">
         <td>{{val.date}}</td>
         <td>{{val.time}}</td>
-        <td>{{val.mean}}</td>
-        <td>{{val.stddev}}</td>
+          <!--<td ng-class="{'danger': individualLatencyResults[key].mean >individualLatencyResults[key+1].mean, 'success': individualLatencyResults[key].mean < individualLatencyResults[key+1].mean }">{{val.mean}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].stddev >individualLatencyResults[key+1].stddev, 'success': individualLatencyResults[key].stddev < individualLatencyResults[key+1].stddev }">{{val.stddev}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].variance >individualLatencyResults[key+1].variance, 'success': individualLatencyResults[key].variance < individualLatencyResults[key+1].variance }">{{val.variance}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].median >individualLatencyResults[key+1].median, 'success': individualLatencyResults[key].median < individualLatencyResults[key+1].median }">{{val.median}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].maximum >individualLatencyResults[key+1].maximum, 'success': individualLatencyResults[key].maximum < individualLatencyResults[key+1].maximum }">{{val.maximum}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].minimum >individualLatencyResults[key+1].minimum, 'success': individualLatencyResults[key].minimum < individualLatencyResults[key+1].minimum }">{{val.minimum}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].percentile95 >individualLatencyResults[key+1].percentile95, 'success': individualLatencyResults[key].percentile95 < individualLatencyResults[key+1].percentile95 }">{{val.percentile95}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].percentile75 >individualLatencyResults[key+1].percentile75, 'success': individualLatencyResults[key].percentile75 < individualLatencyResults[key+1].percentile75 }">{{val.percentile75}}</td>-->
+          <!--<td ng-class="{'danger': individualLatencyResults[key].percentile25 >individualLatencyResults[key+1].percentile25, 'success': individualLatencyResults[key].percentile25 < individualLatencyResults[key+1].percentile25 }">{{val.percentile25}}</td>-->
+          <!---->
+           <td>{{val.minimum}}</td>
+          <td
+            ng-class="{'danger': individualLatencyResults[key].mean> (individualLatencyResults[key+1].mean + individualLatencyResults[key+1].stddev) , 'danger': individualLatencyResults[key].mean < (individualLatencyResults[key+1].mean - individualLatencyResults[key+1].stddev) }">{{val.mean}}</td>
+          <td>{{val.maximum}}</td>
+          <td>{{val.median}}</td>
+          <td>{{val.stddev}}</td>
         <td>{{val.variance}}</td>
-        <td>{{val.median}}</td>
-        <td>{{val.maximum}}</td>
-        <td>{{val.minimum}}</td>
+
+
+
         <td>{{val.percentile95}}</td>
         <td>{{val.percentile75}}</td>
         <td>{{val.percentile25}}</td>
+
         </tr>
 
 

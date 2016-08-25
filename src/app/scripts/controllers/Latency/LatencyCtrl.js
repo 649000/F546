@@ -1,7 +1,7 @@
 /*
  This Controller sets up the main Latency Graph.
  */
-angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService) {
+angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', 'DNSLookup', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService, DNSLookup) {
 
   loadLatencyGraph();
 
@@ -257,7 +257,9 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
             date: date[1] + " " + date[0] + " " + date[2],
             rttMax: element.data().rttMax,
             rttMin: element.data().rttMin,
-            rttMean: element.data().rttMean
+            rttMean: element.data().rttMean,
+            sourceDNS: DNSLookup.getDomain(element.data().startNode)['dns'],
+            destinationDNS: DNSLookup.getDomain(element.data().endNode)['dns']
           }
 
         });

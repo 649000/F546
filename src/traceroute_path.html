@@ -226,7 +226,7 @@ Updated at {{lastUpdated}}
              Selected Traceroute Information
             </h5>
 
-            <span class="list-group-item">
+            <span class="list-group-item" tooltip-placement="left" uib-tooltip="{{selectedPath.sourceDNS}}">
               <i class="fa fa-flag-checkered fa-fw"></i>
               Source:
 
@@ -234,7 +234,7 @@ Updated at {{lastUpdated}}
             {{selectedPath.source}}
           </div>
             </span>
-                     <span class="list-group-item">
+                     <span class="list-group-item" tooltip-placement="left" uib-tooltip="{{selectedPath.destinationDNS}}">
               <i class="fa fa-flag-o fa-fw"></i>
                Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
             </span>
@@ -292,8 +292,8 @@ Updated at {{lastUpdated}}
 
 
           </span>
-                    <i class="fa fa-bar-chart-o fa-fw pull-left"></i>Erroneous Traceroute Path Visualisation
-          <small ng-if="selectedPath.errorStatus">: {{selectedPath.source}}<i class="fa fa-arrow-right fa-fw"></i>{{selectedPath.destination}}</small>
+                    <i class="fa fa-bar-chart-o fa-fw"></i>Erroneous Traceroute Path Visualisation
+          <small ng-if="selectedPath.errorStatus">: <span tooltip-placement="top" uib-tooltip="{{selectedPath.sourceDNS}}">{{selectedPath.source}}</span><i class="fa fa-arrow-right fa-fw"></i><span tooltip-placement="top" uib-tooltip="{{selectedPath.destinationDNS}}">{{selectedPath.destination}}</span></small>
           <span class="pull-right" ng-if="selectedPath.errorStatus">
                      {{individualPath_date}}, {{individualPath_time}}
 

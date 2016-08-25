@@ -6,7 +6,7 @@
  This traceroute path shows duplicated paths.
  This Controller is used to load the Main traceroute path on traceroute.html
  */
-angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'toastr', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', 'AnalyzeTracerouteRtt', 'CurrentTimeUnixService', function ($scope, $http, $q, $log, $interval, toastr, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService, AnalyzeTracerouteRtt, CurrentTimeUnixService) {
+angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'toastr', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'TracerouteResultsService', 'AnalyzeTracerouteRtt', 'CurrentTimeUnixService', 'DNSLookup', function ($scope, $http, $q, $log, $interval, toastr, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, TracerouteResultsService, AnalyzeTracerouteRtt, CurrentTimeUnixService, DNSLookup) {
 
   //Call once to load it.
   loadTRGraph();
@@ -289,7 +289,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             destination: element.data().endNode,
             errorStatus: errorStatus,
             time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
-            date: date[1] + " " + date[0] + " " + date[2]
+            date: date[1] + " " + date[0] + " " + date[2],
+            sourceDNS: DNSLookup.getDomain(element.data().startNode)['dns'],
+            destinationDNS: DNSLookup.getDomain(element.data().endNode)['dns']
           }
 
         });
@@ -346,6 +348,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
 
     // This will load the erroneous RTT after the graph has loaded with initial nodes/edges
+
     TracerouteGraphService.getGraph().one('layoutstop', function () {
       // Other possible options: layoutstart, layoutready, layoutstop, ready
       var sourceAndDestinationList;
@@ -969,7 +972,7 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
  */
 
 
-angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$log', '$interval', 'TraceroutePath_GraphService', 'UnixTimeConverterService', 'TraceroutePath_PopulateGraphService', 'CurrentTimeUnixService', function ($scope, $log, $interval, TraceroutePath_GraphService, UnixTimeConverterService, TraceroutePath_PopulateGraphService, CurrentTimeUnixService) {
+angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$log', '$interval', 'TraceroutePath_GraphService', 'UnixTimeConverterService', 'TraceroutePath_PopulateGraphService', 'CurrentTimeUnixService', 'DNSLookup', function ($scope, $log, $interval, TraceroutePath_GraphService, UnixTimeConverterService, TraceroutePath_PopulateGraphService, CurrentTimeUnixService, DNSLookup) {
   // Benefits of populating graph into service
   // Able to call and reload as needed without refreshing the page.
 
@@ -1035,7 +1038,9 @@ angular.module('traceroute').controller('TraceroutePathGraphCtrl', ['$scope', '$
             destination: element.data().endNode,
             errorStatus: errorStatus,
             time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
-            date: date[1] + " " + date[0] + " " + date[2]
+            date: date[1] + " " + date[0] + " " + date[2],
+            sourceDNS: DNSLookup.getDomain(element.data().startNode)['dns'],
+            destinationDNS: DNSLookup.getDomain(element.data().endNode)['dns']
           }
 
           $scope.$broadcast('LoadIndividualTraceroute', element.data().metadataKey);
