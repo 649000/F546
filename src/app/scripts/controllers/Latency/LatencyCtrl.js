@@ -642,7 +642,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
         $scope.individualLatencyResults.reverse();
 
-        $scope.val.label
+        // $scope.val.label
       }
 
 
