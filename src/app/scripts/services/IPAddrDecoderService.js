@@ -238,8 +238,8 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 
 ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
-  //FIXME: REMEMBER TO CHANGE IP ADDRESS
-  var host = "http://127.0.0.1:8000/reversednslookup";
+  //FIXME: THIS IP ADDRESS HAS TO BE CHANGE TO THE SERVER IP THAT IS BEING DEPLOYED TO
+  var host = "http://203.30.39.133/reversednslookup";
   var DNSCache;
 
   if (!CacheFactory.get("ReverseIPLookup")) {
@@ -256,7 +256,6 @@ ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', func
   return {
 
     getDomain: function (IPAddress) {
-
 
       if (CacheFactory.get("ReverseIPLookup").get(IPAddress)) {
 
@@ -292,6 +291,46 @@ ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', func
       }
 
     }
+
+    // getDomain_Promise: function (IPAddress) {
+    //
+    //   if (CacheFactory.get("ReverseIPLookup").get(IPAddress)) {
+    //
+    //     return CacheFactory.get("ReverseIPLookup").get(IPAddress);
+    //
+    //   } else
+    //   {
+    //
+    //     var dnsLookup = $http({
+    //       method: 'GET',
+    //       url: host,
+    //       params: {
+    //         'ipaddress': IPAddress
+    //       },
+    //       cache: true,
+    //       ignoreLoadingBar: false
+    //
+    //     })
+    //
+    //     //   .then(function (response) {
+    //     //
+    //     //   var tempResult = {
+    //     //     ip: IPAddress,
+    //     //     dns: response.data.dns
+    //     //   }
+    //     //   // console.log(response)
+    //     //   if (response.data.dns != "Unknown") {
+    //     //     DNSCache.put(IPAddress, tempResult);
+    //     //   }
+    //     //
+    //     //   return tempResult;
+    //     //
+    //     //
+    //     // });
+    //     return dnsLookup;
+    //   }
+    //
+    // }
 
 
   };

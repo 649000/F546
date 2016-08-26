@@ -243,6 +243,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
           {
             ip: nodeAndRttList_RawData[i]['IP'],
             dns: nodeAndRttList_RawData[i]['dns'],
+            // dns: "",
             rtt: rrtResult,
             rttAvg: math.round(rttMean, 4),
             rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),

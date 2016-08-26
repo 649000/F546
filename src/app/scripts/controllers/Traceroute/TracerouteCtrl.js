@@ -496,6 +496,21 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
           var anomaliesExist = false;
 
           for (var j = 0; j < tracerouteResults[i].nodes.length; j++) {
+
+            // console.log(tracerouteResults[i].nodes[j].ip)
+
+            // var tempPromise = DNSLookup.getDomain_Promise(tracerouteResults[i].nodes[j].ip);
+            // if (tempPromise instanceof Promise) {
+            //   tempPromise.then(function (response) {
+            //     console.log("INCOMING")
+            //     console.log(response)
+            //   });
+            // } else {
+            //   console.log("NON PROMISE INCOMING")
+            //   console.log(tempPromise['dns'])
+            //   tracerouteResults[i].nodes[j].dns = tempPromise['dns']
+            // }
+
             if (tracerouteResults[i].nodes[j].status == true) {
               noOfAnomalies++;
               anomaliesExist = true;
