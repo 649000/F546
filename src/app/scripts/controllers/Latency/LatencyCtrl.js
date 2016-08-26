@@ -1,7 +1,7 @@
 /*
  This Controller sets up the main Latency Graph.
  */
-angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', 'DNSLookup', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService, DNSLookup) {
+angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', 'DNSLookup','toastr', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService, DNSLookup,toastr) {
 
   loadLatencyGraph();
 
@@ -308,6 +308,13 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
       $log.error(error);
       $log.debug("Server Response: " + error.status);
 
+      if (error.status == 500) {
+        //500 on server.
+        toastr.error('Unable to reach host.');
+      } else if (error.status == -1) {
+        toastr.error('No Internet Connection.');
+      }
+
     });
 
 
@@ -318,7 +325,7 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 }]);
 
 
-angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'LatencyResultsService', function ($scope, $http, $q, $log, HostService, UnixTimeConverterService, LatencyResultsService) {
+angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'LatencyResultsService','toastr', function ($scope, $http, $q, $log, HostService, UnixTimeConverterService, LatencyResultsService,toastr) {
 
   // $log.debug("LatencyHistoryCtrl:START");
 
@@ -643,6 +650,13 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
       $log.debug("LatencyInformationCtrl:loadLatencySummaryChart ERROR")
       $log.error(error);
       $log.debug("Server Response: " + error.status);
+
+      if (error.status == 500) {
+        //500 on server.
+        toastr.error('Unable to reach host.');
+      } else if (error.status == -1) {
+        toastr.error('No Internet Connection.');
+      }
 
     });
 

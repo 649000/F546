@@ -2069,14 +2069,4 @@ angular.module('traceroute').controller('XXX', ['$scope', '$http', '$q', '$log',
 }]);
 
 
-angular.module('traceroute').controller('TracerouteNotificationCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', 'toastr', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, toastr) {
-
-
-  $scope.Hello = function () {
-
-    $log.debug("HELLO")
-    toastr.success('Buuussssukkk');
-
-  }
-}]);
 
