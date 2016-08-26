@@ -46,7 +46,7 @@
   <!-- /.navbar-header -->
 
 
-<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval" popover-placement="bottom" popover-trigger="'mouseenter'">
+<ul class="nav navbar-brand navbar-top-links navbar-right" tooltip-placement="left" uib-tooltip="Page will auto refresh in interval of 30 minutes." tooltip-append-to-body="true">
 Updated at {{lastUpdated}}
             </ul>
 
@@ -109,7 +109,7 @@ Updated at {{lastUpdated}}
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Traceroute Path Analysation
-            <small class="pull-right">
+            <small class="pull-right" tooltip-placement="top" uib-tooltip="Date of Results." tooltip-append-to-body="true">
         <span ng-if="minDate!==undefined">{{minDate}} to </span>
         <span ng-if="maxDate!==undefined">{{maxDate}}</span>
       </small></h1>
@@ -210,8 +210,7 @@ Updated at {{lastUpdated}}
 
 
              <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies"
-                   uib-popover="Click on the red paths to show unique paths underneath." popover-placement="left"
-                   popover-trigger="'mouseenter'">
+                   tooltip-placement="left" uib-tooltip="Click on the red path to view detailed information." tooltip-append-to-body="true">
               <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous Path:
                         <div class="pull-right">
                   <span class="badge">{{noOfAnomalies}}</span>
@@ -234,7 +233,8 @@ Updated at {{lastUpdated}}
             {{selectedPath.source}}
           </div>
             </span>
-                     <span class="list-group-item" tooltip-placement="left" uib-tooltip="{{selectedPath.destinationDNS}}">
+                     <span class="list-group-item" tooltip-placement="left"
+                           uib-tooltip="{{selectedPath.destinationDNS}}">
               <i class="fa fa-flag-o fa-fw"></i>
                Destination: <div class="pull-right"> {{selectedPath.destination}} </div>
             </span>
@@ -293,7 +293,10 @@ Updated at {{lastUpdated}}
 
           </span>
                     <i class="fa fa-bar-chart-o fa-fw"></i>Erroneous Traceroute Path Visualisation
-          <small ng-if="selectedPath.errorStatus">: <span tooltip-placement="top" uib-tooltip="{{selectedPath.sourceDNS}}">{{selectedPath.source}}</span><i class="fa fa-arrow-right fa-fw"></i><span tooltip-placement="top" uib-tooltip="{{selectedPath.destinationDNS}}">{{selectedPath.destination}}</span></small>
+          <small ng-if="selectedPath.errorStatus">: <span tooltip-placement="top"
+                                                          uib-tooltip="{{selectedPath.sourceDNS}}">{{selectedPath.source}}</span><i
+            class="fa fa-arrow-right fa-fw"></i><span tooltip-placement="top"
+                                                      uib-tooltip="{{selectedPath.destinationDNS}}">{{selectedPath.destination}}</span></small>
           <span class="pull-right" ng-if="selectedPath.errorStatus">
                      {{individualPath_date}}, {{individualPath_time}}
 

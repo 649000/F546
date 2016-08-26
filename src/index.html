@@ -45,8 +45,7 @@
   <!-- /.navbar-header -->
 
 
-<ul class="nav navbar-brand navbar-top-links navbar-right" uib-popover="Results are pulled at a 30 minutes interval"
-    popover-placement="bottom" popover-trigger="'mouseenter'">
+<ul class="nav navbar-brand navbar-top-links navbar-right" tooltip-placement="left" uib-tooltip="Page will auto refresh in interval of 30 minutes." tooltip-append-to-body="true">
 Updated at {{lastUpdated}}
             </ul>
 
@@ -108,8 +107,7 @@ Updated at {{lastUpdated}}
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Traceroute <small></small>
-        <small class="pull-right" uib-popover="Date of results." popover-placement="bottom"
-               popover-trigger="'mouseenter'">
+        <small class="pull-right" tooltip-placement="top" uib-tooltip="Date of Results." tooltip-append-to-body="true">
         <span ng-if="minDate!==undefined">{{minDate}} to </span>
         <span ng-if="maxDate!==undefined">{{maxDate}}</span>
       </small></h1>
@@ -208,7 +206,7 @@ Updated at {{lastUpdated}}
             </span>
 
 
-             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies">
+             <span class="list-group-item list-group-item-danger" ng-if="noOfAnomalies" tooltip-placement="left" uib-tooltip="Click on the red path to view detailed information." tooltip-append-to-body="true">
               <i class="fa fa-exclamation-triangle fa-fw"></i>  Erroneous RTTs:
                         <div class="pull-right">
                   <span class="badge">{{noOfAnomalies}}</span>
@@ -228,7 +226,7 @@ Updated at {{lastUpdated}}
               <i class="fa fa-flag-checkered fa-fw"></i>
               Source:
 
-                        <div class="pull-right">
+              <div class="pull-right">
             {{selectedPath.source}}
           </div>
             </span>
@@ -336,8 +334,11 @@ Updated at {{lastUpdated}}
                   <tbody>
                   <tr ng-repeat="(key, val2) in val.nodes ">
                     <td>{{key+1}}</td>
-                    <td uib-popover="{{dnsName}}" popover-trigger="'mouseenter'" popover-append-to-body="true"
-                        popover-placement="top-left" ng-mouseover="getDNS(val2.ip)" role="button">{{val2.ip}}</td>
+                    <!--<td uib-popover="{{dnsName}}" popover-trigger="'mouseenter'" popover-append-to-body="true"-->
+                        <!--popover-placement="top-left" ng-mouseover="getDNS(val2.ip)" role="button">{{val2.ip}}</td>                    -->
+
+
+                    <td tooltip-placement="top-left" uib-tooltip="{{dnsName}}" ng-mouseover="getDNS(val2.ip)" tooltip-append-to-body="true" >{{val2.ip}}</td>
                     <!--<td>{{val2.ip}}</td>-->
                     <td>{{val2.dns}}</td>
                     <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a

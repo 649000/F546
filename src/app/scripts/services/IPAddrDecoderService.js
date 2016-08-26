@@ -239,7 +239,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
   //FIXME: REMEMBER TO CHANGE IP ADDRESS
-  var host = "http://127.0.0.1:5002/reversednslookup";
+  var host = "http://127.0.0.1:8000/reversednslookup";
   var DNSCache;
 
   if (!CacheFactory.get("ReverseIPLookup")) {
