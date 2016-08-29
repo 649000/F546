@@ -339,9 +339,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
       if (error.status == 500) {
         //500 on server.
-        toastr.error('Unable to reach host.');
-      } else if (error.status == -1) {
-        toastr.error('No Internet Connection.');
+        toastr.error('Unable to reach host. Server Status Code: 500');
+      } else {
+        toastr.error('Unable to reach host. Status Code: ' + error.status);
       }
 
     });
@@ -556,9 +556,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 
         if (error.status == 500) {
           //500 on server.
-          toastr.error('Unable to reach host.');
-        } else if (error.status == -1) {
-          toastr.error('No Internet Connection.');
+          toastr.error('Unable to reach host. Server Status Code: 500');
+        } else {
+          toastr.error('Unable to reach host. Status Code: ' + error.status);
         }
 
 
@@ -957,9 +957,9 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
 
     if (error.status == 500) {
       //500 on server.
-      toastr.error('Unable to reach host.');
-    } else if (error.status == -1) {
-      toastr.error('No Internet Connection.');
+      toastr.error('Unable to reach host. Server Status Code: 500');
+    } else {
+      toastr.error('Unable to reach host. Status Code: ' + error.status);
     }
 
   });

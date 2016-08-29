@@ -1,7 +1,7 @@
 /*
  This Controller sets up the main Latency Graph.
  */
-angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', 'DNSLookup','toastr', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService, DNSLookup,toastr) {
+angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', '$q', '$log', '$interval', 'HostService', 'LatencyGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'UniqueArrayService', 'LatencyResultsService', 'AnalyzeLatency', 'CurrentTimeUnixService', 'DNSLookup', 'toastr', function ($scope, $http, $q, $log, $interval, HostService, LatencyGraphService, UnixTimeConverterService, GeoIPNekudoService, UniqueArrayService, LatencyResultsService, AnalyzeLatency, CurrentTimeUnixService, DNSLookup, toastr) {
 
   loadLatencyGraph();
 
@@ -23,7 +23,7 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
       'event-type': 'histogram-rtt',
       // 'limit': 10,
       // 'time-end': (Math.floor(Date.now() / 1000)),
-      // 'time-range': 604800
+      'time-range': 604800
       //48 Hours = 172800
       // 24 hours = 86400
       // 7 days = 604800
@@ -310,9 +310,9 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 
       if (error.status == 500) {
         //500 on server.
-        toastr.error('Unable to reach host.');
-      } else if (error.status == -1) {
-        toastr.error('No Internet Connection.');
+        toastr.error('Unable to reach host. Server Status Code: 500');
+      } else {
+        toastr.error('Unable to reach host. Status Code: ' + error.status);
       }
 
     });
@@ -325,7 +325,7 @@ angular.module('traceroute').controller('LatencyGraphCtrl', ['$scope', '$http', 
 }]);
 
 
-angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'LatencyResultsService','toastr', function ($scope, $http, $q, $log, HostService, UnixTimeConverterService, LatencyResultsService,toastr) {
+angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'UnixTimeConverterService', 'LatencyResultsService', 'toastr', function ($scope, $http, $q, $log, HostService, UnixTimeConverterService, LatencyResultsService, toastr) {
 
   // $log.debug("LatencyHistoryCtrl:START");
 
@@ -346,6 +346,7 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
       {
         'format': 'json',
         'event-type': 'histogram-rtt',
+        'time-range': 604800
         // 'limit': 10,
         // 'time-end': (Math.floor(Date.now() / 1000)),
         // 'time-range': 86400
@@ -620,18 +621,23 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
           var date = UnixTimeConverterService.getDate(reversedResponse[i]['ts']);
 
 
+          //Round up so table will not be too long.
           $scope.individualLatencyResults.push({
             time: time[0] + ":" + time[1] + ":" + time[2] + " " + time[3],
             date: date[0] + " " + date[1] + " " + date[2],
-            stddev: reversedResponse[i]['val']['standard-deviation'],
+            // stddev: reversedResponse[i]['val']['standard-deviation'],
+            stddev: math.round(reversedResponse[i]['val']['standard-deviation'], 5),
             median: reversedResponse[i]['val']['median'],
             maximum: reversedResponse[i]['val']['maximum'],
             minimum: reversedResponse[i]['val']['minimum'],
             percentile75: reversedResponse[i]['val']['percentile-75'],
-            percentile95: reversedResponse[i]['val']['percentile-95'],
+            // percentile95: reversedResponse[i]['val']['percentile-95'],
+            percentile95: math.round(reversedResponse[i]['val']['percentile-95'], 5),
             percentile25: reversedResponse[i]['val']['percentile-25'],
-            variance: reversedResponse[i]['val']['variance'],
-            mean: reversedResponse[i]['val']['mean']
+            // variance: reversedResponse[i]['val']['variance'],
+            variance: math.round(reversedResponse[i]['val']['variance'], 5),
+            // mean: reversedResponse[i]['val']['mean']
+            mean: math.round(reversedResponse[i]['val']['mean'], 5)
 
           });
 
@@ -653,9 +659,9 @@ angular.module('traceroute').controller('LatencyInfoCtrl', ['$scope', '$http', '
 
       if (error.status == 500) {
         //500 on server.
-        toastr.error('Unable to reach host.');
-      } else if (error.status == -1) {
-        toastr.error('No Internet Connection.');
+        toastr.error('Unable to reach host. Server Status Code: 500');
+      } else {
+        toastr.error('Unable to reach host. Status Code: ' + error.status);
       }
 
     });
