@@ -66,7 +66,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
         for (var j = 0; j < response.data[i]['event-types'].length; j++) {
           if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-            promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+            promises.push(TracerouteResultsService.getIndividualResult_NoCORS(response.data[i]['url'],
               {
                 'format': 'json',
                 // 'limit': '1',
@@ -394,7 +394,9 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
                   'format': 'json',
                   // 'limit': '2',
                   // 'time-end': (Math.floor(Date.now() / 1000)),
+                  // 'time-start':newTime
                   'time-range': 604800
+                  // 'time-range': 50000
                   // 48 Hours = 172800
                   // 24 hours = 86400
                   //7 days = 604800
@@ -591,7 +593,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
 // }]);
 
 
-angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', '$uibModal', '$q', 'TracerouteGraphService', 'DNSLookup', function ($scope, $log, $cacheFactory, $uibModal, $q, TracerouteGraphService, DNSLookup) {
+angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '$log', '$cacheFactory', '$uibModal', '$q', 'TracerouteGraphService', 'DNSLookup','TracerouteResultsService', function ($scope, $log, $cacheFactory, $uibModal, $q, TracerouteGraphService, DNSLookup,TracerouteResultsService) {
 
   $scope.mainGraphLayout_BreathFirst = function () {
 

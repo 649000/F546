@@ -132,6 +132,8 @@ ipAddrDecodeServices.factory('FreeGeoIPService', ['$http', '$log', function ($ht
 
 }]);
 
+
+
 ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFactory', function ($http, $log, CacheFactory) {
 
   var host = "http://geoip.nekudo.com/api/";
@@ -147,7 +149,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
       storageMode: 'sessionStorage' // This cache will use `localStorage`.
     });
   }
-
+3
 
   return {
 
@@ -336,3 +338,182 @@ ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', 'CacheFactory', func
   };
 
 }]);
+
+
+// ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', function ($http, $log) {
+//
+//   var host = "http://geoip.nekudo.com/api/";
+//
+//   var IPAddr_LocationCache;
+// //IPAddr_Location
+//
+//
+//
+//   return {
+//
+//     getCountry: function (IPAddress) {
+//
+//       {
+//         var country = $http({
+//           method: 'GET',
+//           url: host + IPAddress,
+//           params: {
+//             // 'format': 'json'
+//           },
+//           cache: true,
+//           ignoreLoadingBar: true
+//         }).then(function (response) {
+//
+//           // console.log(response)
+//
+//           if (response.data.hasOwnProperty("type") && response.data.hasOwnProperty("msg")) {
+//
+//             var geocodedIP = {
+//               ip: IPAddress,
+//               city: "Unknown",
+//               // country: "",//response.data.country.name,
+//               countrycode: "Unknown"//response.data.country.code
+//             }
+//             // IPAddr_LocationCache.put(IPAddress, geocodedIP);
+//
+//           } else {
+//             var cityName = response.data.city
+//
+//             if (cityName == false) {
+//               cityName = "Unknown"
+//             }
+//             var geocodedIP = {
+//               ip: IPAddress,
+//               city: cityName,
+//               // country: response.data.country.name,
+//               countrycode: response.data.country.code
+//             }
+//
+//           }
+//
+//
+//           return geocodedIP;
+//
+//         });
+//
+//         return country;
+//
+//       }
+//
+//
+//     },
+//
+//     getCoordinates: function (IPAddress) {
+//       var coordinates = [];
+//
+//       coordinates = $http({
+//         method: 'GET',
+//         url: host + IPAddress,
+//         params: {
+//
+//           // 'format': 'json',
+//           // 'event-type': 'packet-trace'
+//           // 'limit': 10,
+//           // 'time-end': (Math.floor(Date.now() / 1000)),
+//           // 'time-range': timeRange
+//         },
+//         cache: true
+//       }).then(function (response) {
+//
+//         return [response.data, response.data];
+//       });
+//       return coordinates;
+//     }
+//   };
+//
+// }]);
+//
+//
+// ipAddrDecodeServices.factory('DNSLookup', ['$http', '$log', function ($http, $log) {
+//
+//   //FIXME: THIS IP ADDRESS HAS TO BE CHANGE TO THE SERVER IP THAT IS BEING DEPLOYED TO
+//   var host = "http://203.30.39.133/reversednslookup";
+//   var DNSCache;
+//
+//
+//
+//
+//   return {
+//
+//     getDomain: function (IPAddress) {
+//
+// {
+//
+//         var dnsLookup = $http({
+//           method: 'GET',
+//           url: host,
+//           params: {
+//             'ipaddress': IPAddress
+//           },
+//           cache: true,
+//           ignoreLoadingBar: true
+//
+//         }).then(function (response) {
+//
+//           var tempResult = {
+//             ip: IPAddress,
+//             dns: response.data.dns
+//           }
+//           // console.log(response)
+//           if (response.data.dns != "Unknown") {
+//
+//           }
+//
+//           return tempResult;
+//
+//
+//         });
+//         return dnsLookup;
+//       }
+//
+//     }
+//
+//     // getDomain_Promise: function (IPAddress) {
+//     //
+//     //   if (CacheFactory.get("ReverseIPLookup").get(IPAddress)) {
+//     //
+//     //     return CacheFactory.get("ReverseIPLookup").get(IPAddress);
+//     //
+//     //   } else
+//     //   {
+//     //
+//     //     var dnsLookup = $http({
+//     //       method: 'GET',
+//     //       url: host,
+//     //       params: {
+//     //         'ipaddress': IPAddress
+//     //       },
+//     //       cache: true,
+//     //       ignoreLoadingBar: false
+//     //
+//     //     })
+//     //
+//     //     //   .then(function (response) {
+//     //     //
+//     //     //   var tempResult = {
+//     //     //     ip: IPAddress,
+//     //     //     dns: response.data.dns
+//     //     //   }
+//     //     //   // console.log(response)
+//     //     //   if (response.data.dns != "Unknown") {
+//     //     //     DNSCache.put(IPAddress, tempResult);
+//     //     //   }
+//     //     //
+//     //     //   return tempResult;
+//     //     //
+//     //     //
+//     //     // });
+//     //     return dnsLookup;
+//     //   }
+//     //
+//     // }
+//
+//
+//   };
+//
+// }]);

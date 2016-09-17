@@ -21,11 +21,15 @@ var tracerouteServices = angular.module('TracerouteServices', ['GeneralServices'
  MAIN SERVICE: Used to call Traceroute Results
  Checked on August 12th 2016
  */
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostService', function ($http, $log, HostService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheFactory', 'HostService', function ($http, $log, $cacheFactory, HostService) {
 
 
   return {
     getMainResult: function (params) {
+
+      // $cacheFactory.get('$http').removeAll();
+      // $cacheFactory.get('$http').destroy();
+
       return $http({
         method: 'GET',
         url: HostService.getHost(),
@@ -37,12 +41,20 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
         //   // 'time-end': (Math.floor(Date.now() / 1000)),
         //   'time-range': 86400
         // },
-        cache: true
+        cache: true,
+        headers:{
+         // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
+         //  'Content-Type': undefined
+
+         //  'Access-Control-Request-Method': 'GET'
+    }
       })
 
     },
 
     getIndividualResult: function (url, params) {
+      // $cacheFactory.get('$http').removeAll();
+      // $cacheFactory.get('$http').destroy();
       //URL is the response[i]['url'] taken from the getMainResult();
 
 
@@ -96,15 +108,80 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', 'HostSe
       // if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
       //   toCache = IndividualTracerouteCacheService.getCacheObject();
       // }
-
       return $http({
         method: 'GET',
-        url: url + "packet-trace/base",
-        params: params,
-        cache: true
+        url: 'https://crossorigin.me/https://www.google.com.sg',
+      }).then(function (response) {
+
+        return $http({
+          method: 'GET',
+          url: 'https://crossorigin.me/'+url + "packet-trace/base",
+          params: params,
+          cache: true
+        });
+
+      }).catch(function (error) {
+        $log.error(error)
+        $log.debug("https://crossorigin.me Status Response: " + error.status);
+
+        $http({
+          method: 'GET',
+          url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
+        }).then(function (response) {
+
+          return $http({
+            method: 'GET',
+            url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
+            params: params,
+            cache: true
+          });
+
+
+        }).catch(function (error) {
+          $log.error(error)
+          $log.debug("https://cors-anywhere.herokuapp.com/ Response: " + error.status);
+
+
+        });
+
       });
 
 
+      // return $http({
+      //   method: 'GET',
+      //   // url: 'https://crossorigin.me/'+url + "packet-trace/base",
+      //   url: 'https://crossorigin.me/'+url + "packet-trace/base",
+      //   params: params,
+      //   cache: true,
+      //   headers:{
+      //     // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
+      //     // 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+      //     // 'Access-Control-Request-Method': 'GET'
+      //     // 'Connection':'close'
+      //     // 'If-Range':undefined,
+      //     // 'Range': undefined
+      //   }
+      // });
+
+
+    },
+
+    getIndividualResult_NoCORS: function (url,params){
+      return $http({
+        method: 'GET',
+        // url: 'https://crossorigin.me/'+url + "packet-trace/base",
+        url: 'https://crossorigin.me/'+url + "packet-trace/base",
+        params: params,
+        cache: true,
+        headers:{
+          // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
+          // 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+          // 'Access-Control-Request-Method': 'GET'
+          // 'Connection':'close'
+          // 'If-Range':undefined,
+          // 'Range': undefined
+        }
+      });
     }
 
   }

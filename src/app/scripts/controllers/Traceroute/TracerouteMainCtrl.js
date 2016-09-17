@@ -7,11 +7,9 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'toastr', 'ui.bootstrap', 'angular-cache', 'angular-loading-bar']).config(['$logProvider', 'cfpLoadingBarProvider', function ($logProvider, cfpLoadingBarProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'angular-cache','toastr', 'ui.bootstrap', 'angular-loading-bar']).config(['$logProvider','$httpProvider','cfpLoadingBarProvider', function ($logProvider, $httpProvider,cfpLoadingBarProvider) {
 
   // Spinner for $http loading
-  cfpLoadingBarProvider.includeSpinner = true;
-  cfpLoadingBarProvider.latencyThreshold = 200;
 
 
   // $indexedDBProvider.connection('F546').upgradeDatabase(1, function (event, db, tx) {
@@ -44,6 +42,17 @@ var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencySer
   // http://stackoverflow.com/questions/15561853/how-to-turn-on-off-log-debug-in-angularjs
 
   $logProvider.debugEnabled(true);
+  // delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+  // if (!$httpProvider.defaults.headers.get) {
+  //   $httpProvider.defaults.headers.get = {};
+  // }
+
+
+  // $httpProvider.defaults.headers.common['If-Modified-Since'] = '0'
+  cfpLoadingBarProvider.includeSpinner = true;
+  cfpLoadingBarProvider.latencyThreshold = 200;
+
 
 }]).run(function ($http, CacheFactory) {
 

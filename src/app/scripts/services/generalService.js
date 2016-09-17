@@ -24,26 +24,24 @@ generalServices.factory('IPAddressIdentifierService', function () {
 });
 
 
-
 // NOTE THAT THIS IS A SERVICE
 generalServices.service('UnixTimeConverterService', function () {
-
 
 
   this.getDate = function (timestamp) {
     var fullMonth = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     var abbrMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
     date = new Date(timestamp * 1000)
-      datevalues = [
-        date.getDate(),
-        fullMonth[date.getMonth()],
-        // date.getMonth() + 1,
-        date.getFullYear()
+    datevalues = [
+      date.getDate(),
+      fullMonth[date.getMonth()],
+      // date.getMonth() + 1,
+      date.getFullYear()
 
-        // date.getHours(),
-        // date.getMinutes(),
-        // date.getSeconds()
-      ];
+      // date.getHours(),
+      // date.getMinutes(),
+      // date.getSeconds()
+    ];
 
     return datevalues;
   }
@@ -51,23 +49,23 @@ generalServices.service('UnixTimeConverterService', function () {
   this.getTime = function (timestamp) {
     var date = new Date(timestamp * 1000)
 
-      var hours = date.getHours();
-      var minutes = date.getMinutes();
-      var ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      minutes = minutes < 10 ? '0'+minutes : minutes;
-      var seconds = date.getSeconds();
-      if(seconds<10){
-        seconds = "0"+seconds;
-      }
-      var timevalues = [
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var seconds = date.getSeconds();
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    var timevalues = [
 
-        hours,
-        minutes,
-        seconds,
-        ampm
-      ];
+      hours,
+      minutes,
+      seconds,
+      ampm
+    ];
 
     return timevalues;
   }
@@ -91,29 +89,29 @@ generalServices.factory('CurrentTimeUnixService', function () {
 
     time: function () {
 
-    // var date = new Date(Date.now() * 1000)
-    var date = new Date()
+      // var date = new Date(Date.now() * 1000)
+      var date = new Date()
 
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var seconds = date.getSeconds();
-    if(seconds<10){
-      seconds = "0"+seconds;
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var seconds = date.getSeconds();
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      var timevalues = [
+
+        hours,
+        minutes,
+        seconds,
+        ampm
+      ];
+
+      return timevalues;
     }
-    var timevalues = [
-
-      hours,
-      minutes,
-      seconds,
-      ampm
-    ];
-
-    return timevalues;
-  }
   }
 });
 
@@ -129,7 +127,7 @@ generalServices.factory('HostService', [function () {
       return host;
     },
 
-    setHost: function(hostName){
+    setHost: function (hostName) {
       host = hostName;
       return host;
     }
@@ -141,23 +139,23 @@ generalServices.factory('UniqueArrayService', [function () {
 
   return {
     getUnique: function (arr) {
-        var i,
-          len=arr.length,
-          out=[],
-          obj={};
+      var i,
+        len = arr.length,
+        out = [],
+        obj = {};
 
-        for (i=0;i<len;i++) {
-          obj[arr[i]]=0;
-        }
-        for (i in obj) {
-          out.push(i);
-        }
-        return out;
+      for (i = 0; i < len; i++) {
+        obj[arr[i]] = 0;
+      }
+      for (i in obj) {
+        out.push(i);
+      }
+      return out;
     }
-
 
 
   }
 
 }]);
+
 
