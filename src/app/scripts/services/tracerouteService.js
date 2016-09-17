@@ -21,7 +21,7 @@ var tracerouteServices = angular.module('TracerouteServices', ['GeneralServices'
  MAIN SERVICE: Used to call Traceroute Results
  Checked on August 12th 2016
  */
-tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheFactory', 'HostService', function ($http, $log, $cacheFactory, HostService) {
+tracerouteServices.factory('TracerouteResultsService', ['$http', '$log', '$cacheFactory', 'HostService', function ($http, $log, $cacheFactory, HostService) {
 
 
   return {
@@ -42,12 +42,12 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheF
         //   'time-range': 86400
         // },
         cache: true,
-        headers:{
-         // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
-         //  'Content-Type': undefined
+        headers: {
+          // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
+          //  'Content-Type': undefined
 
-         //  'Access-Control-Request-Method': 'GET'
-    }
+          //  'Access-Control-Request-Method': 'GET'
+        }
       })
 
     },
@@ -108,49 +108,68 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheF
       // if (Math.floor((Math.random() * 100000000) + 10) % 10 == 0) {
       //   toCache = IndividualTracerouteCacheService.getCacheObject();
       // }
+
+
+      // return $http({
+      //   method: 'GET',
+      //   url: 'https://crossorigin.me/https://www.google.com.sg',
+      //   // url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
+      // }).then(function (response) {
+      //
+      //   return $http({
+      //     method: 'GET',
+      //     url: 'https://crossorigin.me/' + url + "packet-trace/base",
+      //     // url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
+      //
+      //     params: params,
+      //     cache: true
+      //   });
+      //
+      // }).catch(function (error) {
+      //   $log.error(error);
+      //   $log.debug("https://crossorigin.me Status Response: " + error.status);
+      //
+      //   return $http({
+      //     method: 'GET',
+      //     url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
+      //     // url: 'https://crossorigin.me/https://www.google.com.sg',
+      //     // url: 'https://crossorigin.me/https://www.google.com.sg',
+      //   }).then(function (response) {
+      //
+      //     return $http({
+      //       method: 'GET',
+      //       url: 'https://cors-anywhere.herokuapp.com/' + url + "packet-trace/base",
+      //       // url: 'https://crossorigin.me/'+url + "packet-trace/base",
+      //       params: params,
+      //       cache: true
+      //     });
+      //
+      //
+      //   }).catch(function (error) {
+      //     $log.error(error);
+      //     $log.debug("https://cors-anywhere.herokuapp.com/ Response: " + error.status);
+      //
+      //
+      //   });
+      //     });
+
+      var urlNoProtocol = url.replace(/^https?\:\/\//i, "");
       return $http({
         method: 'GET',
-        // url: 'https://crossorigin.me/https://www.google.com.sg',
-        url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
-      }).then(function (response) {
-
-        return $http({
-          method: 'GET',
-          // url: 'https://crossorigin.me/'+url + "packet-trace/base",
-          url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
-
-          params: params,
-          cache: true
-        });
-
-      }).catch(function (error) {
-        $log.error(error);
-        $log.debug("https://crossorigin.me Status Response: " + error.status);
-
-        $http({
-          method: 'GET',
-          // url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
-          // url: 'https://crossorigin.me/https://www.google.com.sg',
-          url: 'https://crossorigin.me/https://www.google.com.sg',
-        }).then(function (response) {
-
-          return $http({
-            method: 'GET',
-            // url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
-            url: 'https://crossorigin.me/'+url + "packet-trace/base",
-            params: params,
-            cache: true
-          });
-
-
-        }).catch(function (error) {
-          $log.error(error);
-          $log.debug("https://cors-anywhere.herokuapp.com/ Response: " + error.status);
-
-
-        });
-
+        // url: 'https://crossorigin.me/'+url + "packet-trace/base",
+        url: 'http://203.30.39.133:8080/cors/'+urlNoProtocol + "packet-trace/base",
+        params: params,
+        cache: true,
+        headers:{
+          // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
+          // 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+          // 'Access-Control-Request-Method': 'GET'
+          // 'Connection':'close'
+          // 'If-Range':undefined,
+          // 'Range': undefined
+        }
       });
+
 
 
       // return $http({
@@ -172,14 +191,14 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheF
 
     },
 
-    getIndividualResult_NoCORS: function (url,params){
+    getIndividualResult_NoCORS: function (url, params) {
       return $http({
         method: 'GET',
         // url: 'https://crossorigin.me/'+url + "packet-trace/base",
         url: url + "packet-trace/base",
         params: params,
         cache: true,
-        headers:{
+        headers: {
           // 'Access-Control-Allow-Headers': 'origin, content-type, accept'
           // 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
           // 'Access-Control-Request-Method': 'GET'
