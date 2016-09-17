@@ -879,7 +879,7 @@ angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$sc
         if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
           if (response.data[i]['metadata-key'] == metadata) {
-            promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+            promises.push(TracerouteResultsService.getIndividualResult_NoCORS(response.data[i]['url'],
               {
                 'format': 'json',
                 'time-range': 86400

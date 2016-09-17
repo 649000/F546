@@ -7,7 +7,7 @@
 
 
 // This has to match with ng-app="traceroute" on HTML page
-var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'angular-cache','toastr', 'ui.bootstrap', 'angular-loading-bar']).config(['$logProvider','$httpProvider','cfpLoadingBarProvider', function ($logProvider, $httpProvider,cfpLoadingBarProvider) {
+var traceroute = angular.module('traceroute', ['TracerouteServices', 'LatencyServices', 'IPAddrDecodeServices', 'GeneralServices', 'AnalyzationServices', 'chart.js', 'ngAnimate', 'angular-cache', 'toastr', 'ui.bootstrap', 'angular-loading-bar']).config(['$logProvider', '$httpProvider', 'cfpLoadingBarProvider', function ($logProvider, $httpProvider, cfpLoadingBarProvider) {
 
   // Spinner for $http loading
 

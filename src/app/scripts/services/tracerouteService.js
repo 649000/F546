@@ -110,35 +110,41 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheF
       // }
       return $http({
         method: 'GET',
-        url: 'https://crossorigin.me/https://www.google.com.sg',
+        // url: 'https://crossorigin.me/https://www.google.com.sg',
+        url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
       }).then(function (response) {
 
         return $http({
           method: 'GET',
-          url: 'https://crossorigin.me/'+url + "packet-trace/base",
+          // url: 'https://crossorigin.me/'+url + "packet-trace/base",
+          url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
+
           params: params,
           cache: true
         });
 
       }).catch(function (error) {
-        $log.error(error)
+        $log.error(error);
         $log.debug("https://crossorigin.me Status Response: " + error.status);
 
         $http({
           method: 'GET',
-          url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
+          // url: 'https://cors-anywhere.herokuapp.com/https://www.google.com.sg',
+          // url: 'https://crossorigin.me/https://www.google.com.sg',
+          url: 'https://crossorigin.me/https://www.google.com.sg',
         }).then(function (response) {
 
           return $http({
             method: 'GET',
-            url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
+            // url: 'https://cors-anywhere.herokuapp.com/'+url + "packet-trace/base",
+            url: 'https://crossorigin.me/'+url + "packet-trace/base",
             params: params,
             cache: true
           });
 
 
         }).catch(function (error) {
-          $log.error(error)
+          $log.error(error);
           $log.debug("https://cors-anywhere.herokuapp.com/ Response: " + error.status);
 
 
@@ -170,7 +176,7 @@ tracerouteServices.factory('TracerouteResultsService', ['$http', '$log','$cacheF
       return $http({
         method: 'GET',
         // url: 'https://crossorigin.me/'+url + "packet-trace/base",
-        url: 'https://crossorigin.me/'+url + "packet-trace/base",
+        url: url + "packet-trace/base",
         params: params,
         cache: true,
         headers:{
@@ -788,7 +794,7 @@ tracerouteServices.factory('TraceroutePath_PopulateGraphService', ['$http', '$q'
           for (var j = 0; j < response.data[i]['event-types'].length; j++) {
             if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-              promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+              promises.push(TracerouteResultsService.getIndividualResult_NoCORS(response.data[i]['url'],
                 {
                   'format': 'json',
                   // 'limit': '2',
@@ -1322,7 +1328,7 @@ tracerouteServices.factory('IndividualTraceroutePath_PopulateGraphService', ['$h
           for (var j = 0; j < response.data[i]['event-types'].length; j++) {
             if (response.data[i]['event-types'][j]['event-type'] == 'packet-trace') {
 
-              promises.push(TracerouteResultsService.getIndividualResult(response.data[i]['url'],
+              promises.push(TracerouteResultsService.getIndividualResult_NoCORS(response.data[i]['url'],
                 {
                   'format': 'json',
                   // 'limit': '2',
