@@ -71,17 +71,35 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
         }
       }
 
+      //Preprocessing of Data - Removing outliers.
+      //removing outliers based on 1.5 * Interquartile range (IQR) above the 3rd quartile
+      // If values are greater than the Upper Fence, pop out the value, Upper Fence = Q3 + 1.5 * IQR
+
+      // Anomalies == true if the RRT is  more than the upper fence
+      for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
+
+      }
+
 
       //Calculating Mean, Min and Std Deviation.
       for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
-
+        //LatestResult
         var rrtResult = nodeAndRttList_RawData[i]['rtt'][0];
+
+        var rttMedian = math.median(nodeAndRttList_RawData[i]['rtt']);
+
+        nodeAndRttList_RawData[i]['rtt'].sort(function(a,b){return a - b})
+
+
+
+
+
         var rttMean = math.mean(nodeAndRttList_RawData[i]['rtt']);
         var rttStdDev = math.std(nodeAndRttList_RawData[i]['rtt']);
         var rrtStatus = false;
 
 
-        if (rrtResult >= (rttMean + rttStdDev) || rrtResult <= (rttMean - rttStdDev)) {
+        if (rrtResult >= (rttMean + rttStdDev)) {
           rrtStatus = true;
         }
 
