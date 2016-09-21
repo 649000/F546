@@ -855,14 +855,7 @@ angular.module('traceroute').controller('TracerouteGraphPanelCtrl', ['$scope', '
 }]);
 
 angular.module('traceroute').controller('Modal_IndividualRTT_HistoryCtrl', ['$scope', '$log', '$q', '$uibModalInstance', 'TracerouteResultsService', 'metadata', 'ipaddr', 'UnixTimeConverterService', function ($scope, $log, $q, $uibModalInstance, TracerouteResultsService, metadata, ipaddr, UnixTimeConverterService) {
-  // $scope.individualRTT_IP = [];
-  // $scope.individualRTT_metadata = [];
-  // console.log(metadata);
-  // var metadata = "0a468985ca8b41029a22ae4e4645f869";
-  // var ipaddr = "203.181.248.138";
 
-
-  // $scope.gotThroughmeh = "YES"
 
   TracerouteResultsService.getMainResult(
     {

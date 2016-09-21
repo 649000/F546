@@ -204,7 +204,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
               }
             }
 
-            if (IPExist == false) {
+            if (IPExist == false && k==0) {
 
               //IP Does not exist.
 
