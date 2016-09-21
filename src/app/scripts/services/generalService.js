@@ -117,10 +117,12 @@ generalServices.factory('CurrentTimeUnixService', function () {
 
 generalServices.factory('HostService', [function () {
 
+  //Address to PerfSONAR Measurement Archive
   var host = "http://ps2.jp.apan.net/esmond/perfsonar/archive/";
-
+  //Testing Purposes
   // var host = "http://hpc-perfsonar.usc.edu/esmond/perfsonar/archive/";
-
+  //Address to server hosting this project.
+  var serverIP ="203.30.39.133";
 
   return {
     getHost: function () {
@@ -130,7 +132,12 @@ generalServices.factory('HostService', [function () {
     setHost: function (hostName) {
       host = hostName;
       return host;
+    },
+
+    getServerIP: function () {
+      return serverIP;
     }
+
   }
 
 }]);

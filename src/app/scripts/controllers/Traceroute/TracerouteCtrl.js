@@ -516,6 +516,7 @@ angular.module('traceroute').controller('TracerouteGraphCtrl', ['$scope', '$http
             if (tracerouteResults[i].nodes[j].status == true) {
               noOfAnomalies++;
               anomaliesExist = true;
+              // console.log("EXIST");
 
             }
           }
@@ -1513,24 +1514,6 @@ angular.module('traceroute').controller('TraceroutePathGraphPanelCtrl', ['$scope
 }]);
 
 
-// Individual paths with anomalies
-//TODO: Better Name for this controller
-angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope, $http, $q, $log, HostService, IndividualTraceroutePath_GraphService, UnixTimeConverterService, GeoIPNekudoService, IndividualTraceroutePath_PopulateGraphService) {
-
-  // $log.debug("IndividualTraceroutePathGraphCtrl: START");
-
-
-  // IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {
-  //
-  //   $scope.errorTracerouteResults = response;
-  //
-  //
-  //   $scope.errorTracerouteResultsLength = response.length;
-  //
-  // })
-
-
-}]);
 
 
 angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['$scope', '$rootScope', '$log', '$cacheFactory', 'IndividualTraceroutePath_GraphService', 'IndividualTraceroutePath_PopulateGraphService', 'UnixTimeConverterService', function ($scope, $rootScope, $log, $cacheFactory, IndividualTraceroutePath_GraphService, IndividualTraceroutePath_PopulateGraphService, UnixTimeConverterService) {
@@ -2051,7 +2034,24 @@ angular.module('traceroute').controller('IndividualTracerouteGraphPanelCtrl', ['
 }]);
 
 
-//Empty Module
+//Empty Modules
+
+angular.module('traceroute').controller('IndividualTraceroutePathGraphCtrl', ['$scope', '$http', '$q', '$log', 'HostService', 'IndividualTraceroutePath_GraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'IndividualTraceroutePath_PopulateGraphService', function ($scope, $http, $q, $log, HostService, IndividualTraceroutePath_GraphService, UnixTimeConverterService, GeoIPNekudoService, IndividualTraceroutePath_PopulateGraphService) {
+
+  // $log.debug("IndividualTraceroutePathGraphCtrl: START");
+
+
+  // IndividualTraceroutePath_PopulateGraphService.getErroneousTraceroutePath().then(function (response) {
+  //
+  //   $scope.errorTracerouteResults = response;
+  //
+  //
+  //   $scope.errorTracerouteResultsLength = response.length;
+  //
+  // })
+
+
+}]);
 
 angular.module('traceroute').controller('XXX', ['$scope', '$http', '$q', '$log', 'HostService', 'TracerouteGraphService', 'UnixTimeConverterService', 'GeoIPNekudoService', 'AnalyzeTraceroute', function ($scope, $http, $q, $log, HostService, TracerouteGraphService, UnixTimeConverterService, GeoIPNekudoService, AnalyzeTraceroute, toastr) {
 
