@@ -90,6 +90,10 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
 
         nodeAndRttList_RawData[i]['rtt'].sort(function(a,b){return a - b})
 
+        var q1Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice(0, (nodeAndRttList_RawData[i]['rtt'].length / 2)) : nodeAndRttList_RawData[i]['rtt'].slice(0, Math.floor(nodeAndRttList_RawData[i]['rtt'].length / 2));
+        var q2Arr =  nodeAndRttList_RawData[i]['rtt'];
+        var q3Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice((nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length) : nodeAndRttList_RawData[i]['rtt'].slice(Math.ceil(nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length);
+
 
 
 
