@@ -80,7 +80,7 @@ ipAddrDecodeServices.factory('GeoIPNekudoService', ['$http', '$log', 'CacheFacto
 
       if (CacheFactory.get("IPAddr_Location").get(IPAddress)) {
 
-        $log.debug("Cache Found for " + IPAddress)
+        // $log.debug("Cache Found for " + IPAddress)
         return CacheFactory.get("IPAddr_Location").get(IPAddress);
 
       } else {

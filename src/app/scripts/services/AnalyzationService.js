@@ -46,7 +46,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
               //IP Address Exist. Append new rtt value.
               if (nodeAndRttList_RawData[j]['IP'] == IPAddr) {
                 IPExist = true;
-                nodeAndRttList_RawData[j]['rtt'].push(rtt);
+                nodeAndRttList_RawData[j]['rtt'].push(math.number(rtt));
                 nodeAndRttList_RawData[j]['date'].push(ts)
               }
             }
@@ -58,7 +58,7 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
 
               var newNode = {
                 IP: IPAddr,
-                rtt: [rtt],
+                rtt: [math.number(rtt)],
                 date: [ts],
                 dns: DNSLookup.getDomain(IPAddr).dns
               }
@@ -76,58 +76,112 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
       // If values are greater than the Upper Fence, pop out the value, Upper Fence = Q3 + 1.5 * IQR
 
       // Anomalies == true if the RRT is  more than the upper fence
-      for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
-
-      }
-
+      // for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
+      //
+      // }
 
       //Calculating Mean, Min and Std Deviation.
       for (var i = 0; i < nodeAndRttList_RawData.length; i++) {
-        //LatestResult
-        var rrtResult = nodeAndRttList_RawData[i]['rtt'][0];
+        // Need more than 2 results (excluding the latest results) to determine IQR
+        if (nodeAndRttList_RawData[i]['rtt'].length > 2) {
+          // console.log("INCOMING SIZE: " + nodeAndRttList_RawData[i]['rtt'].length);
 
-        var rttMedian = math.median(nodeAndRttList_RawData[i]['rtt']);
-
-        nodeAndRttList_RawData[i]['rtt'].sort(function(a,b){return a - b})
-
-        var q1Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice(0, (nodeAndRttList_RawData[i]['rtt'].length / 2)) : nodeAndRttList_RawData[i]['rtt'].slice(0, Math.floor(nodeAndRttList_RawData[i]['rtt'].length / 2));
-        var q2Arr =  nodeAndRttList_RawData[i]['rtt'];
-        var q3Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice((nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length) : nodeAndRttList_RawData[i]['rtt'].slice(Math.ceil(nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length);
+          //LatestResult
+          var rrtResult = nodeAndRttList_RawData[i]['rtt'][0];
 
 
+          //Removing the first result.
+          nodeAndRttList_RawData[i]['rtt'].splice(0, 1);
+
+
+          // console.log("OLD SIZE AFTER SPLICE:" + nodeAndRttList_RawData[i]['rtt'].length)
+          // console.log("NEW SIZE AFTER SPLICE:" + newArray.length)
+
+          //Sort
+          nodeAndRttList_RawData[i]['rtt'].sort(function (a, b) {
+            return a - b
+          })
+
+          // console.log("SORT CHECK:" + nodeAndRttList_RawData[i]['rtt'])
 
 
 
-        var rttMean = math.mean(nodeAndRttList_RawData[i]['rtt']);
-        var rttStdDev = math.std(nodeAndRttList_RawData[i]['rtt']);
-        var rrtStatus = false;
+          //Getting interquartile
+          // var q1Arr = (q1TempArray.length % 2 == 0) ? q1TempArray.slice(0, (q1TempArray.length / 2)) : q1TempArray.slice(0, Math.floor(q1TempArray.length / 2));
+          // var q3Arr = (q3TempArray.length % 2 == 0) ? q3TempArray.slice((newArray.length / 2), q3TempArray.length) : q3TempArray.slice(Math.ceil(q3TempArray.length / 2), q3TempArray.length);
+
+          var q1Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice(0, (nodeAndRttList_RawData[i]['rtt'].length / 2)) : nodeAndRttList_RawData[i]['rtt'].slice(0, Math.floor(nodeAndRttList_RawData[i]['rtt'].length / 2));
+          var q3Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice((nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length) : nodeAndRttList_RawData[i]['rtt'].slice(Math.ceil(nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length);
+          console.log("Q1Arr:" + q1Arr.length);
+          console.log("Q3Arr: " + q3Arr.length);
+
+          var q1Median = math.median(q1Arr);
+          var q3Median = math.median(q3Arr);
+
+          // var q1Median = 1;
+          // var q3Median = 4;
 
 
-        if (rrtResult >= (rttMean + rttStdDev)) {
-          rrtStatus = true;
+          // var rttMean = math.mean(newArray);
+          // var rttStdDev = math.std(newArray);
+          var rrtStatus = false;
+
+          //Upper Fence Formula: Q3 + 1.5 * IQR
+          var upperfence = q3Median + (1.5 * (q3Median - q1Median));
+
+
+          if (rrtResult >= upperfence) {
+            rrtStatus = true;
+          }
+
+
+          nodeAndRttList_CalculatedData.push(
+            {
+              ip: nodeAndRttList_RawData[i]['IP'],
+              dns: nodeAndRttList_RawData[i]['dns'],
+              rtt: rrtResult,
+              // rttAvg: math.round(rttMean, 4),
+              // rttStd: math.round(rttStdDev, 4),
+              rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
+              rttUpperFence: math.round(upperfence, 4),
+              rttMedian: math.round(math.median(nodeAndRttList_RawData[i]['rtt']), 4),
+              // rttMedian: 1,
+              // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
+              // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
+              startDate: UnixTimeConverterService.getDate(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+              endDate: UnixTimeConverterService.getDate(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+              startTime: UnixTimeConverterService.getTime(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+              endTime: UnixTimeConverterService.getTime(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+              status: rrtStatus
+
+            }
+          );
+        } else {
+          nodeAndRttList_CalculatedData.push(
+            {
+              ip: nodeAndRttList_RawData[i]['IP'],
+              dns: nodeAndRttList_RawData[i]['dns'],
+              rtt: nodeAndRttList_RawData[i]['rtt'][0],
+              // rttAvg: math.round(rttMean, 4),
+              // rttStd: math.round(rttStdDev, 4),
+              rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
+              rttUpperFence: '0',
+              // rttMedian:math.median(nodeAndRttList_RawData[i]['rtt']),
+              // rttMedian: math.median(math.number(nodeAndRttList_RawData[i]['rtt'])),
+              rttMedian: math.round(math.median(nodeAndRttList_RawData[i]['rtt']), 4),
+              // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
+              // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
+              startDate: UnixTimeConverterService.getDate(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+              endDate: UnixTimeConverterService.getDate(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+              startTime: UnixTimeConverterService.getTime(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
+              endTime: UnixTimeConverterService.getTime(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
+              status: false
+
+            }
+          );
+
         }
 
-
-        nodeAndRttList_CalculatedData.push(
-          {
-            ip: nodeAndRttList_RawData[i]['IP'],
-            dns: nodeAndRttList_RawData[i]['dns'],
-            // dns: "",
-            rtt: rrtResult,
-            rttAvg: math.round(rttMean, 4),
-            rttMin: math.number(math.min(nodeAndRttList_RawData[i]['rtt'])),
-            rttStd: math.round(rttStdDev, 4),
-            // startDate: math.number(math.min(nodeAndRttList_RawData[i]['date'])),
-            // endDate: math.number(math.max(nodeAndRttList_RawData[i]['date']))
-            //DATE MIGHT BE POSSIBLY WRONG
-            startDate: UnixTimeConverterService.getDate(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
-            endDate: UnixTimeConverterService.getDate(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
-            startTime: UnixTimeConverterService.getTime(math.number(math.min(nodeAndRttList_RawData[i]['date']))),
-            endTime: UnixTimeConverterService.getTime(math.number(math.max(nodeAndRttList_RawData[i]['date']))),
-            status: rrtStatus
-
-          }
-        );
 
       }
 

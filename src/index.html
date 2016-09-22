@@ -323,13 +323,14 @@ Updated at {{lastUpdated}}
                     <th>Hop</th>
                     <th>IP</th>
                      <th>Domain</th>
-                    <th>RTT</th>
+                    <th>Latest RTT</th>
                     <th>Min RTT</th>
-                    <th>Mean RTT</th>
-                    <th>Std Deviation RTT</th>
+                    <th>Median RTT</th>
+                    <th tooltip-placement="top" uib-tooltip="Upper Fence of hop RTT." tooltip-append-to-body="true">Threshold RTT</th>
                     <th>Status</th>
                   </tr>
                   </thead>
+
                   <tbody>
                   <tr ng-repeat="(key, val2) in val.nodes ">
                     <td>{{key+1}}</td>
@@ -341,10 +342,10 @@ Updated at {{lastUpdated}}
                     <!--<td>{{val2.ip}}</td>-->
                     <td>{{val2.dns}}</td>
                     <td ng-click="historyRTT_modalDialog(val.metadata,val2.ip);" role="button"><a
-                      href="">{{val2.rtt}}</a></td>
-                    <td>{{val2.rttMin}}</td>
-                    <td>{{val2.rttAvg}}</td>
-                    <td>{{val2.rttStd}}</td>
+                      href="">{{val2.rtt}} ms</a></td>
+                    <td>{{val2.rttMin}} ms</td>
+                    <td>{{val2.rttMedian}} ms</td>
+                    <td>{{val2.rttUpperFence}} ms</td>
 
                     <td class="danger" ng-if="val2.status">
                       <span class="glyphicon glyphicon-remove"> </span></td>
