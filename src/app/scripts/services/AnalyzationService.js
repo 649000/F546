@@ -112,8 +112,8 @@ analyzationService.factory('AnalyzeTracerouteRtt', ['$http', '$q', '$log', 'Host
 
           var q1Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice(0, (nodeAndRttList_RawData[i]['rtt'].length / 2)) : nodeAndRttList_RawData[i]['rtt'].slice(0, Math.floor(nodeAndRttList_RawData[i]['rtt'].length / 2));
           var q3Arr = (nodeAndRttList_RawData[i]['rtt'].length % 2 == 0) ? nodeAndRttList_RawData[i]['rtt'].slice((nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length) : nodeAndRttList_RawData[i]['rtt'].slice(Math.ceil(nodeAndRttList_RawData[i]['rtt'].length / 2), nodeAndRttList_RawData[i]['rtt'].length);
-          console.log("Q1Arr:" + q1Arr.length);
-          console.log("Q3Arr: " + q3Arr.length);
+          // console.log("Q1Arr:" + q1Arr.length);
+          // console.log("Q3Arr: " + q3Arr.length);
 
           var q1Median = math.median(q1Arr);
           var q3Median = math.median(q3Arr);
